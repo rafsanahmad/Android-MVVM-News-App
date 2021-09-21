@@ -2,4 +2,6 @@
     <string name="app_name">News App</string>
     <string name="favorites">Favorites</string>
     <string name="feed">Feed</string>
+    <string name="search">Search</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

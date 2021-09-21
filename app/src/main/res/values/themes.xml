@@ -11,6 +11,12 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
-        <!-- Customize your theme here. -->
+        <item name="searchViewStyle">@style/SearchStyle</item>
+    </style>
+
+    <style name="SearchStyle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="editTextColor">#FFFFFF</item>
+        <item name="android:searchIcon">@android:drawable/ic_search</item>
+        <item name="android:closeIcon">@android:drawable/ic_menu_close_clear_cancel</item>
     </style>
 </resources>
