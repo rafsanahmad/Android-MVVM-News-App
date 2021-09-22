@@ -21,7 +21,7 @@
         android:name="com.rafsan.newsapp.ui.favorite.FavoriteFragment"
         android:label="SavedNewsFragment">
         <action
-            android:id="@+id/action_savedNewsFragment_to_articleFragment"
+            android:id="@+id/action_favoriteFragment_to_detailsFragment"
             app:destination="@id/detailsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -34,6 +34,6 @@
         android:label="DetailsFragment">
         <argument
             android:name="news"
-            app:argType="com.rafsan.newsapp.data.mode.NewsArticle" />
+            app:argType="com.rafsan.newsapp.data.model.NewsArticle" />
     </fragment>
 </navigation>

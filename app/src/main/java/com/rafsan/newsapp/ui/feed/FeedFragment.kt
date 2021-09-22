@@ -8,4 +8,5 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     override fun setBinding(): FragmentFeedBinding =
         FragmentFeedBinding.inflate(layoutInflater)
 
+
 }

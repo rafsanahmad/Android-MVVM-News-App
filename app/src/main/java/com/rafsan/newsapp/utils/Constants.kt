@@ -7,5 +7,6 @@ class Constants {
         const val searchTimeDelay = 500L
         const val QUERY_PER_PAGE = 15
         const val DEFAULT_PAGE_INDEX = 1
+        const val CountryCode = "us"
     }
 }

@@ -2,6 +2,7 @@ package com.rafsan.newsapp.network.api
 
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.utils.Constants.Companion.API_KEY
+import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 import retrofit2.Response
 import retrofit2.http.GET
@@ -12,7 +13,7 @@ interface NewsApi {
     @GET("v2/top-headlines")
     suspend fun getNews(
         @Query("country")
-        countryCode: String = "us",
+        countryCode: String = CountryCode,
         @Query("page")
         pageNumber: Int = 1,
         @Query("apiKey")

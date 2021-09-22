@@ -24,7 +24,9 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
         val news = args.news
         binding.webView.apply {
             webViewClient = WebViewClient()
-            loadUrl(news.url)
+            news.url?.let {
+                loadUrl(it)
+            }
         }
 
         binding.fab.setOnClickListener {

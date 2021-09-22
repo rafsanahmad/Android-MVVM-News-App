@@ -62,8 +62,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
             searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    // do your logic here
-                    Toast.makeText(applicationContext, query, Toast.LENGTH_SHORT).show()
+                    query?.let {
+                        mainViewModel.searchNews(query)
+                    }
                     return false
                 }
 
