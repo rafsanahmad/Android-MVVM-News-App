@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/feed"
+        android:id="@+id/feedFragment"
         android:icon="@drawable/explore"
         android:title="@string/feed" />
+
     <item
-        android:id="@+id/favorite"
+        android:id="@+id/favoriteFragment"
         android:icon="@drawable/favorite"
         android:title="@string/favorites" />
 </menu>

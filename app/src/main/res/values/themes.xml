@@ -14,7 +14,7 @@
         <item name="searchViewStyle">@style/SearchStyle</item>
     </style>
 
-    <style name="SearchStyle" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="SearchStyle" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="editTextColor">#FFFFFF</item>
         <item name="android:tint">#FFFFFF</item>
         <item name="android:searchIcon">@drawable/baseline_search_black_20</item>

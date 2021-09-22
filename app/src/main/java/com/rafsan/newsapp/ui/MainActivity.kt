@@ -7,11 +7,10 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseActivity
@@ -34,7 +33,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun setBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
     private fun setupBottomNavigationBar() {
-        binding.bottomNav.setupWithNavController(binding.navHostContainer.findNavController())
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        binding.bottomNavigationView.setupWithNavController(navController)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -42,8 +44,18 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         val searchItem: MenuItem = menu.findItem(R.id.action_search)
         if (searchItem != null) {
             searchView = searchItem.getActionView() as SearchView
+            //Search button clicked
+            searchView.setOnSearchClickListener {
+                setItemsVisibility(menu, searchItem, false);
+            }
+            searchView.setMaxWidth(android.R.attr.width);
+            //Close button clicked
             searchView.setOnCloseListener(object : SearchView.OnCloseListener {
                 override fun onClose(): Boolean {
+                    mainViewModel.isSearchActivated = false
+                    //Collapse the action view
+                    searchView.onActionViewCollapsed();
+                    setItemsVisibility(menu, searchItem, true);
                     return true
                 }
             })
@@ -64,6 +76,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
                 override fun onQueryTextSubmit(query: String?): Boolean {
                     query?.let {
                         mainViewModel.searchNews(query)
+                        mainViewModel.isSearchActivated = true
                     }
                     return false
                 }
@@ -78,6 +91,13 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
+        for (i in 0 until menu.size()) {
+            val item = menu.getItem(i)
+            if (item !== exception) item.isVisible = visible
+        }
     }
 
     override fun onBackPressed() {

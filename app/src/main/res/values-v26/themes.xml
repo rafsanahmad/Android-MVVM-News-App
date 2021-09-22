@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SearchStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="editTextColor">#FFFFFF</item>
+        <item name="android:tint">#FFFFFF</item>
+        <item name="android:iconTint">#FFFFFF</item>
+        <item name="android:searchIcon">@drawable/baseline_search_black_20</item>
+        <item name="android:closeIcon">@drawable/baseline_close_black_20</item>
+    </style>
+</resources>

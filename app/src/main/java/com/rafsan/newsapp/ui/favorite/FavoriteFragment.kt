@@ -1,6 +1,8 @@
 package com.rafsan.newsapp.ui.favorite
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -30,7 +32,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
 
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
-                putSerializable("article", it)
+                putSerializable("news", it)
             }
             findNavController().navigate(
                 R.id.action_favoriteFragment_to_detailsFragment,
@@ -79,5 +81,10 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(activity)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
     }
 }

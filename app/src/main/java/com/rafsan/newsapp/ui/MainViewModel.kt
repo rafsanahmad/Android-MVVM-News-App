@@ -37,8 +37,9 @@ class MainViewModel @Inject constructor(
 
     var searchNewsPage = 1
     private var searchResponse: NewsResponse? = null
-    private var oldQuery: String? = null
-    private var newQuery: String? = null
+    private var oldQuery: String = ""
+    var newQuery: String = ""
+    var isSearchActivated = false
 
     init {
         fetchNews(Constants.CountryCode)
@@ -78,8 +79,8 @@ class MainViewModel @Inject constructor(
                 feedResponse = resultResponse
             } else {
                 feedNewsPage++
-                val oldArticles = feedResponse?.newsArticles
-                val newArticles = resultResponse.newsArticles
+                val oldArticles = feedResponse?.articles
+                val newArticles = resultResponse.articles
                 oldArticles?.addAll(newArticles)
             }
             return NetworkResult.Success(feedResponse ?: resultResponse)
@@ -89,29 +90,31 @@ class MainViewModel @Inject constructor(
 
     fun searchNews(query: String) {
         newQuery = query
-        if (networkHelper.isNetworkConnected()) {
-            _searchNewsResponse.postValue(NetworkResult.Loading())
-            try {
-                viewModelScope.launch {
-                    when (val response = repository.searchNews(query, searchNewsPage)) {
-                        is NetworkResult.Success -> {
-                            _searchNewsResponse.postValue(handleSearchNewsResponse(response))
-                        }
-                        is NetworkResult.Error -> {
-                            _searchNewsResponse.postValue(
-                                NetworkResult.Error(
-                                    response.message ?: "Error"
+        if (!newQuery.isEmpty()) {
+            if (networkHelper.isNetworkConnected()) {
+                _searchNewsResponse.postValue(NetworkResult.Loading())
+                try {
+                    viewModelScope.launch {
+                        when (val response = repository.searchNews(query, searchNewsPage)) {
+                            is NetworkResult.Success -> {
+                                _searchNewsResponse.postValue(handleSearchNewsResponse(response))
+                            }
+                            is NetworkResult.Error -> {
+                                _searchNewsResponse.postValue(
+                                    NetworkResult.Error(
+                                        response.message ?: "Error"
+                                    )
                                 )
-                            )
+                            }
                         }
-                    }
 
+                    }
+                } catch (e: Exception) {
+                    _searchNewsResponse.postValue(NetworkResult.Error("Error occurred ${e.localizedMessage}"))
                 }
-            } catch (e: Exception) {
-                _searchNewsResponse.postValue(NetworkResult.Error("Error occurred ${e.localizedMessage}"))
+            } else {
+                _errorToast.value = "No internet available"
             }
-        } else {
-            _errorToast.value = "No internet available"
         }
     }
 
@@ -123,8 +126,8 @@ class MainViewModel @Inject constructor(
                 oldQuery = newQuery
             } else {
                 searchNewsPage++
-                val oldArticles = searchResponse?.newsArticles
-                val newArticles = resultResponse.newsArticles
+                val oldArticles = searchResponse?.articles
+                val newArticles = resultResponse.articles
                 oldArticles?.addAll(newArticles)
             }
             return NetworkResult.Success(searchResponse ?: resultResponse)
