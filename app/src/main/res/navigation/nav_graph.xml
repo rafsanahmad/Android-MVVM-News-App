@@ -33,7 +33,7 @@
         android:name="com.rafsan.newsapp.ui.details.DetailsFragment"
         android:label="DetailsFragment">
         <argument
-            android:name="article"
+            android:name="news"
             app:argType="com.rafsan.newsapp.data.mode.NewsArticle" />
     </fragment>
 </navigation>

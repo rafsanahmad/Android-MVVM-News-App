@@ -4,7 +4,8 @@
     tools:context=".ui.home.activities.TransactionSearchActivity">
     <item
         android:id="@+id/action_search"
-        android:icon="@android:drawable/ic_search"
+        android:icon="@drawable/baseline_search_black_20"
+        android:iconTint="@color/white"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />

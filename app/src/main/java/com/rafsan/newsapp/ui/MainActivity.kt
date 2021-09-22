@@ -9,28 +9,29 @@ import android.view.View
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.rafsan.newsapp.R
+import com.rafsan.newsapp.base.BaseActivity
 import com.rafsan.newsapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    private lateinit var binding: ActivityMainBinding
     private lateinit var searchView: SearchView
     val mainViewModel: MainViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        setupBottomNavigationBar()
+    override fun onViewReady(savedInstanceState: Bundle?) {
+        super.onViewReady(savedInstanceState)
+        if (savedInstanceState == null) {
+            setupBottomNavigationBar()
+        }
     }
+
+    override fun setBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
 
     private fun setupBottomNavigationBar() {
         binding.bottomNav.setupWithNavController(binding.navHostContainer.findNavController())

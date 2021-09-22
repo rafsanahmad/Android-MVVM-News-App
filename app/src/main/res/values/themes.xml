@@ -16,7 +16,8 @@
 
     <style name="SearchStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="editTextColor">#FFFFFF</item>
-        <item name="android:searchIcon">@android:drawable/ic_search</item>
-        <item name="android:closeIcon">@android:drawable/ic_menu_close_clear_cancel</item>
+        <item name="android:tint">#FFFFFF</item>
+        <item name="android:searchIcon">@drawable/baseline_search_black_20</item>
+        <item name="android:closeIcon">@drawable/baseline_close_black_20</item>
     </style>
 </resources>
