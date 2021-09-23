@@ -1,6 +1,8 @@
 package com.rafsan.newsapp.ui.details
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.webkit.WebViewClient
 import androidx.navigation.fragment.navArgs
@@ -33,5 +35,12 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
             viewModel.saveNews(news)
             Snackbar.make(view, "News article saved successfully", Snackbar.LENGTH_SHORT).show()
         }
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true);
+        setHasOptionsMenu(true)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu.clear()
     }
 }

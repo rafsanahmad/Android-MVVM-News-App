@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseFragment
 import com.rafsan.newsapp.databinding.FragmentFeedBinding
@@ -55,6 +56,13 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 }
             }
         }
+
+        //Swipe refresh listener
+        val refreshListener = SwipeRefreshLayout.OnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            mainViewModel.fetchNews(countryCode)
+        }
+        binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);
     }
 
     private fun setupRecyclerView() {

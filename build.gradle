@@ -28,6 +28,7 @@ buildscript {
         coroutineVersion = '1.4.2'
         okhttpLoggingVersion = "4.7.2"
         navigationComponent = '2.3.0'
+        swipeRefreshVersion = "1.1.0"
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$gradleVersion"

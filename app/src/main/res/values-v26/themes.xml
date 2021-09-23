@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="SearchStyle" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="SearchStyle" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="editTextColor">#FFFFFF</item>
         <item name="android:tint">#FFFFFF</item>
         <item name="android:iconTint">#FFFFFF</item>

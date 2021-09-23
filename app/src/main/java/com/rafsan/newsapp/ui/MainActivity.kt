@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseActivity
@@ -25,6 +26,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
 
     override fun onViewReady(savedInstanceState: Bundle?) {
         super.onViewReady(savedInstanceState)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.title = "Today's News";
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         }
@@ -37,67 +40,64 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
             supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.feedFragment,
+                R.id.favoriteFragment
+            )
+        )
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.toolbar_menu, menu)
         val searchItem: MenuItem = menu.findItem(R.id.action_search)
-        if (searchItem != null) {
-            searchView = searchItem.getActionView() as SearchView
-            //Search button clicked
-            searchView.setOnSearchClickListener {
-                setItemsVisibility(menu, searchItem, false);
+        searchView = searchItem.getActionView() as SearchView
+        //Search button clicked
+        searchView.setOnSearchClickListener {
+            searchView.maxWidth = android.R.attr.width;
+        }
+        //Close button clicked
+        searchView.setOnCloseListener(object : SearchView.OnCloseListener {
+            override fun onClose(): Boolean {
+                mainViewModel.isSearchActivated = false
+                //Collapse the action view
+                searchView.onActionViewCollapsed();
+                searchView.maxWidth = 0;
+                return true
             }
-            searchView.setMaxWidth(android.R.attr.width);
-            //Close button clicked
-            searchView.setOnCloseListener(object : SearchView.OnCloseListener {
-                override fun onClose(): Boolean {
-                    mainViewModel.isSearchActivated = false
-                    //Collapse the action view
-                    searchView.onActionViewCollapsed();
-                    setItemsVisibility(menu, searchItem, true);
-                    return true
-                }
-            })
+        })
 
-            val searchPlate =
-                searchView.findViewById(androidx.appcompat.R.id.search_src_text) as EditText
-            searchPlate.hint = "Search"
-            val searchPlateView: View =
-                searchView.findViewById(androidx.appcompat.R.id.search_plate)
-            searchPlateView.setBackgroundColor(
-                ContextCompat.getColor(
-                    this,
-                    android.R.color.transparent
-                )
+        val searchPlate =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text) as EditText
+        searchPlate.hint = "Search"
+        val searchPlateView: View =
+            searchView.findViewById(androidx.appcompat.R.id.search_plate)
+        searchPlateView.setBackgroundColor(
+            ContextCompat.getColor(
+                this,
+                android.R.color.transparent
             )
+        )
 
-            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    query?.let {
-                        mainViewModel.searchNews(query)
-                        mainViewModel.isSearchActivated = true
-                    }
-                    return false
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    mainViewModel.searchNews(query)
+                    mainViewModel.isSearchActivated = true
                 }
+                return false
+            }
 
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    return false
-                }
-            })
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
 
-            val searchManager =
-                getSystemService(Context.SEARCH_SERVICE) as SearchManager
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        }
+        val searchManager =
+            getSystemService(Context.SEARCH_SERVICE) as SearchManager
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         return super.onCreateOptionsMenu(menu)
-    }
-
-    private fun setItemsVisibility(menu: Menu, exception: MenuItem, visible: Boolean) {
-        for (i in 0 until menu.size()) {
-            val item = menu.getItem(i)
-            if (item !== exception) item.isVisible = visible
-        }
     }
 
     override fun onBackPressed() {

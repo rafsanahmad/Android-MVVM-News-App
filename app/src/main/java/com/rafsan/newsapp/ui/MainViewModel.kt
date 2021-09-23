@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,8 @@ import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +23,7 @@ class MainViewModel @Inject constructor(
     private val networkHelper: NetworkHelper
 ) : ViewModel() {
 
+    private val TAG = "MainViewModel"
     private val _errorToast = MutableLiveData<String>()
     val errorToast: LiveData<String>
         get() = _errorToast
@@ -83,6 +87,10 @@ class MainViewModel @Inject constructor(
                 val newArticles = resultResponse.articles
                 oldArticles?.addAll(newArticles)
             }
+            //Conversion
+            feedResponse?.let {
+                feedResponse = convertPublishedDate(it)
+            }
             return NetworkResult.Success(feedResponse ?: resultResponse)
         }
         return NetworkResult.Error("No data found")
@@ -130,9 +138,43 @@ class MainViewModel @Inject constructor(
                 val newArticles = resultResponse.articles
                 oldArticles?.addAll(newArticles)
             }
+            searchResponse?.let {
+                searchResponse = convertPublishedDate(it)
+            }
             return NetworkResult.Success(searchResponse ?: resultResponse)
         }
         return NetworkResult.Error("No data found")
+    }
+
+    fun convertPublishedDate(currentResponse: NewsResponse): NewsResponse {
+        currentResponse.let { response ->
+            for (i in 0 until response.articles.size) {
+                val publishedAt = response.articles[i].publishedAt
+                publishedAt?.let {
+                    val converted = formatDate(it)
+                    response.articles[i].publishedAt = converted
+                }
+            }
+        }
+        return currentResponse
+    }
+
+    fun formatDate(strCurrentDate: String): String {
+        var convertedDate = ""
+        try {
+            var format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            val newDate: Date? = format.parse(strCurrentDate)
+
+            format = SimpleDateFormat("MMM dd, yyyy hh:mm a")
+            newDate?.let {
+                convertedDate = format.format(it)
+            }
+        } catch (e: Exception) {
+            e.message?.let {
+                Log.e(TAG, it)
+            }
+        }
+        return convertedDate
     }
 
     fun hideErrorToast() {

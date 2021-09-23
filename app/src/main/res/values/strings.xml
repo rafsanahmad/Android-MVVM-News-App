@@ -4,4 +4,7 @@
     <string name="feed">Feed</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Something went wrong</string>
+    <string name="today_news">Today\'s News</string>
+    <string name="favorite_news">Favorite News</string>
+    <string name="details">Details</string>
 </resources>

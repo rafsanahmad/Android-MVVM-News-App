@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/feedFragment"
         android:name="com.rafsan.newsapp.ui.feed.FeedFragment"
-        android:label="FeedFragment">
+        android:label="@string/today_news">
         <action
             android:id="@+id/action_feedFragment_to_DetailsFragment"
             app:destination="@id/detailsFragment"
@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="com.rafsan.newsapp.ui.favorite.FavoriteFragment"
-        android:label="SavedNewsFragment">
+        android:label="@string/favorite_news">
         <action
             android:id="@+id/action_favoriteFragment_to_detailsFragment"
             app:destination="@id/detailsFragment"
@@ -31,7 +31,7 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.rafsan.newsapp.ui.details.DetailsFragment"
-        android:label="DetailsFragment">
+        android:label="@string/details">
         <argument
             android:name="news"
             app:argType="com.rafsan.newsapp.data.model.NewsArticle" />

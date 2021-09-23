@@ -28,6 +28,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).mainViewModel
+        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false);
         setupRecyclerView()
 
         newsAdapter.setOnItemClickListener {
