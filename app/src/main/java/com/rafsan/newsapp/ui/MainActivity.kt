@@ -1,15 +1,7 @@
 package com.rafsan.newsapp.ui
 
-import android.app.SearchManager
-import android.content.Context
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.EditText
 import androidx.activity.viewModels
-import androidx.appcompat.widget.SearchView
-import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
@@ -21,7 +13,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    private lateinit var searchView: SearchView
     val mainViewModel: MainViewModel by viewModels()
 
     override fun onViewReady(savedInstanceState: Bundle?) {
@@ -49,62 +40,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.toolbar_menu, menu)
-        val searchItem: MenuItem = menu.findItem(R.id.action_search)
-        searchView = searchItem.getActionView() as SearchView
-        //Search button clicked
-        searchView.setOnSearchClickListener {
-            searchView.maxWidth = android.R.attr.width;
-        }
-        //Close button clicked
-        searchView.setOnCloseListener(object : SearchView.OnCloseListener {
-            override fun onClose(): Boolean {
-                mainViewModel.isSearchActivated = false
-                //Collapse the action view
-                searchView.onActionViewCollapsed();
-                searchView.maxWidth = 0;
-                return true
-            }
-        })
-
-        val searchPlate =
-            searchView.findViewById(androidx.appcompat.R.id.search_src_text) as EditText
-        searchPlate.hint = "Search"
-        val searchPlateView: View =
-            searchView.findViewById(androidx.appcompat.R.id.search_plate)
-        searchPlateView.setBackgroundColor(
-            ContextCompat.getColor(
-                this,
-                android.R.color.transparent
-            )
-        )
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                query?.let {
-                    mainViewModel.searchNews(query)
-                    mainViewModel.isSearchActivated = true
-                }
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return false
-            }
-        })
-
-        val searchManager =
-            getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
-        return super.onCreateOptionsMenu(menu)
-    }
-
     override fun onBackPressed() {
-        if (!searchView.isIconified()) {
-            searchView.onActionViewCollapsed();
-        } else {
-            super.onBackPressed();
-        }
+        super.onBackPressed();
     }
 }

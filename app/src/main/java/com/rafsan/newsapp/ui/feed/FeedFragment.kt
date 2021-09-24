@@ -1,8 +1,16 @@
 package com.rafsan.newsapp.ui.feed
 
+import android.app.SearchManager
+import android.content.Context
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +26,7 @@ import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 import com.rafsan.newsapp.utils.EndlessRecyclerOnScrollListener
 import com.rafsan.newsapp.utils.NetworkResult
 
+
 class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     override fun setBinding(): FragmentFeedBinding =
@@ -27,6 +36,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     lateinit var mainViewModel: MainViewModel
     lateinit var newsAdapter: NewsAdapter
     val countryCode = Constants.CountryCode
+    private lateinit var searchView: SearchView
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,6 +44,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         setupUI()
         setupRecyclerView()
         setupObservers()
+        setHasOptionsMenu(true)
     }
 
     private fun setupUI() {
@@ -61,9 +72,11 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         val refreshListener = SwipeRefreshLayout.OnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
             mainViewModel.feedNewsPage = 1
+            mainViewModel.isSearchActivated = false
             mainViewModel.fetchNews(countryCode)
         }
         binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);
+
     }
 
     private fun setupRecyclerView() {
@@ -78,7 +91,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 putSerializable("news", news)
             }
             findNavController().navigate(
-                R.id.action_feedFragment_to_DetailsFragment,
+                com.rafsan.newsapp.R.id.action_feedFragment_to_DetailsFragment,
                 bundle
             )
         }
@@ -168,5 +181,66 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private fun hideErrorMessage() {
         binding.itemErrorMessage.errorCard.visibility = View.GONE
         onScrollListener.isError = false
+    }
+
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.toolbar_menu, menu)
+        val searchItem = menu.findItem(R.id.action_search)
+        searchView = searchItem.getActionView() as SearchView
+        //Search button clicked
+        searchView.setOnSearchClickListener {
+            searchView.maxWidth = android.R.attr.width;
+        }
+        //Close button clicked
+        searchView.setOnCloseListener(object : SearchView.OnCloseListener {
+            override fun onClose(): Boolean {
+                mainViewModel.isSearchActivated = false
+                //Collapse the action view
+                searchView.onActionViewCollapsed();
+                searchView.maxWidth = 0;
+                return true
+            }
+        })
+
+        val searchPlate =
+            searchView.findViewById(androidx.appcompat.R.id.search_src_text) as EditText
+        searchPlate.hint = "Search"
+        val searchPlateView: View =
+            searchView.findViewById(androidx.appcompat.R.id.search_plate)
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                query?.let {
+                    mainViewModel.searchNews(query)
+                    mainViewModel.isSearchActivated = true
+                }
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+
+        activity?.let {
+            searchPlateView.setBackgroundColor(
+                ContextCompat.getColor(
+                    it,
+                    android.R.color.transparent
+                )
+            )
+            val searchManager =
+                it.getSystemService(Context.SEARCH_SERVICE) as SearchManager
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(it.componentName))
+        }
+        //check if search is activated
+        if (mainViewModel.isSearchActivated) {
+            searchView.isIconified = false
+            searchItem.expandActionView();
+            searchView.setQuery(mainViewModel.newQuery, false);
+        }
+        return super.onCreateOptionsMenu(menu, inflater)
     }
 }
