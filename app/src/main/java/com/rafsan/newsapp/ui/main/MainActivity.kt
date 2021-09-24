@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.ui
+package com.rafsan.newsapp.ui.main
 
 import android.os.Bundle
 import androidx.activity.viewModels

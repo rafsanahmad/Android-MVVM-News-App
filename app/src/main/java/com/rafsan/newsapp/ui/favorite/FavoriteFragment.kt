@@ -1,8 +1,6 @@
 package com.rafsan.newsapp.ui.favorite
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -13,9 +11,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseFragment
 import com.rafsan.newsapp.databinding.FragmentFavoritesBinding
-import com.rafsan.newsapp.ui.MainActivity
-import com.rafsan.newsapp.ui.MainViewModel
 import com.rafsan.newsapp.ui.adapter.NewsAdapter
+import com.rafsan.newsapp.ui.main.MainActivity
+import com.rafsan.newsapp.ui.main.MainViewModel
 
 class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
 
@@ -28,9 +26,20 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).mainViewModel
-        (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false);
         setupRecyclerView()
+        setupUI(view)
+        setupObserver()
+    }
 
+    private fun setupRecyclerView() {
+        newsAdapter = NewsAdapter()
+        binding.rvFavoriteNews.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(activity)
+        }
+    }
+
+    private fun setupUI(view: View) {
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("news", it)
@@ -70,22 +79,11 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
         ItemTouchHelper(itemTouchHelperCallback).apply {
             attachToRecyclerView(binding.rvFavoriteNews)
         }
+    }
 
+    private fun setupObserver() {
         viewModel.getFavoriteNews().observe(viewLifecycleOwner, Observer { news ->
             newsAdapter.differ.submitList(news)
         })
-    }
-
-    private fun setupRecyclerView() {
-        newsAdapter = NewsAdapter()
-        binding.rvFavoriteNews.apply {
-            adapter = newsAdapter
-            layoutManager = LinearLayoutManager(activity)
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        menu.clear()
     }
 }

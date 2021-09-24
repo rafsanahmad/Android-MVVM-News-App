@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
@@ -18,9 +17,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseFragment
 import com.rafsan.newsapp.databinding.FragmentFeedBinding
-import com.rafsan.newsapp.ui.MainActivity
-import com.rafsan.newsapp.ui.MainViewModel
 import com.rafsan.newsapp.ui.adapter.NewsAdapter
+import com.rafsan.newsapp.ui.main.MainActivity
+import com.rafsan.newsapp.ui.main.MainViewModel
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 import com.rafsan.newsapp.utils.EndlessRecyclerOnScrollListener
@@ -37,6 +36,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     lateinit var newsAdapter: NewsAdapter
     val countryCode = Constants.CountryCode
     private lateinit var searchView: SearchView
+    private var checkSearch: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -49,7 +49,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     private fun setupUI() {
         binding.itemErrorMessage.btnRetry.setOnClickListener {
-            if (mainViewModel.isSearchActivated) {
+            if (checkSearch) {
                 mainViewModel.searchNews(mainViewModel.newQuery)
             } else {
                 mainViewModel.fetchNews(countryCode)
@@ -60,7 +60,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         // scroll listener for recycler view
         onScrollListener = object : EndlessRecyclerOnScrollListener(QUERY_PER_PAGE) {
             override fun onLoadMore() {
-                if (mainViewModel.isSearchActivated) {
+                if (checkSearch) {
                     mainViewModel.searchNews(mainViewModel.newQuery)
                 } else {
                     mainViewModel.fetchNews(countryCode)
@@ -71,8 +71,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         //Swipe refresh listener
         val refreshListener = SwipeRefreshLayout.OnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
-            mainViewModel.feedNewsPage = 1
-            mainViewModel.isSearchActivated = false
+            mainViewModel.clearSearch()
             mainViewModel.fetchNews(countryCode)
         }
         binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);
@@ -126,6 +125,25 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             }
         })
 
+        mainViewModel.isSearchActivated.observe(viewLifecycleOwner, Observer { activated ->
+            checkSearch = activated
+            if (activated) {
+                observeSearchResponse()
+            } else {
+                mainViewModel.searchNewsResponse.removeObservers(this)
+            }
+        })
+
+        mainViewModel.errorToast.observe(viewLifecycleOwner, Observer { value ->
+            if (value.isNotEmpty()) {
+                Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
+            } else {
+                mainViewModel.hideErrorToast()
+            }
+        })
+    }
+
+    private fun observeSearchResponse() {
         //Search response
         mainViewModel.searchNewsResponse.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
@@ -152,14 +170,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                         showErrorMessage(response.message)
                     }
                 }
-            }
-        })
-
-        mainViewModel.errorToast.observe(viewLifecycleOwner, Observer { value ->
-            if (value.isNotEmpty()) {
-                Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
-            } else {
-                mainViewModel.hideErrorToast()
             }
         })
     }
@@ -196,7 +206,8 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         //Close button clicked
         searchView.setOnCloseListener(object : SearchView.OnCloseListener {
             override fun onClose(): Boolean {
-                mainViewModel.isSearchActivated = false
+                mainViewModel.clearSearch()
+                mainViewModel.fetchNews(countryCode)
                 //Collapse the action view
                 searchView.onActionViewCollapsed();
                 searchView.maxWidth = 0;
@@ -214,7 +225,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     mainViewModel.searchNews(query)
-                    mainViewModel.isSearchActivated = true
+                    mainViewModel.enableSearch()
                 }
                 return false
             }
@@ -236,7 +247,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(it.componentName))
         }
         //check if search is activated
-        if (mainViewModel.isSearchActivated) {
+        if (checkSearch) {
             searchView.isIconified = false
             searchItem.expandActionView();
             searchView.setQuery(mainViewModel.newQuery, false);

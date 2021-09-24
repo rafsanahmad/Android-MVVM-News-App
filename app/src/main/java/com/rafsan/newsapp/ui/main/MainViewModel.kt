@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.ui
+package com.rafsan.newsapp.ui.main
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -40,10 +40,13 @@ class MainViewModel @Inject constructor(
     var feedNewsPage = 1
 
     var searchNewsPage = 1
-    private var searchResponse: NewsResponse? = null
+    var searchResponse: NewsResponse? = null
     private var oldQuery: String = ""
     var newQuery: String = ""
-    var isSearchActivated = false
+
+    private val _isSearchActivated = MutableLiveData<Boolean>()
+    val isSearchActivated: LiveData<Boolean>
+        get() = _isSearchActivated
 
     init {
         fetchNews(Constants.CountryCode)
@@ -192,5 +195,16 @@ class MainViewModel @Inject constructor(
 
     fun deleteNews(news: NewsArticle) = viewModelScope.launch {
         repository.deleteNews(news)
+    }
+
+    fun clearSearch() {
+        _isSearchActivated.postValue(false)
+        searchResponse = null
+        feedNewsPage = 1
+        searchNewsPage = 1
+    }
+
+    fun enableSearch() {
+        _isSearchActivated.postValue(true)
     }
 }
