@@ -40,10 +40,10 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         binding.itemErrorMessage.btnRetry.setOnClickListener {
             if (mainViewModel.isSearchActivated) {
                 mainViewModel.searchNews(mainViewModel.newQuery)
-                hideErrorMessage()
             } else {
                 mainViewModel.fetchNews(countryCode)
             }
+            hideErrorMessage()
         }
 
         // scroll listener for recycler view
@@ -60,6 +60,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         //Swipe refresh listener
         val refreshListener = SwipeRefreshLayout.OnRefreshListener {
             binding.swipeRefreshLayout.isRefreshing = false
+            mainViewModel.feedNewsPage = 1
             mainViewModel.fetchNews(countryCode)
         }
         binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);

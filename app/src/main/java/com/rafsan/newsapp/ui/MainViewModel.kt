@@ -162,17 +162,20 @@ class MainViewModel @Inject constructor(
     fun formatDate(strCurrentDate: String): String {
         var convertedDate = ""
         try {
-            var format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-            val newDate: Date? = format.parse(strCurrentDate)
+            if (strCurrentDate.isNotEmpty() && strCurrentDate.contains("T")) {
+                var format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                val newDate: Date? = format.parse(strCurrentDate)
 
-            format = SimpleDateFormat("MMM dd, yyyy hh:mm a")
-            newDate?.let {
-                convertedDate = format.format(it)
+                format = SimpleDateFormat("MMM dd, yyyy hh:mm a")
+                newDate?.let {
+                    convertedDate = format.format(it)
+                }
             }
         } catch (e: Exception) {
             e.message?.let {
                 Log.e(TAG, it)
             }
+            convertedDate = strCurrentDate
         }
         return convertedDate
     }
