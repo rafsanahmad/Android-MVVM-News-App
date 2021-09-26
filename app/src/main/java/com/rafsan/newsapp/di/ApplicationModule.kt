@@ -8,7 +8,7 @@ import com.rafsan.newsapp.data.local.NewsDatabase
 import com.rafsan.newsapp.network.api.ApiHelper
 import com.rafsan.newsapp.network.api.ApiHelperImpl
 import com.rafsan.newsapp.network.api.NewsApi
-import com.rafsan.newsapp.network.repository.MainRepository
+import com.rafsan.newsapp.network.repository.FavoriteRepository
 import com.rafsan.newsapp.utils.Constants.Companion.BASE_URL
 import dagger.Module
 import dagger.Provides
@@ -71,5 +71,5 @@ object ApplicationModule {
     fun provideRepository(
         remoteDataSource: ApiHelper,
         localDataSource: NewsDao
-    ) = MainRepository(remoteDataSource, localDataSource)
+    ) = FavoriteRepository(remoteDataSource, localDataSource)
 }

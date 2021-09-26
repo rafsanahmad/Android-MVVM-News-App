@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
-import com.rafsan.newsapp.network.repository.MainRepository
+import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
+import com.rafsan.newsapp.network.repository.FavoriteRepository
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,8 +21,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: MainRepository,
-    private val networkHelper: NetworkHelper
+    private val repository: FavoriteRepository,
+    private val networkHelper: NetworkHelper,
+    private val coroutinesDispatcherProvider: CoroutinesDispatcherProvider
 ) : ViewModel() {
 
     private val TAG = "MainViewModel"
@@ -55,24 +58,24 @@ class MainViewModel @Inject constructor(
     fun fetchNews(countryCode: String) {
         if (networkHelper.isNetworkConnected()) {
             _newsResponse.postValue(NetworkResult.Loading())
-            try {
-                viewModelScope.launch {
-                    when (val response = repository.getNews(countryCode, feedNewsPage)) {
-                        is NetworkResult.Success -> {
-                            _newsResponse.postValue(handleFeedNewsResponse(response))
-                        }
-                        is NetworkResult.Error -> {
-                            _newsResponse.postValue(
-                                NetworkResult.Error(
-                                    response.message ?: "Error"
-                                )
-                            )
-                        }
-                    }
 
+            val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+                onError(exception)
+            }
+            viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+                when (val response = repository.getNews(countryCode, feedNewsPage)) {
+                    is NetworkResult.Success -> {
+                        _newsResponse.postValue(handleFeedNewsResponse(response))
+                    }
+                    is NetworkResult.Error -> {
+                        _newsResponse.postValue(
+                            NetworkResult.Error(
+                                response.message ?: "Error"
+                            )
+                        )
+                    }
                 }
-            } catch (e: Exception) {
-                _newsResponse.postValue(NetworkResult.Error("Error occurred ${e.localizedMessage}"))
+
             }
         } else {
             _errorToast.value = "No internet available"
@@ -104,24 +107,23 @@ class MainViewModel @Inject constructor(
         if (!newQuery.isEmpty()) {
             if (networkHelper.isNetworkConnected()) {
                 _searchNewsResponse.postValue(NetworkResult.Loading())
-                try {
-                    viewModelScope.launch {
-                        when (val response = repository.searchNews(query, searchNewsPage)) {
-                            is NetworkResult.Success -> {
-                                _searchNewsResponse.postValue(handleSearchNewsResponse(response))
-                            }
-                            is NetworkResult.Error -> {
-                                _searchNewsResponse.postValue(
-                                    NetworkResult.Error(
-                                        response.message ?: "Error"
-                                    )
-                                )
-                            }
+                val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+                    onError(exception)
+                }
+                viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+                    when (val response = repository.searchNews(query, searchNewsPage)) {
+                        is NetworkResult.Success -> {
+                            _searchNewsResponse.postValue(handleSearchNewsResponse(response))
                         }
-
+                        is NetworkResult.Error -> {
+                            _searchNewsResponse.postValue(
+                                NetworkResult.Error(
+                                    response.message ?: "Error"
+                                )
+                            )
+                        }
                     }
-                } catch (e: Exception) {
-                    _searchNewsResponse.postValue(NetworkResult.Error("Error occurred ${e.localizedMessage}"))
+
                 }
             } else {
                 _errorToast.value = "No internet available"
@@ -187,14 +189,24 @@ class MainViewModel @Inject constructor(
         _errorToast.value = ""
     }
 
-    fun saveNews(news: NewsArticle) = viewModelScope.launch {
-        repository.upsert(news)
+    fun saveNews(news: NewsArticle) {
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+            onError(exception)
+        }
+        viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+            repository.upsert(news)
+        }
     }
 
     fun getFavoriteNews() = repository.getSavedNews()
 
-    fun deleteNews(news: NewsArticle) = viewModelScope.launch {
-        repository.deleteNews(news)
+    fun deleteNews(news: NewsArticle) {
+        val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+            onError(exception)
+        }
+        viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+            repository.deleteNews(news)
+        }
     }
 
     fun clearSearch() {
@@ -206,5 +218,10 @@ class MainViewModel @Inject constructor(
 
     fun enableSearch() {
         _isSearchActivated.postValue(true)
+    }
+
+    private fun onError(throwable: Throwable) {
+        _errorToast.value = throwable.message
+        Log.e(TAG, throwable.message ?: "error")
     }
 }
