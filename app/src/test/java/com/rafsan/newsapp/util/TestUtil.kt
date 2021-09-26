@@ -1,36 +1,36 @@
 package com.rafsan.newsapp.util
 
 import com.rafsan.newsapp.data.model.NewsArticle
+import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.data.model.Source
 import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
+import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.emptyList
 
 object TestUtil {
-    fun getFakeNewsArticleDataList(): List<NewsArticle> {
+    fun getFakeNewsArticleResponse(): NetworkResult<NewsResponse> {
         val articles = getFakeArticles()
-        return articles
+        val newsResponse = NewsResponse(
+            articles = articles, "200", 2
+        )
+        return NetworkResult.Success(newsResponse)
     }
 
-    fun getFakeArticles(): List<NewsArticle> {
-        val articleList = ArrayList<NewsArticle>(2)
+    fun getFakeArticles(): MutableList<NewsArticle> {
+        val articleList: MutableList<NewsArticle> = arrayListOf()
         val source1 = Source(
             id = 1, name = "BBC"
         )
         val article1 = NewsArticle(
-            id = 1, author = "A", content = "ABC", description = "Desc1", publishedAt = "2020-8-20",
+            id = 1, author = "A", content = "ABC", description = "Desc1", publishedAt = "",
             source = source1, title = "Title1", url = "https://google.com", urlToImage = ""
         )
         val source2 = Source(
             id = 2, name = "CNN"
         )
         val article2 = NewsArticle(
-            id = 2, author = "B", content = "DEF", description = "Desc2", publishedAt = "2021-8-20",
+            id = 2, author = "B", content = "DEF", description = "Desc2", publishedAt = "",
             source = source2, title = "Title2", url = "https://youtube.com", urlToImage = ""
         )
 

@@ -43,6 +43,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("news", it)
+                putBoolean("isFromFavorite", true)
             }
             findNavController().navigate(
                 R.id.action_favoriteFragment_to_detailsFragment,

@@ -88,9 +88,10 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         newsAdapter.setOnItemClickListener { news ->
             val bundle = Bundle().apply {
                 putSerializable("news", news)
+                putBoolean("isFromFavorite", false)
             }
             findNavController().navigate(
-                com.rafsan.newsapp.R.id.action_feedFragment_to_DetailsFragment,
+                R.id.action_feedFragment_to_DetailsFragment,
                 bundle
             )
         }

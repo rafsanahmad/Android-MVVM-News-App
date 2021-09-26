@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
-import com.rafsan.newsapp.network.repository.FavoriteRepository
+import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: FavoriteRepository,
+    private val repository: NewsRepository,
     private val networkHelper: NetworkHelper,
     private val coroutinesDispatcherProvider: CoroutinesDispatcherProvider
 ) : ViewModel() {
@@ -222,6 +222,5 @@ class MainViewModel @Inject constructor(
 
     private fun onError(throwable: Throwable) {
         _errorToast.value = throwable.message
-        Log.e(TAG, throwable.message ?: "error")
     }
 }

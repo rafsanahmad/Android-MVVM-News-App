@@ -7,7 +7,7 @@ import com.rafsan.newsapp.network.api.ApiHelper
 import com.rafsan.newsapp.utils.NetworkResult
 import javax.inject.Inject
 
-class FavoriteRepository @Inject constructor(
+class NewsRepository @Inject constructor(
     private val remoteDataSource: ApiHelper,
     private val localDataSource: NewsDao
 ) {

@@ -21,7 +21,17 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).mainViewModel
+        setupUI(view)
+    }
+
+    private fun setupUI(view: View) {
         val news = args.news
+        val isFromFavorite = args.isFromFavorite
+
+        if (isFromFavorite) {
+            binding.fab.visibility = View.GONE
+        }
+
         binding.webView.apply {
             webViewClient = WebViewClient()
             news.url?.let {

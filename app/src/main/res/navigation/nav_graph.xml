@@ -35,5 +35,8 @@
         <argument
             android:name="news"
             app:argType="com.rafsan.newsapp.data.model.NewsArticle" />
+        <argument
+            android:name="isFromFavorite"
+            app:argType="boolean" />
     </fragment>
 </navigation>
