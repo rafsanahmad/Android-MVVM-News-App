@@ -39,6 +39,18 @@ object TestUtil {
         return articleList
     }
 
+    fun getFakeArticle(): NewsArticle {
+        val source1 = Source(
+            id = 1, name = "BBC"
+        )
+        val article1 = NewsArticle(
+            id = 1, author = "A", content = "ABC", description = "Desc1", publishedAt = "",
+            source = source1, title = "Title1", url = "https://google.com", urlToImage = ""
+        )
+        return article1
+    }
+
+
     @ExperimentalCoroutinesApi
     fun provideFakeCoroutinesDispatcherProvider(
         dispatcher: TestCoroutineDispatcher?

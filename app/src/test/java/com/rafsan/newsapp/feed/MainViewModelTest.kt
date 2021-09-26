@@ -60,6 +60,25 @@ class MainViewModelTest {
     }
 
     @Test
+    fun `when calling for results then return loading`() {
+        coroutineRule.runBlockingTest {
+            whenever(networkHelper.isNetworkConnected())
+                .thenReturn(true)
+            viewModel.newsResponse.observeForever(responseObserver)
+            whenever(newsRepository.getNews(CountryCode, 1))
+                .thenReturn(NetworkResult.Loading())
+
+            //When
+            viewModel.fetchNews(CountryCode)
+
+            //Then
+            assertThat(viewModel.newsResponse.value).isNotNull()
+            assertThat(viewModel.newsResponse.value?.data).isNull()
+            assertThat(viewModel.newsResponse.value?.message).isNull()
+        }
+    }
+
+    @Test
     fun `test if feed is loaded with articles`() {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())

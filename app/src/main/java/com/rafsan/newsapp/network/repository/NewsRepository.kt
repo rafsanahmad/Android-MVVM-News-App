@@ -40,9 +40,11 @@ class NewsRepository @Inject constructor(
         }
     }
 
-    suspend fun upsert(news: NewsArticle) = localDataSource.upsert(news)
+    suspend fun saveNews(news: NewsArticle) = localDataSource.upsert(news)
 
     fun getSavedNews() = localDataSource.getAllNews()
 
     suspend fun deleteNews(news: NewsArticle) = localDataSource.deleteNews(news)
+
+    suspend fun deleteAllNews() = localDataSource.deleteAllNews()
 }

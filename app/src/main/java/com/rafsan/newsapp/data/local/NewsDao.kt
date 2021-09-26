@@ -15,4 +15,7 @@ interface NewsDao {
 
     @Delete
     suspend fun deleteNews(newsArticle: NewsArticle)
+
+    @Query("Delete FROM news_articles")
+    suspend fun deleteAllNews()
 }

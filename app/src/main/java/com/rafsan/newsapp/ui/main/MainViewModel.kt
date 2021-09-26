@@ -194,7 +194,7 @@ class MainViewModel @Inject constructor(
             onError(exception)
         }
         viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
-            repository.upsert(news)
+            repository.saveNews(news)
         }
     }
 
