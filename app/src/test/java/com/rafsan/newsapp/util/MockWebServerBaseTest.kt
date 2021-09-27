@@ -7,7 +7,7 @@
 
 package com.rafsan.newsapp.util
 
-import com.rafsan.newsapp.network.api.ApiHelper
+import com.rafsan.newsapp.network.api.NewsApi
 import okhttp3.OkHttpClient
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -15,11 +15,10 @@ import org.junit.After
 import org.junit.Before
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 
 abstract class MockWebServerBaseTest {
 
-    private lateinit var mockServer: MockWebServer
+    lateinit var mockServer: MockWebServer
 
     @Before
     open fun setUp() {
@@ -53,15 +52,13 @@ abstract class MockWebServerBaseTest {
         mockServer.enqueue(MockResponse().setResponseCode(responseCode))
 
     private fun getJson(path: String): String {
-        val uri = this.javaClass.classLoader!!.getResource(path)
-        val file = File(uri.path)
-        return String(file.readBytes())
+        return FileReader.readStringFromFile(path)
     }
 
-    fun provideTestApiService(): ApiHelper {
+    fun provideTestApiService(): NewsApi {
         return Retrofit.Builder().baseUrl(mockServer.url("/")).addConverterFactory(
             GsonConverterFactory.create()
         )
-            .client(OkHttpClient.Builder().build()).build().create(ApiHelper::class.java)
+            .client(OkHttpClient.Builder().build()).build().create(NewsApi::class.java)
     }
 }

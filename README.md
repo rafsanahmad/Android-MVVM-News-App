@@ -31,7 +31,7 @@ The UI consists of two parts
 1. `View` - Activity screen, Host the navigation component fragments.
 2. `Fragment` - Contains two fragments:
 
-    a) `FeedFragement` - Show & search for today's news
+    a) `FeedFragement` - Show & search for today's news. Listen for `onScrollListener` using `EndlessRecyclerOnScrollListener` for Recylcerview.
 
     b) `FavoriteFragment` - Show saved news articles.
 
@@ -94,10 +94,11 @@ The project uses [`Kotin-Dsl`](https://docs.gradle.org/current/userguide/kotlin_
 9. `Navigation Component` for supporting navigation through the app.
 10. `GLide` for image loading.
 11. `Swipe Refresh Layout` for pull-to-refresh  `RecyclerView`.
-12. `Mockito` & `Junit` for Unit testing.
-13. `Robolectric` for Instrumentation testing
-14. `Truth` for Assertion in testing.
-15. `Espresso` for UI testing.
+12. `EndlessRecyclerOnScrollListener` for Recylerview Infinite Scroll.
+13. `Mockito` & `Junit` for Unit testing.
+14. `Robolectric` for Instrumentation testing
+15. `Truth` for Assertion in testing.
+16. `Espresso` for UI testing.
 
 ## Testing
 
@@ -109,11 +110,13 @@ Test the viewmodel of the app using `CoroutineRule` & `LiveData Observer`.
 
 The test cases comprise of testing different states like Loading, Success, Error with fake data for testing News Response & Search Response.
 
-### `NewsRepositoryTest,kt`
+### `NewsRepositoryTest.kt`
 
 Test the Repository of the app using `Robolectric`.
 
-The test comprises of testing the Favorite News Room Database like Insertion, Remove, Get saved news etc.
+The test comprises of testing the functionality of Favorite News Room Database like Insertion, Remove, Get saved news etc.
+
+[Mock Webserver](https://github.com/square/okhttp/tree/master/mockwebserver) is used to test the Network api response in case of successful data, empty, failed case.
 
 ## Sample app
 

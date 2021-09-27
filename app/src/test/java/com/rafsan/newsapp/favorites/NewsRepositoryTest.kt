@@ -17,18 +17,21 @@ import com.rafsan.newsapp.data.local.NewsDao
 import com.rafsan.newsapp.data.local.NewsDatabase
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.network.api.ApiHelper
+import com.rafsan.newsapp.network.api.ApiHelperImpl
+import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.util.MainCoroutineRule
 import com.rafsan.newsapp.util.MockWebServerBaseTest
 import com.rafsan.newsapp.util.TestUtil
 import com.rafsan.newsapp.util.runBlockingTest
+import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import kotlinx.coroutines.runBlocking
+import org.junit.*
 import org.junit.runner.RunWith
+import org.mockito.ArgumentMatchers
 import org.robolectric.RobolectricTestRunner
+import java.net.HttpURLConnection
 
 @ExperimentalCoroutinesApi
 @RunWith(RobolectricTestRunner::class)
@@ -44,7 +47,11 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
     private lateinit var newsDatabase: NewsDatabase
     private lateinit var newsDao: NewsDao
     private lateinit var apiHelper: ApiHelper
+    private lateinit var newsApi: NewsApi
+    private lateinit var apiHelperImpl: ApiHelperImpl
     private lateinit var responseObserver: Observer<List<NewsArticle>>
+    private val country = ArgumentMatchers.anyString()
+    private val page = ArgumentMatchers.anyInt()
 
     override fun isMockServerEnabled(): Boolean = true
 
@@ -55,7 +62,9 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
             context, NewsDatabase::class.java
         ).allowMainThreadQueries().build()
         newsDao = newsDatabase.getNewsDao()
-        apiHelper = provideTestApiService()
+        newsApi = provideTestApiService()
+        apiHelperImpl = ApiHelperImpl(newsApi)
+        apiHelper = apiHelperImpl
         newsRepository = NewsRepository(apiHelper, newsDao)
         responseObserver = Observer { }
     }
@@ -88,6 +97,39 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
             val favoriteArticle = newsRepository.getSavedNews()
             favoriteArticle.observeForever(responseObserver)
             assertThat(favoriteArticle.value?.get(0)?.id == fakeArticle.id).isTrue()
+        }
+    }
+
+    @Test
+    fun `given response ok when fetching results then return a list with elements`() {
+        runBlocking {
+            mockHttpResponse("news_response.json", HttpURLConnection.HTTP_OK)
+            val apiResponse = newsRepository.getNews(country, page)
+
+            assertThat(apiResponse).isNotNull()
+            assertThat(apiResponse.data?.articles).hasSize(20)
+        }
+    }
+
+    @Test
+    fun `given response ok when fetching empty results then return an empty list`() {
+        runBlocking {
+            mockHttpResponse("news_response_empty_list.json", HttpURLConnection.HTTP_OK)
+            val apiResponse = newsRepository.getNews(country, page)
+            assertThat(apiResponse).isNotNull()
+            assertThat(apiResponse.data?.articles).hasSize(0)
+        }
+    }
+
+    @Test
+    fun `given response failure when fetching results then return exception`() {
+        runBlocking {
+            mockHttpResponse(502)
+            val apiResponse = newsRepository.getNews(country, page)
+
+            Assert.assertNotNull(apiResponse)
+            val expectedValue = NetworkResult.Error("An error occurred", null)
+            assertThat(expectedValue.message).isEqualTo(apiResponse.message)
         }
     }
 
