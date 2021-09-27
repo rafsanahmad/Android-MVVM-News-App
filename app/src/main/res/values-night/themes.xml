@@ -1,3 +1,10 @@
+<!--
+  ~ /**
+  ~  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
+  ~  * Copyright (c) 2021 . All rights reserved.
+  ~  */
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.NewsApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">

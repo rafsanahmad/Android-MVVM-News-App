@@ -1,3 +1,10 @@
+/*
+ * *
+ *  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
+ *  * Copyright (c) 2021 . All rights reserved.
+ *
+ */
+
 package com.rafsan.newsapp.ui.main
 
 import android.util.Log
@@ -212,6 +219,7 @@ class MainViewModel @Inject constructor(
     fun clearSearch() {
         _isSearchActivated.postValue(false)
         searchResponse = null
+        feedResponse = null
         feedNewsPage = 1
         searchNewsPage = 1
     }
