@@ -182,6 +182,8 @@ class MainViewModel @Inject constructor(
                 newDate?.let {
                     convertedDate = format.format(it)
                 }
+            } else {
+                convertedDate = strCurrentDate
             }
         } catch (e: Exception) {
             e.message?.let {

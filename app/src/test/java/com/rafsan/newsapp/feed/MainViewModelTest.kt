@@ -23,10 +23,7 @@ import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
@@ -155,6 +152,20 @@ class MainViewModelTest {
                 TestUtil.getFakeArticles()
             ).inOrder()
         }
+    }
+
+    @Test
+    fun `test format date with T`() {
+        val result = viewModel.formatDate("2021-09-29T13:01:31Z")
+        assertThat(result).isNotNull()
+        assertThat(result).isEqualTo("Sep 29, 2021 01:01 PM")
+    }
+
+    @Test
+    fun `test format date without T`() {
+        val result = viewModel.formatDate("2021-09-29 3:01:31 PM")
+        assertThat(result).isNotNull()
+        assertThat(result).isEqualTo("2021-09-29 3:01:31 PM")
     }
 
     @After
