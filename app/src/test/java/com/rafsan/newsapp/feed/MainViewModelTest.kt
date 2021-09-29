@@ -23,7 +23,10 @@ import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import org.junit.*
+import org.junit.After
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations

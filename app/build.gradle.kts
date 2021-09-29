@@ -14,7 +14,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Deps.Versions.compile_sdk)
+    compileSdk = Deps.Versions.compile_sdk
 
     buildFeatures {
         viewBinding = true
@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId = "com.rafsan.newsapp"
-        minSdkVersion(Deps.Versions.min_sdk)
-        targetSdkVersion(Deps.Versions.target_sdk)
+        minSdk = Deps.Versions.min_sdk
+        targetSdk = Deps.Versions.target_sdk
         versionCode = Deps.Versions.app_version_code
         versionName = Deps.Versions.app_version_name
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
