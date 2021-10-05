@@ -1,6 +1,6 @@
 ![](images/banner.jpeg)
 # Android - Clean Architecture - Kotlin
-The purpose of this repo is to follow up Clean Architecture principles by bringing them to Android. The repo contains a Sample News Application which shows current news from `https://newsapi.org/` API.
+The purpose of this repo is to follow up Clean Architecture principles by bringing them to Android. The repo contains a Sample News Application which shows current news from https://newsapi.org/ API.
 
 ## Clean Architecture
 
@@ -14,7 +14,7 @@ Clean architecture promotes separation of concerns, making the code loosely coup
 
 ## Functionality
 The app's functionality includes:
-1. Fetch Current News data from `https://newsapi.org/` & show them in `RecylerView` with smooth pagination.
+1. Fetch Current News data from https://newsapi.org/ & show them in `RecylerView` with smooth pagination.
 2. When an item is selected from `RecyclerView` it will load the news article in a `Webview`.
 3. From Details view , a news article can be added to Favorite news - which will store the News article in the Room database.
 4. From Today's news section users can search for specific news topic & return the search results with pagination.
@@ -65,7 +65,7 @@ The network layer is composed of Repository, ApiService.
 
 In-order to successfully run & test the application you will need an `api key`.
 
-Go to - `https://newsapi.org/` and click `Get Api Key`
+Go to - **https://newsapi.org/**  and click `Get Api Key`
 
 Now Go to - `app/src/main/java/utils/Constants.kt`
 
