@@ -15,7 +15,7 @@ import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 
-object TestUtil {
+object FakeDataUtil {
     fun getFakeNewsArticleResponse(): NetworkResult<NewsResponse> {
         val articles = getFakeArticles()
         val newsResponse = NewsResponse(

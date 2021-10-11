@@ -22,7 +22,7 @@ import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.util.MainCoroutineRule
 import com.rafsan.newsapp.util.MockWebServerBaseTest
-import com.rafsan.newsapp.util.TestUtil
+import com.rafsan.newsapp.util.FakeDataUtil
 import com.rafsan.newsapp.util.runBlockingTest
 import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -72,7 +72,7 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
     @Test
     fun testFavoriteNewsInsertionInDb() {
         coroutineRule.runBlockingTest {
-            newsRepository.saveNews(TestUtil.getFakeArticle())
+            newsRepository.saveNews(FakeDataUtil.getFakeArticle())
             val favNews = newsRepository.getSavedNews()
             favNews.observeForever(responseObserver)
             assertThat(favNews.value?.isNotEmpty()).isTrue()
@@ -92,7 +92,7 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
     @Test
     fun testFavoriteNews() {
         coroutineRule.runBlockingTest {
-            val fakeArticle = TestUtil.getFakeArticle()
+            val fakeArticle = FakeDataUtil.getFakeArticle()
             newsRepository.saveNews(fakeArticle)
             val favoriteArticle = newsRepository.getSavedNews()
             favoriteArticle.observeForever(responseObserver)

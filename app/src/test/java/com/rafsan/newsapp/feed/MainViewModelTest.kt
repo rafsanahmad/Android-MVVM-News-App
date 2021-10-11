@@ -16,8 +16,8 @@ import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.ui.main.MainViewModel
 import com.rafsan.newsapp.util.MainCoroutineRule
-import com.rafsan.newsapp.util.TestUtil
-import com.rafsan.newsapp.util.TestUtil.provideFakeCoroutinesDispatcherProvider
+import com.rafsan.newsapp.util.FakeDataUtil
+import com.rafsan.newsapp.util.FakeDataUtil.provideFakeCoroutinesDispatcherProvider
 import com.rafsan.newsapp.util.runBlockingTest
 import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
@@ -94,7 +94,7 @@ class MainViewModelTest {
             viewModel.newsResponse.observeForever(responseObserver)
             // Stub repository with fake favorites
             whenever(newsRepository.getNews(CountryCode, 1))
-                .thenAnswer { (TestUtil.getFakeNewsArticleResponse()) }
+                .thenAnswer { (FakeDataUtil.getFakeNewsArticleResponse()) }
 
             //When
             viewModel.fetchNews(CountryCode)
@@ -104,10 +104,10 @@ class MainViewModelTest {
             val articles = viewModel.newsResponse.value?.data?.articles
             assertThat(articles?.isNotEmpty())
             // compare the response with fake list
-            assertThat(articles).hasSize(TestUtil.getFakeArticles().size)
+            assertThat(articles).hasSize(FakeDataUtil.getFakeArticles().size)
             // compare the data and also order
             assertThat(articles).containsExactlyElementsIn(
-                TestUtil.getFakeArticles()
+                FakeDataUtil.getFakeArticles()
             ).inOrder()
         }
     }
@@ -139,7 +139,7 @@ class MainViewModelTest {
             viewModel.searchNewsResponse.observeForever(responseObserver)
             // Stub repository with fake favorites
             whenever(newsRepository.searchNews(CountryCode, 1))
-                .thenAnswer { (TestUtil.getFakeNewsArticleResponse()) }
+                .thenAnswer { (FakeDataUtil.getFakeNewsArticleResponse()) }
 
             //When
             viewModel.searchNews(CountryCode)
@@ -149,10 +149,10 @@ class MainViewModelTest {
             val articles = viewModel.searchNewsResponse.value?.data?.articles
             assertThat(articles?.isNotEmpty())
             // compare the response with fake list
-            assertThat(articles).hasSize(TestUtil.getFakeArticles().size)
+            assertThat(articles).hasSize(FakeDataUtil.getFakeArticles().size)
             // compare the data and also order
             assertThat(articles).containsExactlyElementsIn(
-                TestUtil.getFakeArticles()
+                FakeDataUtil.getFakeArticles()
             ).inOrder()
         }
     }
