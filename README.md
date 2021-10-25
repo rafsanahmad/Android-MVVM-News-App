@@ -125,7 +125,7 @@ The test comprises of testing the functionality of Favorite News Room Database l
 ## License
 
 ```
-Copyright (c) 2020 Rafsan Ahmad
+Copyright (c) 2021 Rafsan Ahmad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
