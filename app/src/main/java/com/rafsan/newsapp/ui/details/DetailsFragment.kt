@@ -29,6 +29,7 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = (activity as MainActivity).mainViewModel
         setupUI(view)
+        setupObserver();
     }
 
     private fun setupUI(view: View) {
@@ -50,5 +51,14 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
             viewModel.saveNews(news)
             Snackbar.make(view, "News article saved successfully", Snackbar.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setupObserver() {
+        viewModel.getFavoriteNews().observe(viewLifecycleOwner, { news ->
+            val isAlreadyFavorite = news.any {
+                it.title == args.news.title
+            }
+            if (isAlreadyFavorite) binding.fab.visibility = View.GONE
+        })
     }
 }
