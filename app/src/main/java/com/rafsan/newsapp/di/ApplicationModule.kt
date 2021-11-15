@@ -8,8 +8,9 @@
 package com.rafsan.newsapp.di
 
 import android.content.Context
-import androidx.viewbinding.BuildConfig
+import android.util.Log
 import com.google.gson.GsonBuilder
+import com.rafsan.newsapp.BuildConfig
 import com.rafsan.newsapp.data.local.NewsDao
 import com.rafsan.newsapp.data.local.NewsDatabase
 import com.rafsan.newsapp.network.api.ApiHelper
@@ -32,10 +33,14 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApplicationModule {
 
+    private val TAG = "NewsApp"
+
     @Provides
     @Singleton
     fun provideOkHttpClient() = if (BuildConfig.DEBUG) {
-        val loggingInterceptor = HttpLoggingInterceptor()
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            Log.d(TAG, message)
+        }
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
