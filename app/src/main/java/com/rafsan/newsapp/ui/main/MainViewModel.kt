@@ -175,10 +175,11 @@ class MainViewModel @Inject constructor(
         var convertedDate = ""
         try {
             if (strCurrentDate.isNotEmpty() && strCurrentDate.contains("T")) {
-                var format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                val local = Locale("US")
+                var format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", local)
                 val newDate: Date? = format.parse(strCurrentDate)
 
-                format = SimpleDateFormat("MMM dd, yyyy hh:mm a")
+                format = SimpleDateFormat("MMM dd, yyyy hh:mm a", local)
                 newDate?.let {
                     convertedDate = format.format(it)
                 }
