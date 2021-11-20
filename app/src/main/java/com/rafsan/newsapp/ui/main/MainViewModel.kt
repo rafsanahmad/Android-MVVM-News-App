@@ -53,6 +53,7 @@ class MainViewModel @Inject constructor(
     var searchResponse: NewsResponse? = null
     private var oldQuery: String = ""
     var newQuery: String = ""
+    var totalPage = 1
 
     private val _isSearchActivated = MutableLiveData<Boolean>()
     val isSearchActivated: LiveData<Boolean>
@@ -63,29 +64,31 @@ class MainViewModel @Inject constructor(
     }
 
     fun fetchNews(countryCode: String) {
-        if (networkHelper.isNetworkConnected()) {
-            _newsResponse.postValue(NetworkResult.Loading())
+        if (feedNewsPage <= totalPage) {
+            if (networkHelper.isNetworkConnected()) {
+                _newsResponse.postValue(NetworkResult.Loading())
 
-            val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-                onError(exception)
-            }
-            viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
-                when (val response = repository.getNews(countryCode, feedNewsPage)) {
-                    is NetworkResult.Success -> {
-                        _newsResponse.postValue(handleFeedNewsResponse(response))
-                    }
-                    is NetworkResult.Error -> {
-                        _newsResponse.postValue(
-                            NetworkResult.Error(
-                                response.message ?: "Error"
-                            )
-                        )
-                    }
+                val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
+                    onError(exception)
                 }
+                viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+                    when (val response = repository.getNews(countryCode, feedNewsPage)) {
+                        is NetworkResult.Success -> {
+                            _newsResponse.postValue(handleFeedNewsResponse(response))
+                        }
+                        is NetworkResult.Error -> {
+                            _newsResponse.postValue(
+                                NetworkResult.Error(
+                                    response.message ?: "Error"
+                                )
+                            )
+                        }
+                    }
 
+                }
+            } else {
+                _errorToast.value = "No internet available"
             }
-        } else {
-            _errorToast.value = "No internet available"
         }
     }
 
@@ -111,7 +114,7 @@ class MainViewModel @Inject constructor(
 
     fun searchNews(query: String) {
         newQuery = query
-        if (!newQuery.isEmpty()) {
+        if (!newQuery.isEmpty() && searchNewsPage <= totalPage) {
             if (networkHelper.isNetworkConnected()) {
                 _searchNewsResponse.postValue(NetworkResult.Loading())
                 val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->

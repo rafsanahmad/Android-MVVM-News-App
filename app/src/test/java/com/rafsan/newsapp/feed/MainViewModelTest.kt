@@ -58,7 +58,7 @@ class MainViewModelTest {
 
     @Before
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        MockitoAnnotations.openMocks(this)
         viewModel = MainViewModel(
             repository = newsRepository,
             networkHelper = networkHelper,
