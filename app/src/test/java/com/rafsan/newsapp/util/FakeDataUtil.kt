@@ -10,10 +10,7 @@ package com.rafsan.newsapp.util
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.data.model.Source
-import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
 import com.rafsan.newsapp.utils.NetworkResult
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.TestCoroutineDispatcher
 
 object FakeDataUtil {
     fun getFakeNewsArticleResponse(): NetworkResult<NewsResponse> {
@@ -55,18 +52,5 @@ object FakeDataUtil {
             source = source1, title = "Title1", url = "https://google.com", urlToImage = ""
         )
         return article1
-    }
-
-
-    @ExperimentalCoroutinesApi
-    fun provideFakeCoroutinesDispatcherProvider(
-        dispatcher: TestCoroutineDispatcher?
-    ): CoroutinesDispatcherProvider {
-        val sharedTestCoroutineDispatcher = TestCoroutineDispatcher()
-        return CoroutinesDispatcherProvider(
-            dispatcher ?: sharedTestCoroutineDispatcher,
-            dispatcher ?: sharedTestCoroutineDispatcher,
-            dispatcher ?: sharedTestCoroutineDispatcher
-        )
     }
 }

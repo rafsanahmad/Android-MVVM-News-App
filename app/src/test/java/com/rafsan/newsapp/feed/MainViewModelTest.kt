@@ -15,9 +15,9 @@ import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.ui.main.MainViewModel
-import com.rafsan.newsapp.util.MainCoroutineRule
 import com.rafsan.newsapp.util.FakeDataUtil
-import com.rafsan.newsapp.util.FakeDataUtil.provideFakeCoroutinesDispatcherProvider
+import com.rafsan.newsapp.util.MainCoroutineRule
+import com.rafsan.newsapp.util.provideFakeCoroutinesDispatcherProvider
 import com.rafsan.newsapp.util.runBlockingTest
 import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper

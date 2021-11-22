@@ -20,9 +20,9 @@ import com.rafsan.newsapp.network.api.ApiHelper
 import com.rafsan.newsapp.network.api.ApiHelperImpl
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
+import com.rafsan.newsapp.util.FakeDataUtil
 import com.rafsan.newsapp.util.MainCoroutineRule
 import com.rafsan.newsapp.util.MockWebServerBaseTest
-import com.rafsan.newsapp.util.FakeDataUtil
 import com.rafsan.newsapp.util.runBlockingTest
 import com.rafsan.newsapp.utils.NetworkResult
 import kotlinx.coroutines.ExperimentalCoroutinesApi
