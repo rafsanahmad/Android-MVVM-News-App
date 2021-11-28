@@ -31,6 +31,7 @@ import com.rafsan.newsapp.ui.main.MainViewModel
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 import com.rafsan.newsapp.utils.EndlessRecyclerOnScrollListener
+import com.rafsan.newsapp.utils.EspressoIdlingResource
 import com.rafsan.newsapp.utils.NetworkResult
 
 
@@ -56,6 +57,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun setupUI() {
+        EspressoIdlingResource.increment()
         binding.itemErrorMessage.btnRetry.setOnClickListener {
             if (checkSearch) {
                 mainViewModel.searchNews(mainViewModel.newQuery)
@@ -112,6 +114,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                     hideProgressBar()
                     hideErrorMessage()
                     response.data?.let { newResponse ->
+                        EspressoIdlingResource.decrement()
                         newsAdapter.differ.submitList(newResponse.articles.toList())
                         mainViewModel.totalPage = newResponse.totalResults / QUERY_PER_PAGE + 1
                         onScrollListener.isLastPage =
@@ -159,6 +162,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                     hideProgressBar()
                     hideErrorMessage()
                     response.data?.let { searchResponse ->
+                        EspressoIdlingResource.decrement()
                         newsAdapter.differ.submitList(searchResponse.articles.toList())
                         mainViewModel.totalPage = searchResponse.totalResults / QUERY_PER_PAGE + 1
                         onScrollListener.isLastPage =
