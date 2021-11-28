@@ -83,6 +83,8 @@ object Deps {
                 const val contrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso}"
                 const val idling_resource =
                     "androidx.test.espresso:espresso-idling-resource:${Versions.espresso}"
+                const val intents =
+                    "androidx.test.espresso:espresso-intents:${Versions.espresso}"
             }
 
             const val arch_core_testing =

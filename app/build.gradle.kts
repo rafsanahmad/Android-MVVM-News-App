@@ -142,6 +142,9 @@ dependencies {
     //Swipe Refresh Layout
     implementation(Deps.SwipeRefreshLayout)
 
+    //Idling Resource
+    implementation(Deps.AndroidX.Test.Espresso.idling_resource)
+
     //Testing dependencies
     testImplementation(Deps.junit)
     testImplementation(Deps.Test.Mockito.core)
@@ -155,8 +158,15 @@ dependencies {
     testImplementation(Deps.OkHttp.mockWebServer)
     androidTestImplementation(Deps.AndroidX.Test.arch_core_testing)
     androidTestImplementation(Deps.AndroidX.Test.junit)
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.core)
     androidTestImplementation(Deps.AndroidX.Test.junitKtx)
     androidTestImplementation(Deps.AndroidX.Test.coreKtx)
-
+    androidTestImplementation(Deps.AndroidX.Test.Espresso.core) {
+        exclude(group = "org.checkerframework", module = "checker")
+    }
+    androidTestImplementation(Deps.AndroidX.Test.Espresso.contrib) {
+        exclude(group = "org.checkerframework", module = "checker")
+    }
+    androidTestImplementation(Deps.AndroidX.Test.Espresso.intents) {
+        exclude(group = "org.checkerframework", module = "checker")
+    }
 }
