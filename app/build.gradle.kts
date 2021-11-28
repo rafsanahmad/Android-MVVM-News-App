@@ -160,6 +160,7 @@ dependencies {
     androidTestImplementation(Deps.AndroidX.Test.junit)
     androidTestImplementation(Deps.AndroidX.Test.junitKtx)
     androidTestImplementation(Deps.AndroidX.Test.coreKtx)
+    androidTestImplementation(Deps.Test.Mockito.android)
     androidTestImplementation(Deps.AndroidX.Test.Espresso.core) {
         exclude(group = "org.checkerframework", module = "checker")
     }
