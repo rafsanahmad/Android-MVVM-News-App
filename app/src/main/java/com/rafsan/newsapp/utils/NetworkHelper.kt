@@ -18,8 +18,9 @@ import javax.inject.Singleton
 @Singleton
 class NetworkHelper @Inject constructor(@ApplicationContext private val context: Context) {
 
+    @Suppress("DEPRECATION")
     fun isNetworkConnected(): Boolean {
-        var result = false
+        val result: Boolean
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -33,9 +34,8 @@ class NetworkHelper @Inject constructor(@ApplicationContext private val context:
                 else -> false
             }
         } else {
-            @Suppress("DEPRECATION") val networkInfo =
+            val networkInfo =
                 connectivityManager.activeNetworkInfo ?: return false
-            @Suppress("DEPRECATION")
             return networkInfo.isConnected
         }
 
