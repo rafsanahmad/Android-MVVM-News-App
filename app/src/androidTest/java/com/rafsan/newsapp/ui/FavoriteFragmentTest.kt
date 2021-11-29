@@ -43,7 +43,7 @@ import runBlockingTest
 
 @ExperimentalCoroutinesApi
 @RunWith(AndroidJUnit4::class)
-open class FavoriteFragmentTest {
+class FavoriteFragmentTest {
     // Set the main coroutines dispatcher for unit testing.
     @get:Rule
     var coroutineRule = MainCoroutineRule()

@@ -14,4 +14,8 @@
     <string name="today_news">Today\'s News</string>
     <string name="favorite_news">Favorite News</string>
     <string name="details">Details</string>
+    <string name="title">TITLE</string>
+    <string name="description">DESCRIPTION</string>
+    <string name="source">SOURCE</string>
+    <string name="published_at">PUBLISHED AT</string>
 </resources>
