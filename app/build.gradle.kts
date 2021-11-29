@@ -77,13 +77,15 @@ android {
     testBuildType = "debug"
 
     packagingOptions {
-        exclude("META-INF/ASL2.0")
-        exclude("META-INF/DEPENDENCIES")
-        exclude("META-INF/NOTICE")
-        exclude("META-INF/LICENSE")
-        exclude("META-INF/LICENSE.txt")
-        exclude("META-INF/NOTICE.txt")
-        exclude(".readme")
+        resources.excludes.add("META-INF/*")
+        resources.excludes.add(".readme")
+    }
+
+    sourceSets {
+        val test by getting
+        val androidTest by getting
+        test.java.srcDirs("$projectDir/src/testShared")
+        androidTest.java.srcDirs("$projectDir/src/testShared")
     }
 
     kotlinOptions {
@@ -160,7 +162,11 @@ dependencies {
     androidTestImplementation(Deps.AndroidX.Test.junit)
     androidTestImplementation(Deps.AndroidX.Test.junitKtx)
     androidTestImplementation(Deps.AndroidX.Test.coreKtx)
-    androidTestImplementation(Deps.Test.Mockito.android)
+    androidTestImplementation(Deps.Test.Mockito.kotlin)
+    androidTestImplementation(Deps.Test.Mockito.dexMaker)
+    androidTestImplementation(Deps.Coroutines.test) {
+        exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-debug")
+    }
     androidTestImplementation(Deps.AndroidX.Test.Espresso.core) {
         exclude(group = "org.checkerframework", module = "checker")
     }
@@ -169,5 +175,11 @@ dependencies {
     }
     androidTestImplementation(Deps.AndroidX.Test.Espresso.intents) {
         exclude(group = "org.checkerframework", module = "checker")
+    }
+    debugImplementation(Deps.AndroidX.Test.fragmentTest) {
+        exclude(group = "androidx.test", module = "monitor")
+    }
+    debugImplementation(Deps.AndroidX.Test.core) {
+        exclude(group = "androidx.test", module = "monitor")
     }
 }
