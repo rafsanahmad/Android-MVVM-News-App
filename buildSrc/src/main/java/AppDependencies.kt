@@ -37,11 +37,12 @@ object Deps {
         const val mockitoKotlin = "2.2.0"
         const val robolectric = "4.6.1"
         const val truth = "1.0.1"
-        const val navigationVersion = "2.4.0-alpha01"
+        const val navigationVersion = "2.4.0-alpha02"
         const val appCompatVersion = "1.2.0"
         const val swipeRefreshVersion = "1.1.0"
         const val mockwebServer = "4.7.2"
-
+        const val fragment_test_version = "1.3.0-alpha08"
+        const val dexmaker_version = "2.28.1"
     }
 
     const val gradle_plugin = "com.android.tools.build:gradle:${Versions.gradle_plugin}"
@@ -77,6 +78,8 @@ object Deps {
             const val junit = "androidx.test.ext:junit:${Versions.android_test_junit}"
             const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
             const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
+            const val fragmentTest =
+                "androidx.fragment:fragment-testing:${Versions.fragment_test_version}"
 
             object Espresso {
                 const val core = "androidx.test.espresso:espresso-core:${Versions.espresso}"
@@ -165,6 +168,8 @@ object Deps {
             const val inline = "org.mockito:mockito-inline:${Versions.mockitoInline}"
             const val kotlin =
                 "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
+            const val dexMaker =
+                "com.linkedin.dexmaker:dexmaker-mockito-inline:${Versions.dexmaker_version}"
         }
 
         const val truth = "com.google.truth:truth:${Versions.truth}"

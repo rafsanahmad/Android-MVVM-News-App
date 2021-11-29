@@ -9,7 +9,6 @@ package com.rafsan.newsapp.ui.favorite
 
 import android.os.Bundle
 import android.view.View
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,6 +20,7 @@ import com.rafsan.newsapp.databinding.FragmentFavoritesBinding
 import com.rafsan.newsapp.ui.adapter.NewsAdapter
 import com.rafsan.newsapp.ui.main.MainActivity
 import com.rafsan.newsapp.ui.main.MainViewModel
+import com.rafsan.newsapp.utils.EspressoIdlingResource
 
 class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
 
@@ -47,6 +47,7 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
     }
 
     private fun setupUI(view: View) {
+        EspressoIdlingResource.increment()
         newsAdapter.setOnItemClickListener {
             val bundle = Bundle().apply {
                 putSerializable("news", it)
@@ -90,7 +91,8 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
     }
 
     private fun setupObserver() {
-        viewModel.getFavoriteNews().observe(viewLifecycleOwner, Observer { news ->
+        viewModel.getFavoriteNews().observe(viewLifecycleOwner, { news ->
+            EspressoIdlingResource.decrement()
             newsAdapter.differ.submitList(news)
         })
     }

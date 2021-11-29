@@ -23,7 +23,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseFragment
-import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.databinding.FragmentFeedBinding
 import com.rafsan.newsapp.ui.adapter.NewsAdapter
 import com.rafsan.newsapp.ui.main.MainActivity
@@ -119,7 +118,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                         mainViewModel.totalPage = newResponse.totalResults / QUERY_PER_PAGE + 1
                         onScrollListener.isLastPage =
                             mainViewModel.feedNewsPage == mainViewModel.totalPage + 1
-                        hideBottomPadding(newResponse)
+                        hideBottomPadding()
                     }
                 }
 
@@ -167,7 +166,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                         mainViewModel.totalPage = searchResponse.totalResults / QUERY_PER_PAGE + 1
                         onScrollListener.isLastPage =
                             mainViewModel.searchNewsPage == mainViewModel.totalPage + 1
-                        hideBottomPadding(searchResponse)
+                        hideBottomPadding()
                     }
                 }
 
@@ -266,7 +265,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun hideBottomPadding(newResponse: NewsResponse) {
+    private fun hideBottomPadding() {
         if (onScrollListener.isLastPage) {
             binding.rvNews.setPadding(0, 0, 0, 0)
         }
