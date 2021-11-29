@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ /**
   ~  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
   ~  * Copyright (c) 2021 . All rights reserved.
@@ -21,7 +20,7 @@
         android:layout_marginEnd="6dp"
         android:ellipsize="end"
         android:maxLines="5"
-        android:text="TITLE"
+        android:text="@string/title"
         android:textColor="@android:color/black"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -35,11 +34,13 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         android:ellipsize="end"
-        android:maxLines="4"
-        android:text="DESCRIPTION"
+        android:maxLines="6"
+        android:text="@string/description"
         android:textColor="@android:color/black"
         android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ivArticleImage" />
 
@@ -55,27 +56,30 @@
 
     <TextView
         android:id="@+id/tvSource"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="SOURCE"
+        android:layout_marginEnd="8dp"
+        android:text="@string/source"
         android:textColor="@android:color/black"
         android:textSize="14sp"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvDescription" />
 
 
     <TextView
         android:id="@+id/tvPublishedAt"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="PUBLISHED AT"
+        android:layout_marginEnd="8dp"
+        android:text="@string/published_at"
         android:textColor="@android:color/black"
         android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvSource" />
 
