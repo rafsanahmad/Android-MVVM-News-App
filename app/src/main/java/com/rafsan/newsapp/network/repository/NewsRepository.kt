@@ -17,9 +17,12 @@ import javax.inject.Inject
 class NewsRepository @Inject constructor(
     private val remoteDataSource: ApiHelper,
     private val localDataSource: NewsDao
-) {
+) : INewsRepository {
 
-    suspend fun getNews(countryCode: String, pageNumber: Int): NetworkResult<NewsResponse> {
+    override suspend fun getNews(
+        countryCode: String,
+        pageNumber: Int
+    ): NetworkResult<NewsResponse> {
         return try {
             val response = remoteDataSource.getNews(countryCode, pageNumber)
             val result = response.body()
@@ -33,7 +36,10 @@ class NewsRepository @Inject constructor(
         }
     }
 
-    suspend fun searchNews(searchQuery: String, pageNumber: Int): NetworkResult<NewsResponse> {
+    override suspend fun searchNews(
+        searchQuery: String,
+        pageNumber: Int
+    ): NetworkResult<NewsResponse> {
         return try {
             val response = remoteDataSource.searchNews(searchQuery, pageNumber)
             val result = response.body()
@@ -47,11 +53,11 @@ class NewsRepository @Inject constructor(
         }
     }
 
-    suspend fun saveNews(news: NewsArticle) = localDataSource.upsert(news)
+    override suspend fun saveNews(news: NewsArticle) = localDataSource.upsert(news)
 
-    fun getSavedNews() = localDataSource.getAllNews()
+    override fun getSavedNews() = localDataSource.getAllNews()
 
-    suspend fun deleteNews(news: NewsArticle) = localDataSource.deleteNews(news)
+    override suspend fun deleteNews(news: NewsArticle) = localDataSource.deleteNews(news)
 
-    suspend fun deleteAllNews() = localDataSource.deleteAllNews()
+    override suspend fun deleteAllNews() = localDataSource.deleteAllNews()
 }
