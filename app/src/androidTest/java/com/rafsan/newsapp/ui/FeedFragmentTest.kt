@@ -37,7 +37,7 @@ class FeedFragmentTest {
     @get: Rule
     val espressoIdlingResourceRule = EspressoIdlingResourceRule()
 
-    private val itemInTest = 1
+    val itemInTest = 1
 
     @Before
     fun setUp() {
@@ -45,7 +45,7 @@ class FeedFragmentTest {
     }
 
     @Test
-    fun test_isListItemsVisibleOnAppLaunch() {
+    fun test_isNewsItemsVisibleOnAppLaunch() {
         onView(withId(R.id.rvNews))
             .check(matches(isDisplayed()))
 
@@ -54,7 +54,7 @@ class FeedFragmentTest {
     }
 
     @Test
-    fun test_selectListItem_isDetailFragmentVisible() {
+    fun test_selectNewsItem_isDetailFragmentVisible() {
         onView(withId(R.id.rvNews))
             .perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(

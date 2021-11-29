@@ -15,7 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
-import com.rafsan.newsapp.network.repository.NewsRepository
+import com.rafsan.newsapp.network.repository.INewsRepository
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
@@ -28,7 +28,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: NewsRepository,
+    private val repository: INewsRepository,
     private val networkHelper: NetworkHelper,
     private val coroutinesDispatcherProvider: CoroutinesDispatcherProvider
 ) : ViewModel() {
@@ -87,7 +87,7 @@ class MainViewModel @Inject constructor(
 
                 }
             } else {
-                _errorToast.value = "No internet available"
+                _errorToast.postValue("No internet available")
             }
         }
     }
@@ -136,7 +136,7 @@ class MainViewModel @Inject constructor(
 
                 }
             } else {
-                _errorToast.value = "No internet available"
+                _errorToast.postValue("No internet available")
             }
         }
     }
@@ -199,7 +199,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun hideErrorToast() {
-        _errorToast.value = ""
+        _errorToast.postValue("")
     }
 
     fun saveNews(news: NewsArticle) {
@@ -235,6 +235,8 @@ class MainViewModel @Inject constructor(
     }
 
     private fun onError(throwable: Throwable) {
-        _errorToast.value = throwable.message
+        throwable.message?.let {
+            _errorToast.postValue(it)
+        }
     }
 }

@@ -7,6 +7,8 @@
 
 package com.rafsan.newsapp.feed
 
+import FakeDataUtil
+import MainCoroutineRule
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.google.common.truth.Truth.assertThat
@@ -15,10 +17,6 @@ import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.ui.main.MainViewModel
-import com.rafsan.newsapp.util.FakeDataUtil
-import com.rafsan.newsapp.util.MainCoroutineRule
-import com.rafsan.newsapp.util.provideFakeCoroutinesDispatcherProvider
-import com.rafsan.newsapp.util.runBlockingTest
 import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
 import com.rafsan.newsapp.utils.NetworkResult
@@ -30,6 +28,8 @@ import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import provideFakeCoroutinesDispatcherProvider
+import runBlockingTest
 
 @ExperimentalCoroutinesApi
 class MainViewModelTest {
