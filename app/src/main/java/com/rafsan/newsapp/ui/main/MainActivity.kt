@@ -29,6 +29,10 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         }
+
+        savedInstanceState?.let {
+            mainViewModel.hideErrorToast()
+        }
     }
 
     override fun setBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
