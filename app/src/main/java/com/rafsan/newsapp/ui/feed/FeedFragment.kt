@@ -135,7 +135,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             }
         })
 
-        mainViewModel.isSearchActivated.observe(viewLifecycleOwner, Observer { activated ->
+        mainViewModel.isSearchActivated.observe(viewLifecycleOwner, { activated ->
             checkSearch = activated
             if (activated) {
                 observeSearchResponse()
@@ -144,18 +144,17 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             }
         })
 
-        mainViewModel.errorToast.observe(viewLifecycleOwner, Observer { value ->
+        mainViewModel.errorToast.observe(viewLifecycleOwner, { value ->
             if (value.isNotEmpty()) {
                 Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
-            } else {
-                mainViewModel.hideErrorToast()
             }
+            mainViewModel.hideErrorToast()
         })
     }
 
     private fun observeSearchResponse() {
         //Search response
-        mainViewModel.searchNewsResponse.observe(viewLifecycleOwner, Observer { response ->
+        mainViewModel.searchNewsResponse.observe(viewLifecycleOwner, { response ->
             when (response) {
                 is NetworkResult.Success -> {
                     hideProgressBar()
