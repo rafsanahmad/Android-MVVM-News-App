@@ -11,6 +11,7 @@ import android.widget.AbsListView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 
 abstract class EndlessRecyclerOnScrollListener(
@@ -34,20 +35,31 @@ abstract class EndlessRecyclerOnScrollListener(
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         super.onScrolled(recyclerView, dx, dy)
-        val layoutManager = recyclerView.layoutManager
-        when (layoutManager) {
-            is LinearLayoutManager -> {
-                firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+        val mLayoutManager = recyclerView.layoutManager
+        when (mLayoutManager) {
+            is StaggeredGridLayoutManager -> {
+                val firstVisibleItemPositions =
+                    mLayoutManager.findFirstVisibleItemPositions(
+                        null
+                    )
+                // get maximum element within the list
+                firstVisibleItem = getFirstVisibleItem(firstVisibleItemPositions)
+                //firstVisibleItem = firstVisibleItemPositions[0]
             }
             is GridLayoutManager -> {
-                firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
+                firstVisibleItem =
+                    mLayoutManager.findFirstVisibleItemPosition()
+            }
+            is LinearLayoutManager -> {
+                firstVisibleItem =
+                    mLayoutManager.findFirstVisibleItemPosition()
             }
             else -> {
                 Exception("Unsupported LayoutManager")
             }
         }
 
-        layoutManager?.let { manager ->
+        mLayoutManager?.let { manager ->
             visibleItemCount = manager.childCount
             totalItemCount = manager.itemCount
         }
@@ -66,6 +78,18 @@ abstract class EndlessRecyclerOnScrollListener(
             isScrolling = false;
             onLoadMore()
         }
+    }
+
+    private fun getFirstVisibleItem(firstVisibleItemPositions: IntArray): Int {
+        var maxSize = 0
+        for (i in firstVisibleItemPositions.indices) {
+            if (i == 0) {
+                maxSize = firstVisibleItemPositions[i]
+            } else if (firstVisibleItemPositions[i] > maxSize) {
+                maxSize = firstVisibleItemPositions[i]
+            }
+        }
+        return maxSize
     }
 
     fun resetOnLoadMore() {
