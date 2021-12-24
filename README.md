@@ -82,23 +82,23 @@ you can set the gradle jdk in `Preferences->Build Tools->Gradle->Gradle JDK`
 
 The project uses [`Kotin-Dsl`](https://docs.gradle.org/current/userguide/kotlin_dsl.html) build scripts to maintain dependencies & plugins.
 
-## Libraries used
-1.  Android appcompat, core, constraint layout, Material Support.
-2.  Android View Binding
-3. `Hilt` for dependency injection
-4. `Retrofit` for REST API communication
-5. `Coroutine` for Network call
-6. `Lifecycle`, `ViewModel`
-7. `LiveData`
-8. `Room` for local database.
-9. `Navigation Component` for supporting navigation through the app.
-10. `GLide` for image loading.
-11. `Swipe Refresh Layout` for pull-to-refresh  `RecyclerView`.
-12. `EndlessRecyclerOnScrollListener` for Recylerview Infinite Scroll.
-13. `Mockito` & `Junit` for Unit testing.
-14. `Robolectric` for Instrumentation testing
-15. `Truth` for Assertion in testing.
-16. `Espresso` for UI testing.
+## Tech Stack
+1.  [Android appcompat](https://developer.android.com/jetpack/androidx/releases/appcompat), [KTX](https://developer.android.com/kotlin/ktx), [Constraint layout](https://developer.android.com/reference/androidx/constraintlayout/widget/ConstraintLayout), [Material Support](https://material.io/develop/android/docs/getting-started).
+2.  [Android View Binding](https://developer.android.com/topic/libraries/view-binding)
+3. [Hilt](https://developer.android.com/training/dependency-injection/hilt-android) for dependency injection.
+4. [Retrofit](https://square.github.io/retrofit/) for REST API communication
+5. [Coroutine](https://developer.android.com/kotlin/coroutines) for Network call
+6. [Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle), [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
+7. [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
+8. [Room](https://developer.android.com/jetpack/androidx/releases/room) for local database.
+9. [Navigation Component](https://developer.android.com/guide/navigation/navigation-getting-started) for supporting navigation through the app.
+10. [Glide](https://github.com/bumptech/glide) for image loading.
+11. [Swipe Refresh Layout](https://developer.android.com/jetpack/androidx/releases/swiperefreshlayout) for pull-to-refresh `RecyclerView`.
+12. [EndlessRecyclerOnScrollListener](https://gist.github.com/rafsanahmad/00214d0f2879884513f8e086754a22e7) for Recylerview Infinite Scroll.
+13. [Mockito](https://developer.android.com/training/testing/local-tests) & [Junit](https://developer.android.com/training/testing/local-tests) for Unit testing.
+14. [Robolectric](http://robolectric.org/) for Instrumentation testing.
+15. [Truth](https://truth.dev/) for Assertion in testing.
+16. [Espresso](https://developer.android.com/training/testing/espresso) for UI testing.
 
 ## Testing
 
