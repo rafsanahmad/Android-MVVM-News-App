@@ -108,32 +108,37 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     private fun setupObservers() {
         lifecycleScope.launchWhenStarted {
-            mainViewModel.newsResponse.collect { response ->
-                when (response) {
-                    is NetworkState.Success -> {
-                        hideProgressBar()
-                        hideErrorMessage()
-                        response.data?.let { newResponse ->
-                            EspressoIdlingResource.decrement()
-                            newsAdapter.differ.submitList(newResponse.articles.toList())
-                            mainViewModel.totalPage = newResponse.totalResults / QUERY_PER_PAGE + 1
-                            onScrollListener.isLastPage =
-                                mainViewModel.feedNewsPage == mainViewModel.totalPage + 1
-                            hideBottomPadding()
+            if (!mainViewModel.searchEnable) {
+                mainViewModel.newsResponse.collect { response ->
+                    when (response) {
+                        is NetworkState.Success -> {
+                            hideProgressBar()
+                            hideErrorMessage()
+                            response.data?.let { newResponse ->
+                                EspressoIdlingResource.decrement()
+                                newsAdapter.differ.submitList(newResponse.articles.toList())
+                                mainViewModel.totalPage =
+                                    newResponse.totalResults / QUERY_PER_PAGE + 1
+                                onScrollListener.isLastPage =
+                                    mainViewModel.feedNewsPage == mainViewModel.totalPage + 1
+                                hideBottomPadding()
+                            }
                         }
-                    }
 
-                    is NetworkState.Loading -> {
-                        showProgressBar()
-                    }
+                        is NetworkState.Loading -> {
+                            showProgressBar()
+                        }
 
-                    is NetworkState.Error -> {
-                        hideProgressBar()
-                        response.message?.let {
-                            showErrorMessage(response.message)
+                        is NetworkState.Error -> {
+                            hideProgressBar()
+                            response.message?.let {
+                                showErrorMessage(response.message)
+                            }
                         }
                     }
                 }
+            } else {
+                collectSearchResponse()
             }
         }
 
