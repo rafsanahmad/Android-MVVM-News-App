@@ -17,13 +17,14 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.base.BaseFragment
 import com.rafsan.newsapp.databinding.FragmentFeedBinding
+import com.rafsan.newsapp.state.NetworkState
 import com.rafsan.newsapp.ui.adapter.NewsAdapter
 import com.rafsan.newsapp.ui.main.MainActivity
 import com.rafsan.newsapp.ui.main.MainViewModel
@@ -31,7 +32,7 @@ import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.Constants.Companion.QUERY_PER_PAGE
 import com.rafsan.newsapp.utils.EndlessRecyclerOnScrollListener
 import com.rafsan.newsapp.utils.EspressoIdlingResource
-import com.rafsan.newsapp.utils.NetworkResult
+import kotlinx.coroutines.flow.collect
 
 
 class FeedFragment : BaseFragment<FragmentFeedBinding>() {
@@ -44,7 +45,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     lateinit var newsAdapter: NewsAdapter
     val countryCode = Constants.CountryCode
     private lateinit var searchView: SearchView
-    private var checkSearch: Boolean = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,7 +58,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     private fun setupUI() {
         EspressoIdlingResource.increment()
         binding.itemErrorMessage.btnRetry.setOnClickListener {
-            if (checkSearch) {
+            if (mainViewModel.searchEnable) {
                 mainViewModel.searchNews(mainViewModel.newQuery)
             } else {
                 mainViewModel.fetchNews(countryCode)
@@ -69,7 +69,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         // scroll listener for recycler view
         onScrollListener = object : EndlessRecyclerOnScrollListener(QUERY_PER_PAGE) {
             override fun onLoadMore() {
-                if (checkSearch) {
+                if (mainViewModel.searchEnable) {
                     mainViewModel.searchNews(mainViewModel.newQuery)
                 } else {
                     mainViewModel.fetchNews(countryCode)
@@ -107,80 +107,81 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun setupObservers() {
-        mainViewModel.newsResponse.observe(viewLifecycleOwner, Observer { response ->
-            when (response) {
-                is NetworkResult.Success -> {
-                    hideProgressBar()
-                    hideErrorMessage()
-                    response.data?.let { newResponse ->
-                        EspressoIdlingResource.decrement()
-                        newsAdapter.differ.submitList(newResponse.articles.toList())
-                        mainViewModel.totalPage = newResponse.totalResults / QUERY_PER_PAGE + 1
-                        onScrollListener.isLastPage =
-                            mainViewModel.feedNewsPage == mainViewModel.totalPage + 1
-                        hideBottomPadding()
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.newsResponse.collect { response ->
+                when (response) {
+                    is NetworkState.Success -> {
+                        hideProgressBar()
+                        hideErrorMessage()
+                        response.data?.let { newResponse ->
+                            EspressoIdlingResource.decrement()
+                            newsAdapter.differ.submitList(newResponse.articles.toList())
+                            mainViewModel.totalPage = newResponse.totalResults / QUERY_PER_PAGE + 1
+                            onScrollListener.isLastPage =
+                                mainViewModel.feedNewsPage == mainViewModel.totalPage + 1
+                            hideBottomPadding()
+                        }
+                    }
+
+                    is NetworkState.Loading -> {
+                        showProgressBar()
+                    }
+
+                    is NetworkState.Error -> {
+                        hideProgressBar()
+                        response.message?.let {
+                            showErrorMessage(response.message)
+                        }
                     }
                 }
+            }
+        }
 
-                is NetworkResult.Loading -> {
-                    showProgressBar()
+        lifecycleScope.launchWhenStarted {
+            mainViewModel.errorMessage.collect { value ->
+                if (value.isNotEmpty()) {
+                    Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
                 }
+                mainViewModel.hideErrorToast()
 
-                is NetworkResult.Error -> {
-                    hideProgressBar()
-                    response.message?.let {
-                        showErrorMessage(response.message)
-                    }
-                }
             }
-        })
-
-        mainViewModel.isSearchActivated.observe(viewLifecycleOwner, { activated ->
-            checkSearch = activated
-            if (activated) {
-                observeSearchResponse()
-            } else {
-                mainViewModel.searchNewsResponse.removeObservers(this)
-            }
-        })
-
-        mainViewModel.errorToast.observe(viewLifecycleOwner, { value ->
-            if (value.isNotEmpty()) {
-                Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
-            }
-            mainViewModel.hideErrorToast()
-        })
+        }
     }
 
-    private fun observeSearchResponse() {
+    private fun collectSearchResponse() {
         //Search response
-        mainViewModel.searchNewsResponse.observe(viewLifecycleOwner, { response ->
-            when (response) {
-                is NetworkResult.Success -> {
-                    hideProgressBar()
-                    hideErrorMessage()
-                    response.data?.let { searchResponse ->
-                        EspressoIdlingResource.decrement()
-                        newsAdapter.differ.submitList(searchResponse.articles.toList())
-                        mainViewModel.totalPage = searchResponse.totalResults / QUERY_PER_PAGE + 1
-                        onScrollListener.isLastPage =
-                            mainViewModel.searchNewsPage == mainViewModel.totalPage + 1
-                        hideBottomPadding()
-                    }
-                }
+        lifecycleScope.launchWhenStarted {
+            if (mainViewModel.searchEnable) {
+                mainViewModel.searchNewsResponse.collect { response ->
+                    when (response) {
+                        is NetworkState.Success -> {
+                            hideProgressBar()
+                            hideErrorMessage()
+                            response.data?.let { searchResponse ->
+                                EspressoIdlingResource.decrement()
+                                newsAdapter.differ.submitList(searchResponse.articles.toList())
+                                mainViewModel.totalPage =
+                                    searchResponse.totalResults / QUERY_PER_PAGE + 1
+                                onScrollListener.isLastPage =
+                                    mainViewModel.searchNewsPage == mainViewModel.totalPage + 1
+                                hideBottomPadding()
+                            }
+                        }
 
-                is NetworkResult.Loading -> {
-                    showProgressBar()
-                }
+                        is NetworkState.Loading -> {
+                            showProgressBar()
+                        }
 
-                is NetworkResult.Error -> {
-                    hideProgressBar()
-                    response.message?.let {
-                        showErrorMessage(response.message)
+                        is NetworkState.Error -> {
+                            hideProgressBar()
+                            response.message?.let {
+                                showErrorMessage(response.message)
+                            }
+                        }
                     }
                 }
             }
-        })
+        }
     }
 
     private fun showProgressBar() {
@@ -235,6 +236,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                 query?.let {
                     mainViewModel.searchNews(query)
                     mainViewModel.enableSearch()
+                    collectSearchResponse()
                 }
                 return false
             }
@@ -256,7 +258,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(it.componentName))
         }
         //check if search is activated
-        if (checkSearch) {
+        if (mainViewModel.searchEnable) {
             searchView.isIconified = false
             searchItem.expandActionView();
             searchView.setQuery(mainViewModel.newQuery, false);

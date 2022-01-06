@@ -13,7 +13,7 @@ import androidx.lifecycle.MutableLiveData
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.network.repository.INewsRepository
-import com.rafsan.newsapp.utils.NetworkResult
+import com.rafsan.newsapp.state.NetworkState
 
 class FakeRepository : INewsRepository {
 
@@ -22,14 +22,14 @@ class FakeRepository : INewsRepository {
     override suspend fun getNews(
         countryCode: String,
         pageNumber: Int
-    ): NetworkResult<NewsResponse> {
+    ): NetworkState<NewsResponse> {
         TODO("Not yet implemented")
     }
 
     override suspend fun searchNews(
         searchQuery: String,
         pageNumber: Int
-    ): NetworkResult<NewsResponse> {
+    ): NetworkState<NewsResponse> {
         TODO("Not yet implemented")
     }
 

@@ -8,19 +8,19 @@
 package com.rafsan.newsapp.ui.main
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.di.CoroutinesDispatcherProvider
 import com.rafsan.newsapp.network.repository.INewsRepository
+import com.rafsan.newsapp.state.NetworkState
 import com.rafsan.newsapp.utils.Constants
 import com.rafsan.newsapp.utils.NetworkHelper
-import com.rafsan.newsapp.utils.NetworkResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -34,30 +34,28 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val TAG = "MainViewModel"
-    private val _errorToast = MutableLiveData<String>()
-    val errorToast: LiveData<String>
-        get() = _errorToast
+    private val _errorMessage = MutableStateFlow("")
+    val errorMessage: StateFlow<String>
+        get() = _errorMessage
 
-    private val _newsResponse = MutableLiveData<NetworkResult<NewsResponse>>()
-    val newsResponse: LiveData<NetworkResult<NewsResponse>>
+    private val _newsResponse = MutableStateFlow<NetworkState<NewsResponse>>(NetworkState.Empty())
+    val newsResponse: StateFlow<NetworkState<NewsResponse>>
         get() = _newsResponse
 
-    private val _searchNewsResponse = MutableLiveData<NetworkResult<NewsResponse>>()
-    val searchNewsResponse: LiveData<NetworkResult<NewsResponse>>
+    private val _searchNewsResponse =
+        MutableStateFlow<NetworkState<NewsResponse>>(NetworkState.Empty())
+    val searchNewsResponse: StateFlow<NetworkState<NewsResponse>>
         get() = _searchNewsResponse
 
     private var feedResponse: NewsResponse? = null
     var feedNewsPage = 1
 
+    var searchEnable: Boolean = false
     var searchNewsPage = 1
     var searchResponse: NewsResponse? = null
     private var oldQuery: String = ""
     var newQuery: String = ""
     var totalPage = 1
-
-    private val _isSearchActivated = MutableLiveData<Boolean>()
-    val isSearchActivated: LiveData<Boolean>
-        get() = _isSearchActivated
 
     init {
         fetchNews(Constants.CountryCode)
@@ -66,33 +64,28 @@ class MainViewModel @Inject constructor(
     fun fetchNews(countryCode: String) {
         if (feedNewsPage <= totalPage) {
             if (networkHelper.isNetworkConnected()) {
-                _newsResponse.postValue(NetworkResult.Loading())
-
-                val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-                    onError(exception)
-                }
-                viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+                viewModelScope.launch(coroutinesDispatcherProvider.io) {
+                    _newsResponse.value = NetworkState.Loading()
                     when (val response = repository.getNews(countryCode, feedNewsPage)) {
-                        is NetworkResult.Success -> {
-                            _newsResponse.postValue(handleFeedNewsResponse(response))
+                        is NetworkState.Success -> {
+                            _newsResponse.value = handleFeedNewsResponse(response)
                         }
-                        is NetworkResult.Error -> {
-                            _newsResponse.postValue(
-                                NetworkResult.Error(
+                        is NetworkState.Error -> {
+                            _newsResponse.value =
+                                NetworkState.Error(
                                     response.message ?: "Error"
                                 )
-                            )
                         }
                     }
 
                 }
             } else {
-                _errorToast.postValue("No internet available")
+                _errorMessage.value = "No internet available"
             }
         }
     }
 
-    private fun handleFeedNewsResponse(response: NetworkResult<NewsResponse>): NetworkResult<NewsResponse> {
+    private fun handleFeedNewsResponse(response: NetworkState<NewsResponse>): NetworkState<NewsResponse> {
         response.data?.let { resultResponse ->
             if (feedResponse == null) {
                 feedNewsPage = 2
@@ -107,41 +100,36 @@ class MainViewModel @Inject constructor(
             feedResponse?.let {
                 feedResponse = convertPublishedDate(it)
             }
-            return NetworkResult.Success(feedResponse ?: resultResponse)
+            return NetworkState.Success(feedResponse ?: resultResponse)
         }
-        return NetworkResult.Error("No data found")
+        return NetworkState.Error("No data found")
     }
 
     fun searchNews(query: String) {
         newQuery = query
-        if (!newQuery.isEmpty() && searchNewsPage <= totalPage) {
+        if (newQuery.isNotEmpty() && searchNewsPage <= totalPage) {
             if (networkHelper.isNetworkConnected()) {
-                _searchNewsResponse.postValue(NetworkResult.Loading())
-                val coroutineExceptionHandler = CoroutineExceptionHandler { _, exception ->
-                    onError(exception)
-                }
-                viewModelScope.launch(coroutinesDispatcherProvider.io + coroutineExceptionHandler) {
+                viewModelScope.launch(coroutinesDispatcherProvider.io) {
+                    _searchNewsResponse.value = NetworkState.Loading()
                     when (val response = repository.searchNews(query, searchNewsPage)) {
-                        is NetworkResult.Success -> {
-                            _searchNewsResponse.postValue(handleSearchNewsResponse(response))
+                        is NetworkState.Success -> {
+                            _searchNewsResponse.value = handleSearchNewsResponse(response)
                         }
-                        is NetworkResult.Error -> {
-                            _searchNewsResponse.postValue(
-                                NetworkResult.Error(
+                        is NetworkState.Error -> {
+                            _searchNewsResponse.value =
+                                NetworkState.Error(
                                     response.message ?: "Error"
                                 )
-                            )
                         }
                     }
-
                 }
             } else {
-                _errorToast.postValue("No internet available")
+                _errorMessage.value = "No internet available"
             }
         }
     }
 
-    private fun handleSearchNewsResponse(response: NetworkResult<NewsResponse>): NetworkResult<NewsResponse> {
+    private fun handleSearchNewsResponse(response: NetworkState<NewsResponse>): NetworkState<NewsResponse> {
         response.data?.let { resultResponse ->
             if (searchResponse == null || oldQuery != newQuery) {
                 searchNewsPage = 2
@@ -156,9 +144,9 @@ class MainViewModel @Inject constructor(
             searchResponse?.let {
                 searchResponse = convertPublishedDate(it)
             }
-            return NetworkResult.Success(searchResponse ?: resultResponse)
+            return NetworkState.Success(searchResponse ?: resultResponse)
         }
-        return NetworkResult.Error("No data found")
+        return NetworkState.Error("No data found")
     }
 
     fun convertPublishedDate(currentResponse: NewsResponse): NewsResponse {
@@ -199,7 +187,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun hideErrorToast() {
-        _errorToast.postValue("")
+        _errorMessage.value = ""
     }
 
     fun saveNews(news: NewsArticle) {
@@ -223,7 +211,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun clearSearch() {
-        _isSearchActivated.postValue(false)
+        searchEnable = false
         searchResponse = null
         feedResponse = null
         feedNewsPage = 1
@@ -231,12 +219,12 @@ class MainViewModel @Inject constructor(
     }
 
     fun enableSearch() {
-        _isSearchActivated.postValue(true)
+        searchEnable = true
     }
 
     private fun onError(throwable: Throwable) {
         throwable.message?.let {
-            _errorToast.postValue(it)
+            _errorMessage.value = it
         }
     }
 }

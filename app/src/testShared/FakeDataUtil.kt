@@ -10,15 +10,15 @@ import androidx.lifecycle.MutableLiveData
 import com.rafsan.newsapp.data.model.NewsArticle
 import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.data.model.Source
-import com.rafsan.newsapp.utils.NetworkResult
+import com.rafsan.newsapp.state.NetworkState
 
 object FakeDataUtil {
-    fun getFakeNewsArticleResponse(): NetworkResult<NewsResponse> {
+    fun getFakeNewsArticleResponse(): NetworkState<NewsResponse> {
         val articles = getFakeArticles()
         val newsResponse = NewsResponse(
             articles = articles, "200", 2
         )
-        return NetworkResult.Success(newsResponse)
+        return NetworkState.Success(newsResponse)
     }
 
     fun getFakeNewsArticleLiveData(): LiveData<List<NewsArticle>> {
