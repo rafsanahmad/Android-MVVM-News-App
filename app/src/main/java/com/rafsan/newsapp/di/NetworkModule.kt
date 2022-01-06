@@ -1,28 +1,22 @@
 /*
  * *
- *  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
- *  * Copyright (c) 2021 . All rights reserved.
+ *  * Created by Rafsan Ahmad on 1/7/22, 12:10 AM
+ *  * Copyright (c) 2022 . All rights reserved.
  *
  */
 
 package com.rafsan.newsapp.di
 
-import android.content.Context
 import android.util.Log
 import com.google.gson.GsonBuilder
 import com.rafsan.newsapp.BuildConfig
-import com.rafsan.newsapp.data.local.NewsDao
-import com.rafsan.newsapp.data.local.NewsDatabase
 import com.rafsan.newsapp.network.api.ApiHelper
 import com.rafsan.newsapp.network.api.ApiHelperImpl
 import com.rafsan.newsapp.network.api.NewsApi
-import com.rafsan.newsapp.network.repository.INewsRepository
-import com.rafsan.newsapp.network.repository.NewsRepository
-import com.rafsan.newsapp.utils.Constants.Companion.BASE_URL
+import com.rafsan.newsapp.utils.Constants
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -32,7 +26,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApplicationModule {
+object NetworkModule {
 
     private val TAG = "NewsApp"
 
@@ -58,7 +52,7 @@ object ApplicationModule {
     ): Retrofit =
         Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create(GsonBuilder().create()))
-            .baseUrl(BASE_URL)
+            .baseUrl(Constants.BASE_URL)
             .client(okHttpClient)
             .build()
 
@@ -70,23 +64,4 @@ object ApplicationModule {
     @Singleton
     fun provideApiHelper(apiHelper: ApiHelperImpl): ApiHelper = apiHelper
 
-    @Singleton
-    @Provides
-    fun provideDatabase(@ApplicationContext appContext: Context) =
-        NewsDatabase.getDatabase(appContext)
-
-    @Singleton
-    @Provides
-    fun provideNewsDao(db: NewsDatabase) = db.getNewsDao()
-
-    @Singleton
-    @Provides
-    fun provideRepository(
-        remoteDataSource: ApiHelper,
-        localDataSource: NewsDao
-    ) = NewsRepository(remoteDataSource, localDataSource)
-
-    @Singleton
-    @Provides
-    fun provideINewsRepository(repository: NewsRepository): INewsRepository = repository
 }
