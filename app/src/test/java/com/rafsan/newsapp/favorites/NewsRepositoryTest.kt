@@ -23,7 +23,7 @@ import com.rafsan.newsapp.network.api.ApiHelperImpl
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.util.MockWebServerBaseTest
-import com.rafsan.newsapp.utils.NetworkResult
+import com.rafsan.newsapp.state.NetworkState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.*
@@ -128,7 +128,7 @@ class NewsRepositoryTest : MockWebServerBaseTest() {
             val apiResponse = newsRepository.getNews(country, page)
 
             Assert.assertNotNull(apiResponse)
-            val expectedValue = NetworkResult.Error("An error occurred", null)
+            val expectedValue = NetworkState.Error("An error occurred", null)
             assertThat(expectedValue.message).isEqualTo(apiResponse.message)
         }
     }

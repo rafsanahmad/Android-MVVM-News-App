@@ -19,7 +19,7 @@ import com.rafsan.newsapp.network.repository.NewsRepository
 import com.rafsan.newsapp.ui.main.MainViewModel
 import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
-import com.rafsan.newsapp.utils.NetworkResult
+import com.rafsan.newsapp.state.NetworkState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
@@ -52,8 +52,6 @@ class MainViewModelTest {
 
     private val testDispatcher = coroutineRule.testDispatcher
 
-    @Mock
-    private lateinit var responseObserver: Observer<NetworkResult<NewsResponse>>
     private lateinit var viewModel: MainViewModel
 
     @Before
@@ -71,17 +69,16 @@ class MainViewModelTest {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
-            viewModel.newsResponse.observeForever(responseObserver)
             whenever(newsRepository.getNews(CountryCode, 1))
-                .thenReturn(NetworkResult.Loading())
+                .thenReturn(NetworkState.Loading())
 
             //When
             viewModel.fetchNews(CountryCode)
 
             //Then
             assertThat(viewModel.newsResponse.value).isNotNull()
-            assertThat(viewModel.newsResponse.value?.data).isNull()
-            assertThat(viewModel.newsResponse.value?.message).isNull()
+            assertThat(viewModel.newsResponse.value.data).isNull()
+            assertThat(viewModel.newsResponse.value.message).isNull()
         }
     }
 
@@ -91,7 +88,6 @@ class MainViewModelTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
 
-            viewModel.newsResponse.observeForever(responseObserver)
             // Stub repository with fake favorites
             whenever(newsRepository.getNews(CountryCode, 1))
                 .thenAnswer { (FakeDataUtil.getFakeNewsArticleResponse()) }
@@ -101,7 +97,7 @@ class MainViewModelTest {
 
             //then
             assertThat(viewModel.newsResponse.value).isNotNull()
-            val articles = viewModel.newsResponse.value?.data?.articles
+            val articles = viewModel.newsResponse.value.data?.articles
             assertThat(articles?.isNotEmpty())
             // compare the response with fake list
             assertThat(articles).hasSize(FakeDataUtil.getFakeArticles().size)
@@ -119,15 +115,15 @@ class MainViewModelTest {
                 .thenReturn(true)
             // Stub repository with fake favorites
             whenever(newsRepository.getNews(CountryCode, 1))
-                .thenAnswer { NetworkResult.Error("Error occurred", null) }
+                .thenAnswer { NetworkState.Error("Error occurred", null) }
 
             //When
             viewModel.fetchNews(CountryCode)
 
             //then
             val response = viewModel.newsResponse.value
-            assertThat(response?.message).isNotNull()
-            assertThat(response?.message).isEqualTo("Error occurred")
+            assertThat(response.message).isNotNull()
+            assertThat(response.message).isEqualTo("Error occurred")
         }
     }
 
@@ -136,7 +132,7 @@ class MainViewModelTest {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
-            viewModel.searchNewsResponse.observeForever(responseObserver)
+
             // Stub repository with fake favorites
             whenever(newsRepository.searchNews(CountryCode, 1))
                 .thenAnswer { (FakeDataUtil.getFakeNewsArticleResponse()) }
@@ -146,7 +142,7 @@ class MainViewModelTest {
 
             //then
             assertThat(viewModel.searchNewsResponse.value).isNotNull()
-            val articles = viewModel.searchNewsResponse.value?.data?.articles
+            val articles = viewModel.searchNewsResponse.value.data?.articles
             assertThat(articles?.isNotEmpty())
             // compare the response with fake list
             assertThat(articles).hasSize(FakeDataUtil.getFakeArticles().size)
@@ -174,7 +170,5 @@ class MainViewModelTest {
     @After
     fun release() {
         Mockito.framework().clearInlineMocks()
-        viewModel.newsResponse.removeObserver(responseObserver)
-        viewModel.searchNewsResponse.removeObserver(responseObserver)
     }
 }
