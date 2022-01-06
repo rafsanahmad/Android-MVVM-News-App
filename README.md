@@ -22,7 +22,7 @@ The app's functionality includes:
 
 ## Architecture
 The app uses clean architecture with `MVVM(Model View View Model)` design pattern. 
-MVVM provides better separation of concern, easier testing, Live data & lifecycle awareness, etc.
+MVVM provides better separation of concern, easier testing, lifecycle awareness, etc.
 
 ![](images/MVVM_Flow.png)
 
@@ -45,7 +45,7 @@ In addition entity class has been added for room database along with `Type conve
 
 `MainViewModel.kt`
 
-Used for fetching today's news, searching news & update livedata. Also send out the status of the network call like Loading, Success, Error using `sealed` class.
+Used for fetching today's news, searching news & update states. Also send out the status of the network call like Loading, Success, Error using `sealed` class.
 
 The `ViewModel` also responsible for pagination of data using page count.
 
@@ -89,7 +89,7 @@ The project uses [`Kotin-Dsl`](https://docs.gradle.org/current/userguide/kotlin_
 4. [Retrofit](https://square.github.io/retrofit/) for REST API communication
 5. [Coroutine](https://developer.android.com/kotlin/coroutines) for Network call
 6. [Lifecycle](https://developer.android.com/jetpack/androidx/releases/lifecycle), [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel)
-7. [LiveData](https://developer.android.com/topic/libraries/architecture/livedata)
+7. [StateFlow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-state-flow/)
 8. [Room](https://developer.android.com/jetpack/androidx/releases/room) for local database.
 9. [Navigation Component](https://developer.android.com/guide/navigation/navigation-getting-started) for supporting navigation through the app.
 10. [Glide](https://github.com/bumptech/glide) for image loading.
@@ -106,7 +106,7 @@ Unit testing has been added for `MainViewModel` & `NewsRepository`.
 
 ### `MainViewModelTest.kt`
 
-Test the viewmodel of the app using `CoroutineRule` & `LiveData Observer`.
+Test the viewmodel of the app using `CoroutineRule` & `Stateflow value`.
 
 The test cases comprise of testing different states like Loading, Success, Error with fake data for testing News Response & Search Response.
 
