@@ -22,8 +22,8 @@ import com.rafsan.newsapp.network.api.ApiHelper
 import com.rafsan.newsapp.network.api.ApiHelperImpl
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
-import com.rafsan.newsapp.util.MockWebServerBaseTest
 import com.rafsan.newsapp.state.NetworkState
+import com.rafsan.newsapp.util.MockWebServerBaseTest
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.*

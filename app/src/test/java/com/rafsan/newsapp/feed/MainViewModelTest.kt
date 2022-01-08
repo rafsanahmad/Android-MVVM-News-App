@@ -10,16 +10,14 @@ package com.rafsan.newsapp.feed
 import FakeDataUtil
 import MainCoroutineRule
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.Observer
 import com.google.common.truth.Truth.assertThat
 import com.nhaarman.mockitokotlin2.whenever
-import com.rafsan.newsapp.data.model.NewsResponse
 import com.rafsan.newsapp.network.api.NewsApi
 import com.rafsan.newsapp.network.repository.NewsRepository
+import com.rafsan.newsapp.state.NetworkState
 import com.rafsan.newsapp.ui.main.MainViewModel
 import com.rafsan.newsapp.utils.Constants.Companion.CountryCode
 import com.rafsan.newsapp.utils.NetworkHelper
-import com.rafsan.newsapp.state.NetworkState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.junit.After
 import org.junit.Before
@@ -65,7 +63,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `when calling for results then return loading`() {
+    fun `when calling for results then return loading state`() {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
@@ -83,7 +81,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `test if feed is loaded with articles`() {
+    fun `when calling for results then return news results`() {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
@@ -109,7 +107,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `test for failure`() {
+    fun `when calling for results then return error`() {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)
@@ -128,7 +126,7 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `test if search is loaded with search response`() {
+    fun `when calling for search then return search result`() {
         coroutineRule.runBlockingTest {
             whenever(networkHelper.isNetworkConnected())
                 .thenReturn(true)

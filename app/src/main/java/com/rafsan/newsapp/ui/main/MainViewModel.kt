@@ -98,7 +98,7 @@ class MainViewModel @Inject constructor(
             }
             //Conversion
             feedResponse?.let {
-                feedResponse = convertPublishedDate(it)
+                convertPublishedDate(it)
             }
             return NetworkState.Success(feedResponse ?: resultResponse)
         }
@@ -142,24 +142,19 @@ class MainViewModel @Inject constructor(
                 oldArticles?.addAll(newArticles)
             }
             searchResponse?.let {
-                searchResponse = convertPublishedDate(it)
+                convertPublishedDate(it)
             }
             return NetworkState.Success(searchResponse ?: resultResponse)
         }
         return NetworkState.Error("No data found")
     }
 
-    fun convertPublishedDate(currentResponse: NewsResponse): NewsResponse {
-        currentResponse.let { response ->
-            for (i in 0 until response.articles.size) {
-                val publishedAt = response.articles[i].publishedAt
-                publishedAt?.let {
-                    val converted = formatDate(it)
-                    response.articles[i].publishedAt = converted
-                }
+    fun convertPublishedDate(currentResponse: NewsResponse) {
+        currentResponse.articles.map { article ->
+            article.publishedAt?.let {
+                article.publishedAt = formatDate(it)
             }
         }
-        return currentResponse
     }
 
     fun formatDate(strCurrentDate: String): String {
