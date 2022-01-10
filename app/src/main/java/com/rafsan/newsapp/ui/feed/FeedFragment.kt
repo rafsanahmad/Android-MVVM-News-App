@@ -42,7 +42,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     private lateinit var onScrollListener: EndlessRecyclerOnScrollListener
     lateinit var mainViewModel: MainViewModel
-    lateinit var newsAdapter: NewsAdapter
+    private lateinit var newsAdapter: NewsAdapter
     val countryCode = Constants.CountryCode
     private lateinit var searchView: SearchView
 
@@ -84,7 +84,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             mainViewModel.fetchNews(countryCode)
         }
         binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);
-
     }
 
     private fun setupRecyclerView() {
@@ -148,7 +147,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                     Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
                 }
                 mainViewModel.hideErrorToast()
-
             }
         }
     }
@@ -213,22 +211,20 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.toolbar_menu, menu)
         val searchItem = menu.findItem(R.id.action_search)
-        searchView = searchItem.getActionView() as SearchView
+        searchView = searchItem.actionView as SearchView
         //Search button clicked
         searchView.setOnSearchClickListener {
             searchView.maxWidth = android.R.attr.width;
         }
         //Close button clicked
-        searchView.setOnCloseListener(object : SearchView.OnCloseListener {
-            override fun onClose(): Boolean {
-                mainViewModel.clearSearch()
-                mainViewModel.fetchNews(countryCode)
-                //Collapse the action view
-                searchView.onActionViewCollapsed();
-                searchView.maxWidth = 0;
-                return true
-            }
-        })
+        searchView.setOnCloseListener {
+            mainViewModel.clearSearch()
+            mainViewModel.fetchNews(countryCode)
+            //Collapse the action view
+            searchView.onActionViewCollapsed()
+            searchView.maxWidth = 0
+            true
+        }
 
         val searchPlate =
             searchView.findViewById(androidx.appcompat.R.id.search_src_text) as EditText

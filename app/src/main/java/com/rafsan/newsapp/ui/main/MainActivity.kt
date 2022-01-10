@@ -50,8 +50,4 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
         binding.toolbar.setupWithNavController(navController, appBarConfiguration)
     }
-
-    override fun onBackPressed() {
-        super.onBackPressed();
-    }
 }
