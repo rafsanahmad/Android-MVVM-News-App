@@ -76,6 +76,7 @@ class MainViewModel @Inject constructor(
                                     response.message ?: "Error"
                                 )
                         }
+                        else -> {}
                     }
 
                 }
@@ -121,6 +122,7 @@ class MainViewModel @Inject constructor(
                                     response.message ?: "Error"
                                 )
                         }
+                        else -> {}
                     }
                 }
             } else {

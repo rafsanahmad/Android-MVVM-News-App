@@ -83,7 +83,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             mainViewModel.clearSearch()
             mainViewModel.fetchNews(countryCode)
         }
-        binding.swipeRefreshLayout.setOnRefreshListener(refreshListener);
+        binding.swipeRefreshLayout.setOnRefreshListener(refreshListener)
     }
 
     private fun setupRecyclerView() {
@@ -96,7 +96,6 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         newsAdapter.setOnItemClickListener { news ->
             val bundle = Bundle().apply {
                 putSerializable("news", news)
-                putBoolean("isFromFavorite", false)
             }
             findNavController().navigate(
                 R.id.action_feedFragment_to_DetailsFragment,
@@ -214,7 +213,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         searchView = searchItem.actionView as SearchView
         //Search button clicked
         searchView.setOnSearchClickListener {
-            searchView.maxWidth = android.R.attr.width;
+            searchView.maxWidth = android.R.attr.width
         }
         //Close button clicked
         searchView.setOnCloseListener {
@@ -261,8 +260,8 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
         //check if search is activated
         if (mainViewModel.searchEnable) {
             searchView.isIconified = false
-            searchItem.expandActionView();
-            searchView.setQuery(mainViewModel.newQuery, false);
+            searchItem.expandActionView()
+            searchView.setQuery(mainViewModel.newQuery, false)
         }
         return super.onCreateOptionsMenu(menu, inflater)
     }
