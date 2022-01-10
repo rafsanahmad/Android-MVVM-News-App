@@ -141,7 +141,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             }
         }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
             mainViewModel.errorMessage.collect { value ->
                 if (value.isNotEmpty()) {
                     Toast.makeText(activity, value, Toast.LENGTH_LONG).show()
@@ -153,7 +153,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
 
     private fun collectSearchResponse() {
         //Search response
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
             if (mainViewModel.searchEnable) {
                 mainViewModel.searchNewsResponse.collect { response ->
                     when (response) {
@@ -222,7 +222,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             mainViewModel.fetchNews(countryCode)
             //Collapse the action view
             searchView.onActionViewCollapsed()
-            searchView.maxWidth = 0;
+            searchView.maxWidth = 0
             true
         }
 
