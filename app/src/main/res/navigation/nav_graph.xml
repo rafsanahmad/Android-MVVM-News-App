@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ /**
   ~  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
   ~  * Copyright (c) 2021 . All rights reserved.
@@ -42,8 +41,5 @@
         <argument
             android:name="news"
             app:argType="com.rafsan.newsapp.data.model.NewsArticle" />
-        <argument
-            android:name="isFromFavorite"
-            app:argType="boolean" />
     </fragment>
 </navigation>
