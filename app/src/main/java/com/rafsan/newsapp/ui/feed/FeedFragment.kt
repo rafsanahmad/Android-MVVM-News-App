@@ -106,7 +106,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
     }
 
     private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+        lifecycleScope.launchWhenStarted {
             if (!mainViewModel.searchEnable) {
                 mainViewModel.newsResponse.collect { response ->
                     when (response) {
@@ -221,7 +221,7 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
             mainViewModel.clearSearch()
             mainViewModel.fetchNews(countryCode)
             //Collapse the action view
-            searchView.onActionViewCollapsed();
+            searchView.onActionViewCollapsed()
             searchView.maxWidth = 0;
             true
         }
