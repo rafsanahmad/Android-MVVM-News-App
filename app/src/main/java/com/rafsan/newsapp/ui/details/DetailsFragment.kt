@@ -10,6 +10,7 @@ package com.rafsan.newsapp.ui.details
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebViewClient
+import androidx.core.view.isGone
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.rafsan.newsapp.base.BaseFragment
@@ -49,10 +50,7 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
 
     private fun setupObserver() {
         viewModel.getFavoriteNews().observe(viewLifecycleOwner, { news ->
-            val isAlreadyFavorite = news.any {
-                it.title == args.news.title
-            }
-            if (isAlreadyFavorite) binding.fab.visibility = View.GONE
+            binding.fab.isGone = news.any { it.title == args.news.title }
         })
     }
 }
