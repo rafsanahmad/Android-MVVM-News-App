@@ -91,9 +91,9 @@ class FavoriteFragment : BaseFragment<FragmentFavoritesBinding>() {
     }
 
     private fun setupObserver() {
-        viewModel.getFavoriteNews().observe(viewLifecycleOwner, { news ->
+        viewModel.getFavoriteNews().observe(viewLifecycleOwner) { news ->
             EspressoIdlingResource.decrement()
             newsAdapter.differ.submitList(news)
-        })
+        }
     }
 }

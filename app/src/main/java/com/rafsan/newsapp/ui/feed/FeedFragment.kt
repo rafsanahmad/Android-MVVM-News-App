@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.collect
 
 
 class FeedFragment : BaseFragment<FragmentFeedBinding>() {
-
     override fun setBinding(): FragmentFeedBinding =
         FragmentFeedBinding.inflate(layoutInflater)
 
@@ -133,6 +132,8 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                                 showErrorMessage(response.message)
                             }
                         }
+
+                        else -> {}
                     }
                 }
             } else {
@@ -180,6 +181,8 @@ class FeedFragment : BaseFragment<FragmentFeedBinding>() {
                                 showErrorMessage(response.message)
                             }
                         }
+
+                        else -> {}
                     }
                 }
             }

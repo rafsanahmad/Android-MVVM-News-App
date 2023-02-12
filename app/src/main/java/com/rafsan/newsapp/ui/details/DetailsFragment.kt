@@ -23,8 +23,8 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
     override fun setBinding(): FragmentDetailsBinding =
         FragmentDetailsBinding.inflate(layoutInflater)
 
-    lateinit var viewModel: MainViewModel
-    val args: DetailsFragmentArgs by navArgs()
+    private lateinit var viewModel: MainViewModel
+    private val args: DetailsFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,13 +44,13 @@ class DetailsFragment : BaseFragment<FragmentDetailsBinding>() {
 
         binding.fab.setOnClickListener {
             viewModel.saveNews(news)
-            Snackbar.make(view, "News article saved successfully", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, "News article added to favorites.", Snackbar.LENGTH_SHORT).show()
         }
     }
 
     private fun setupObserver() {
-        viewModel.getFavoriteNews().observe(viewLifecycleOwner, { news ->
+        viewModel.getFavoriteNews().observe(viewLifecycleOwner) { news ->
             binding.fab.isGone = news.any { it.title == args.news.title }
-        })
+        }
     }
 }

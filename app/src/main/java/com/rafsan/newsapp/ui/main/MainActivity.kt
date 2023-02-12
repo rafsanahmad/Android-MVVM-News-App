@@ -25,7 +25,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
     override fun onViewReady(savedInstanceState: Bundle?) {
         super.onViewReady(savedInstanceState)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = "Today's News";
+        supportActionBar?.title = "Today's News"
         if (savedInstanceState == null) {
             setupBottomNavigationBar()
         }

@@ -52,7 +52,7 @@ class MainViewModel @Inject constructor(
 
     var searchEnable: Boolean = false
     var searchNewsPage = 1
-    var searchResponse: NewsResponse? = null
+    private var searchResponse: NewsResponse? = null
     private var oldQuery: String = ""
     var newQuery: String = ""
     var totalPage = 1
@@ -151,7 +151,7 @@ class MainViewModel @Inject constructor(
         return NetworkState.Error("No data found")
     }
 
-    fun convertPublishedDate(currentResponse: NewsResponse) {
+    private fun convertPublishedDate(currentResponse: NewsResponse) {
         currentResponse.articles.map { article ->
             article.publishedAt?.let {
                 article.publishedAt = formatDate(it)
