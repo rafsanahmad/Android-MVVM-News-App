@@ -75,7 +75,7 @@ abstract class EndlessRecyclerOnScrollListener(
                     && isTotalMoreThanVisible && isScrolling
 
         if (shouldPaginate) {
-            isScrolling = false;
+            isScrolling = false
             onLoadMore()
         }
     }

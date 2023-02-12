@@ -28,7 +28,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private val TAG = "NewsApp"
+    private const val TAG = "NewsApp"
 
     @Provides
     @Singleton
