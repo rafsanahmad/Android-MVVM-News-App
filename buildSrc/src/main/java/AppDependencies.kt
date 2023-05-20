@@ -17,7 +17,7 @@ object Deps {
         const val lifecycle = "2.2.0"
         const val junit = "4.12"
         const val material = "1.2.1"
-        const val kotlinVersion = "1.5.31"
+        const val kotlinVersion = "1.6.21"
         const val coroutinesVersion = "1.4.2"
         const val android_test = "1.3.0"
         const val espresso = "3.4.0"
