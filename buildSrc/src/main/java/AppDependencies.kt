@@ -7,9 +7,9 @@
 
 object Deps {
     object Versions {
-        const val compile_sdk = 30
+        const val compile_sdk = 33
         const val min_sdk = 21
-        const val target_sdk = 30
+        const val target_sdk = 33
         const val app_version_code = 1
         const val app_version_name = "1.0"
         const val gradle_plugin = "7.0.0"
@@ -19,7 +19,7 @@ object Deps {
         const val material = "1.2.1"
         const val kotlinVersion = "1.6.21"
         const val coroutinesVersion = "1.4.2"
-        const val android_test = "1.3.0"
+        const val android_test = "1.4.0-beta01"
         const val espresso = "3.4.0"
         const val android_test_junit = "1.1.3"
         const val arch_core_testing = "2.1.0"
