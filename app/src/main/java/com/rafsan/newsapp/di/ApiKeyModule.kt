@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.di
 
+import com.rafsan.newsapp.BuildConfig
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
