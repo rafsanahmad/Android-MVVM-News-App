@@ -116,15 +116,19 @@ object Deps {
         const val logging_interceptor =
             "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
         const val mockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebServer}"
-    }
-
-    object Paging {
-        const val runtime = "androidx.paging:paging-runtime:${Versions.pagingVersion}"
-        const val compose = "androidx.paging:paging-compose:${Versions.pagingVersion}"
-    }
-
-    object Compose {
-        const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
+        }
+ 
+     object Paging {
+         const val runtime = "androidx.paging:paging-runtime:${Versions.pagingVersion}"
+         const val compose = "androidx.paging:paging-compose:${Versions.pagingVersion}"
+     }
+ 
+     object Timber {
+         const val timber = "com.jakewharton.timber:timber:5.0.1"
+     }
+ 
+     object Compose {
+const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
         const val ui = "androidx.compose.ui:ui"
         const val uiGraphics = "androidx.compose.ui:ui-graphics"
         const val uiTooling = "androidx.compose.ui:ui-tooling"

@@ -3,19 +3,31 @@ package com.rafsan.newsapp.feature.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import com.rafsan.newsapp.core.ui.UiState
 import com.rafsan.newsapp.domain.model.NewsArticle
-import com.rafsan.newsapp.domain.repository.NewsRepository
+import com.rafsan.newsapp.domain.usecase.GetTopHeadlinesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    repository: NewsRepository
+    getTopHeadlinesUseCase: GetTopHeadlinesUseCase
 ) : ViewModel() {
     val headlines: StateFlow<PagingData<NewsArticle>> =
-        repository.getTopHeadlines(countryCode = "us")
+        getTopHeadlinesUseCase(countryCode = "us")
+            .onStart { uiState.value = UiState.Loading }
+            .catch { e ->
+                Timber.e(e, "Failed to load headlines")
+                uiState.value = UiState.Error(e.message ?: "Unknown error", e)
+            }
             .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
+
+    val uiState: MutableStateFlow<UiState<Unit>> = MutableStateFlow(UiState.Idle)
 }

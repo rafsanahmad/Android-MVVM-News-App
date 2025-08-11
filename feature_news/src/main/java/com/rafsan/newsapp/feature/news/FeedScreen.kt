@@ -4,13 +4,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -18,20 +15,27 @@ import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
+import com.rafsan.newsapp.core.navigation.Screen
+import com.rafsan.newsapp.domain.model.NewsArticle
 
 @Composable
 fun FeedRoute(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
     val pagingItems = viewModel.headlines.collectAsLazyPagingItems()
     FeedScreen(
         state = pagingItems,
-        onClick = { article -> navController.navigate("details") }
+        onClick = { article ->
+            navController.currentBackStackEntry?.savedStateHandle?.set("url", article.url)
+            navController.currentBackStackEntry?.savedStateHandle?.set("title", article.title)
+            navController.currentBackStackEntry?.savedStateHandle?.set("image", article.urlToImage)
+            navController.navigate(Screen.Details.route)
+        }
     )
 }
 
 @Composable
 fun FeedScreen(
-    state: androidx.paging.compose.LazyPagingItems<com.rafsan.newsapp.domain.model.NewsArticle>,
-    onClick: (com.rafsan.newsapp.domain.model.NewsArticle) -> Unit
+    state: androidx.paging.compose.LazyPagingItems<NewsArticle>,
+    onClick: (NewsArticle) -> Unit
 ) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(
@@ -49,11 +53,17 @@ fun FeedScreen(
             is androidx.paging.LoadState.Loading -> {
                 item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
             }
+            is androidx.paging.LoadState.Error -> {
+                item { Text("Error: ${refresh.error.message}", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
+            }
             else -> {}
         }
         when (val append = state.loadState.append) {
             is androidx.paging.LoadState.Loading -> {
                 item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
+            }
+            is androidx.paging.LoadState.Error -> {
+                item { Text("Error: ${append.error.message}", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
             }
             else -> {}
         }
@@ -62,8 +72,8 @@ fun FeedScreen(
 
 @Composable
 private fun NewsRow(
-    article: com.rafsan.newsapp.domain.model.NewsArticle,
-    onClick: (com.rafsan.newsapp.domain.model.NewsArticle) -> Unit
+    article: NewsArticle,
+    onClick: (NewsArticle) -> Unit
 ) {
     androidx.compose.foundation.layout.Row(
         modifier = Modifier.clickable { onClick(article) }.padding(16.dp)

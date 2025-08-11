@@ -51,6 +51,6 @@ object CoreModule {
 
     @Provides
     @Singleton
-    fun provideRepository(api: NewsApi, db: NewsDatabase, dao: NewsDao): NewsRepository =
-        NewsRepositoryImpl(api = api, db = db, dao = dao, apiKey = "YOUR_API_KEY", pageSize = 15)
+    fun provideRepository(api: NewsApi, db: NewsDatabase, dao: NewsDao, @javax.inject.Named("newsApiKey") apiKey: String): NewsRepository =
+        NewsRepositoryImpl(api = api, db = db, dao = dao, apiKey = apiKey, pageSize = 15)
 }

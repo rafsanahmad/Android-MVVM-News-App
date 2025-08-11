@@ -20,6 +20,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        compose = true
     }
 
     composeOptions {
@@ -44,10 +45,14 @@ android {
                     )
                 )
             }
-        }
-    }
-    flavorDimensions("default")
-    productFlavors {
+                }
+     }
+     flavorDimensions("default")
+
+     buildTypes.all {
+         buildConfigField("String", "NEWS_API_KEY", '"YOUR_API_KEY"')
+     }
+productFlavors {
         create("prod") {
             applicationId = "com.rafsan.newsapp"
         }
@@ -139,6 +144,9 @@ dependencies {
     //Dagger - Hilt
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
+
+    // Timber
+    implementation(Deps.Timber.timber)
 
     // Navigation Compose
     implementation(Deps.Navigation.navigationCompose)
