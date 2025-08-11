@@ -19,14 +19,19 @@ import androidx.compose.material.rememberDismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.ui.res.stringResource
 import com.rafsan.newsapp.feature.favorite.R
-import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.launch
+import androidx.compose.material.ExperimentalMaterialApi
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel = hiltViewModel()) {
     val items by viewModel.favorites.collectAsState(initial = emptyList())
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+
+    // Precompute strings used in snackbar (avoid calling stringResource from inside coroutine)
+    val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
+    val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
         LazyColumn(modifier = Modifier
@@ -41,8 +46,8 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
                             dismissed = true
                             coroutineScope.launch {
                                 val result = snackbarHostState.showSnackbar(
-                                    message = stringResource(R.string.snackbar_remove_favorite_message),
-                                    actionLabel = stringResource(R.string.snackbar_remove_confirm_action),
+                                    message = removeMessage,
+                                    actionLabel = confirmAction,
                                     withDismissAction = true
                                 )
                                 if (result == SnackbarResult.ActionPerformed) {
@@ -59,10 +64,10 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
-    val dismissState = rememberDismissState(confirmValueChange = { value ->
+    val dismissState = rememberDismissState(confirmStateChange = { value ->
         if (value == DismissValue.DismissedToStart || value == DismissValue.DismissedToEnd) {
             onDismiss(); true
         } else false

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2022 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<resources>
+    <!-- This file defines Android telephony related resources -->
+
+    <!-- Configure tcp buffer sizes per network type in the form:
+         network-type:rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max
+
+         The network-type must be a valid DataConfigNetworkType value. If no value is found for the
+         network-type in use, config_tcp_buffers will be used instead.
+    -->
+    <string-array name="config_network_type_tcp_buffers">
+    </string-array>
+    <java-symbol type="array" name="config_network_type_tcp_buffers" />
+
+    <!-- Configure tcp buffer sizes in the form:
+         rmem_min,rmem_def,rmem_max,wmem_min,wmem_def,wmem_max
+         If this is configured as an empty string, the system default will be applied.
+    -->
+    <string name="config_tcp_buffers" translatable="false">2097152,6291456,16777216,512000,2097152,8388608</string>
+    <java-symbol type="string"  name="config_tcp_buffers" />
+
+    <!-- What source to use to estimate link upstream and downstream bandwidth capacities.
+         Default is bandwidth_estimator.
+         Values are bandwidth_estimator, carrier_config and modem. -->
+    <string name="config_bandwidthEstimateSource">bandwidth_estimator</string>
+    <java-symbol type="string" name="config_bandwidthEstimateSource" />
+
+    <!-- Whether to adopt the predefined handover policies for IWLAN.
+         {@see CarrierConfigManager#KEY_IWLAN_HANDOVER_POLICY_STRING_ARRAY}
+    -->
+    <bool name="config_enable_iwlan_handover_policy">true</bool>
+    <java-symbol type="bool" name="config_enable_iwlan_handover_policy" />
+
+    <!-- When a radio power off request is received, we will delay completing the request until
+         either IMS moves to the deregistered state or the timeout defined by this configuration
+         elapses. If 0, this feature is disabled and we do not delay radio power off requests.-->
+    <integer name="config_delay_for_ims_dereg_millis">0</integer>
+    <java-symbol type="integer" name="config_delay_for_ims_dereg_millis" />
+
+    <!-- Define the bar of considering the availability of a subscription is stable in milliseconds,
+         where 0 means immediate switch, and negative milliseconds indicates the auto data switch
+         feature is disabled.-->
+    <integer name="auto_data_switch_availability_stability_time_threshold_millis">10000</integer>
+    <java-symbol type="integer" name="auto_data_switch_availability_stability_time_threshold_millis" />
+
+    <!-- Define the maximum retry times when a validation for switching failed.-->
+    <integer name="auto_data_switch_validation_max_retry">7</integer>
+    <java-symbol type="integer" name="auto_data_switch_validation_max_retry" />
+
+    <!-- Boolean indicating whether ping test is required to pass on the target data SIM before the
+         device automatically switch to it. -->
+    <bool name="auto_data_switch_ping_test_before_switch">true</bool>
+    <java-symbol type="bool" name="auto_data_switch_ping_test_before_switch" />
+
+    <!-- Boolean indicating whether the Iwlan data service supports persistence of iwlan ipsec
+         tunnels across service restart. If iwlan tunnels are not persisted across restart,
+         Framework will clean up dangling data connections when service restarts -->
+    <bool name="config_wlan_data_service_conn_persistence_on_restart">true</bool>
+    <java-symbol type="bool" name="config_wlan_data_service_conn_persistence_on_restart" />
+
+    <!-- Cellular data service package name to bind to by default. If none is specified in an
+         overlay, an empty string is passed in -->
+    <string name="config_wwan_data_service_package" translatable="false">com.android.phone</string>
+    <java-symbol type="string" name="config_wwan_data_service_package" />
+
+    <!-- IWLAN data service package name to bind to by default. If none is specified in an overlay,
+         an empty string is passed in -->
+    <string name="config_wlan_data_service_package" translatable="false"></string>
+    <java-symbol type="string" name="config_wlan_data_service_package" />
+
+    <!-- Cellular data service class name to bind to by default. If none is specified in an overlay,
+         an empty string is passed in -->
+    <string name="config_wwan_data_service_class" translatable="false"></string>
+    <java-symbol type="string" name="config_wwan_data_service_class" />
+
+    <!-- IWLAN data service class name to bind to by default. If none is specified in an overlay, an
+         empty string is passed in -->
+    <string name="config_wlan_data_service_class" translatable="false"></string>
+    <java-symbol type="string" name="config_wlan_data_service_class" />
+
+    <!-- Cellular network service package name to bind to by default. -->
+    <string name="config_wwan_network_service_package" translatable="false">
+        com.android.phone
+    </string>
+    <java-symbol type="string" name="config_wwan_network_service_package" />
+
+    <!-- Cellular network service class name to bind to by default.-->
+    <string name="config_wwan_network_service_class" translatable="false"></string>
+    <java-symbol type="string" name="config_wwan_network_service_class" />
+
+    <!-- IWLAN network service package name to bind to by default. If none is specified in an
+         overlay, an empty string is passed in -->
+    <string name="config_wlan_network_service_package" translatable="false"></string>
+    <java-symbol type="string" name="config_wlan_network_service_package" />
+
+    <!-- IWLAN network service class name to bind to by default. If none is specified in an overlay,
+         an empty string is passed in -->
+    <string name="config_wlan_network_service_class" translatable="false"></string>
+    <java-symbol type="string" name="config_wlan_network_service_class" />
+
+    <!-- Telephony qualified networks service package name to bind to by default. -->
+    <string name="config_qualified_networks_service_package" translatable="false"></string>
+    <java-symbol type="string" name="config_qualified_networks_service_package" />
+
+    <!-- Telephony qualified networks service class name to bind to by default. -->
+    <string name="config_qualified_networks_service_class" translatable="false"></string>
+    <java-symbol type="string" name="config_qualified_networks_service_class" />
+
+    <!-- Telephony satellite service package name to bind to by default. -->
+    <string name="config_satellite_service_package" translatable="false"></string>
+    <java-symbol type="string" name="config_satellite_service_package" />
+
+    <!-- Telephony satellite gateway service package name to bind to by default. -->
+    <string name="config_satellite_gateway_service_package" translatable="false"></string>
+    <java-symbol type="string" name="config_satellite_gateway_service_package" />
+
+    <!-- Telephony pointing UI package name to be launched. -->
+    <string name="config_pointing_ui_package" translatable="false"></string>
+    <java-symbol type="string" name="config_pointing_ui_package" />
+
+    <!-- Telephony pointing UI class name to be launched. -->
+    <string name="config_pointing_ui_class" translatable="false"></string>
+    <java-symbol type="string" name="config_pointing_ui_class" />
+
+    <!-- Telephony resends received satellite datagram to listener
+         if ack is not received within this timeout -->
+    <integer name="config_timeout_to_receive_delivered_ack_millis">300000</integer>
+    <java-symbol type="integer" name="config_timeout_to_receive_delivered_ack_millis" />
+
+    <!-- Whether enhanced IWLAN handover check is enabled. If enabled, telephony frameworks
+         will not perform handover if the target transport is out of service, or VoPS not
+         supported. The network will be torn down on the source transport, and will be
+         re-established on the target transport when condition is allowed for bringing up a
+         new network. -->
+    <bool name="config_enhanced_iwlan_handover_check">true</bool>
+    <java-symbol type="bool" name="config_enhanced_iwlan_handover_check" />
+
+    <!-- Whether asynchronously update the subscription database or not. Async mode increases
+         the performance, but sync mode reduces the chance of database/cache out-of-sync. -->
+    <bool name="config_subscription_database_async_update">true</bool>
+    <java-symbol type="bool" name="config_subscription_database_async_update" />
+
+    <!-- Boolean indicating whether the emergency numbers for a country, sourced from modem/config,
+         should be ignored if that country is 'locked' (i.e. ignore_modem_config set to true) in
+         Android Emergency DB. If this value is true, emergency numbers for a country, sourced from
+         modem/config, will be ignored if that country is 'locked' in Android Emergency DB. -->
+    <bool name="ignore_modem_config_emergency_numbers">false</bool>
+    <java-symbol type="bool" name="ignore_modem_config_emergency_numbers" />
+
+    <!-- Boolean indicating whether emergency numbers routing from the android emergency number
+         database should be ignored (i.e. routing will always be set to UNKNOWN). If this value is
+         true, routing from the android emergency number database will be ignored. -->
+    <bool name="ignore_emergency_number_routing_from_db">false</bool>
+    <java-symbol type="bool" name="ignore_emergency_number_routing_from_db" />
+
+    <!-- Whether "Virtual DSDA", i.e. in-call IMS connectivity can be provided on both subs with
+         only single logical modem, by using its data connection in addition to cellular IMS. -->
+    <bool name="config_enable_virtual_dsda">false</bool>
+    <java-symbol type="bool" name="config_enable_virtual_dsda" />
+</resources>
