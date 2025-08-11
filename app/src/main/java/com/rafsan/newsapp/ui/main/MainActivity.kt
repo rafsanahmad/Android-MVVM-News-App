@@ -8,46 +8,37 @@
 package com.rafsan.newsapp.ui.main
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupWithNavController
-import com.rafsan.newsapp.R
-import com.rafsan.newsapp.base.BaseActivity
-import com.rafsan.newsapp.databinding.ActivityMainBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainActivity : BaseActivity<ActivityMainBinding>() {
-
-    val mainViewModel: MainViewModel by viewModels()
-
-    override fun onViewReady(savedInstanceState: Bundle?) {
-        super.onViewReady(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.title = "Today's News"
-        if (savedInstanceState == null) {
-            setupBottomNavigationBar()
-        }
-
-        savedInstanceState?.let {
-            mainViewModel.hideErrorToast()
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContent {
+            MaterialTheme {
+                Surface(color = MaterialTheme.colorScheme.background) {
+                    AppNavHost()
+                }
+            }
         }
     }
+}
 
-    override fun setBinding(): ActivityMainBinding = ActivityMainBinding.inflate(layoutInflater)
-
-    private fun setupBottomNavigationBar() {
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.newsNavHostFragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        binding.bottomNavigationView.setupWithNavController(navController)
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.feedFragment,
-                R.id.favoriteFragment
-            )
-        )
-        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+@Composable
+private fun AppNavHost() {
+    val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = "feed") {
+        composable("feed") { com.rafsan.newsapp.feature.news.FeedRoute(navController) }
+        composable("search") { com.rafsan.newsapp.feature.search.SearchRoute(navController) }
+        composable("favorites") { com.rafsan.newsapp.feature.favorite.FavoritesRoute(navController) }
+        composable("details") { com.rafsan.newsapp.feature.details.DetailsRoute(navController) }
     }
 }

@@ -10,7 +10,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
-    id("androidx.navigation.safeargs")
+
 }
 
 android {
@@ -155,18 +155,13 @@ dependencies {
     testImplementation(Deps.Test.Mockito.core)
     testImplementation(Deps.Test.Mockito.inline)
     testImplementation(Deps.Test.Mockito.kotlin)
-    testImplementation(Deps.AndroidX.Test.arch_core_testing)
-    testImplementation(Deps.AndroidX.Test.core)
-    testImplementation(Deps.Test.robolectric)
+    testImplementation(Deps.junit)
     testImplementation(Deps.Test.truth)
     testImplementation(Deps.Coroutines.test)
     testImplementation(Deps.OkHttp.mockWebServer)
-    androidTestImplementation(Deps.AndroidX.Test.arch_core_testing)
     androidTestImplementation(Deps.AndroidX.Test.junit)
     androidTestImplementation(Deps.AndroidX.Test.junitKtx)
     androidTestImplementation(Deps.AndroidX.Test.coreKtx)
-    androidTestImplementation(Deps.Test.Mockito.kotlin)
-    androidTestImplementation(Deps.Test.Mockito.dexMaker)
     androidTestImplementation(Deps.Coroutines.test) {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-debug")
     }
