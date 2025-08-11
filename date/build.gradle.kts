@@ -26,4 +26,7 @@ android {
 dependencies {
     implementation(Deps.Coroutines.core)
     implementation(Deps.AndroidX.ktx_core)
+    
+    testImplementation(Deps.junit)
+    testImplementation(Deps.Test.truth)
 }

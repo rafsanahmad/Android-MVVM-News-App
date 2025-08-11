@@ -55,7 +55,13 @@ dependencies {
     // Paging
     implementation(Deps.Paging.runtime)
 
+    // Timber
+    implementation(Deps.Timber.timber)
+
     testImplementation(Deps.junit)
     testImplementation(Deps.Coroutines.test)
+    testImplementation(Deps.Test.truth)
+    testImplementation(Deps.Test.Mockito.core)
+    testImplementation(Deps.Test.Mockito.kotlin)
     androidTestImplementation(Deps.AndroidX.Test.junit)
 }

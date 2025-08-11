@@ -50,7 +50,7 @@ android {
      flavorDimensions("default")
 
      buildTypes.all {
-         buildConfigField("String", "NEWS_API_KEY", '"YOUR_API_KEY"')
+         buildConfigField("String", "NEWS_API_KEY", "\"YOUR_API_KEY\"")
      }
 productFlavors {
         create("prod") {

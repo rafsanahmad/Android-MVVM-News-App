@@ -96,6 +96,7 @@ object Deps {
         const val navigationKtx =
             "androidx.navigation:navigation-ui-ktx:${Versions.navigationVersion}"
         const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigationVersion}"
+        const val hiltCompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
     }
 
     object Hilt {

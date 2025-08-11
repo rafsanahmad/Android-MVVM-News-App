@@ -43,6 +43,7 @@ dependencies {
     implementation(Deps.Compose.uiToolingPreview)
     implementation(Deps.Compose.material3)
     implementation(Deps.AndroidX.activity_compose)
+    implementation(Deps.Navigation.hiltCompose)
 
     implementation(Deps.Coil.compose)
 
@@ -55,6 +56,13 @@ dependencies {
     // Hilt
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
+
+    // Timber
+    implementation(Deps.Timber.timber)
+
+    testImplementation(Deps.junit)
+    testImplementation(Deps.Coroutines.test)
+    testImplementation(Deps.Test.truth)
 
     androidTestImplementation(platform(Deps.Compose.bom))
     androidTestImplementation(Deps.Compose.uiTestJunit4)

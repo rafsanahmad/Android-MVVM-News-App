@@ -6,6 +6,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import androidx.paging.map
 import com.rafsan.newsapp.core.database.NewsDao
 import com.rafsan.newsapp.core.database.NewsDatabase
 import com.rafsan.newsapp.core.database.entity.NewsArticleEntity
@@ -55,7 +56,7 @@ class NewsRepositoryImpl(
             config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
             remoteMediator = NewsRemoteMediator(countryCode, pageSize, apiKey, api, db),
             pagingSourceFactory = { dao.pagingSource() }
-        ).flow
+        ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
     override fun searchNews(query: String): Flow<PagingData<NewsArticle>> {
