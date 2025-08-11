@@ -1,3 +1,7 @@
+import com.android.build.api.dsl.Packaging
+import java.io.FileInputStream
+import java.util.Properties
+
 /*
  * *
  *  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
@@ -45,14 +49,28 @@ android {
                     )
                 )
             }
-                }
-     }
-     flavorDimensions("default")
+        }
+    }
+    flavorDimensions("default")
 
-     buildTypes.all {
-         buildConfigField("String", "NEWS_API_KEY", "\"YOUR_API_KEY\"")
-     }
-productFlavors {
+    // Read API key from local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties") // Use rootProject.file
+    if (localPropertiesFile.exists()) {
+        FileInputStream(localPropertiesFile).use { fis ->
+            localProperties.load(fis)
+        }
+    }
+    // Define WEATHER_API_KEY in BuildConfig. Fallback to a placeholder if not found.
+    val apiKey = localProperties.getProperty(
+        "NEWS_API_KEY",
+        "YOUR_API_KEY_HERE_IF_NOT_IN_LOCAL_PROPERTIES"
+    )
+
+    buildTypes.all {
+        buildConfigField("String", "NEWS_API_KEY", "\"${apiKey}\"")
+    }
+    productFlavors {
         create("prod") {
             applicationId = "com.rafsan.newsapp"
         }
@@ -75,11 +93,6 @@ productFlavors {
         }
     }
 
-    packagingOptions {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -96,9 +109,9 @@ productFlavors {
 
     testBuildType = "debug"
 
-    packagingOptions {
-        resources.excludes.add("META-INF/*")
-        resources.excludes.add(".readme")
+    packaging {
+        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        resources.excludes += "META-INF/LICENSE*" // Changed to use a wildcard
     }
 
     sourceSets {
@@ -107,8 +120,6 @@ productFlavors {
         test.java.srcDirs("$projectDir/src/testShared")
         androidTest.java.srcDirs("$projectDir/src/testShared")
     }
-
-
 }
 
 dependencies {

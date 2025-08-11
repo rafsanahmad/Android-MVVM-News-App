@@ -6,7 +6,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Named
 import javax.inject.Singleton
-import com.rafsan.newsapp.BuildConfig
 
 @Module
 @InstallIn(SingletonComponent::class)

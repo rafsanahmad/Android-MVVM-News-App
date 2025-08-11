@@ -1,11 +1,11 @@
 /*
  * *
- *  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
- *  * Copyright (c) 2021 . All rights reserved.
+ *  * Created by Rafsan Ahmad on 8/12/25, 12:01 AM
+ *  * Copyright (c) 2025 . All rights reserved.
  *
  */
 
-package com.rafsan.newsapp.ui.main
+package com.rafsan.newsapp
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,6 +17,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rafsan.newsapp.core.navigation.Screen
+import com.rafsan.newsapp.feature.details.DetailsRoute
+import com.rafsan.newsapp.feature.favorite.FavoritesRoute
+import com.rafsan.newsapp.feature.news.FeedRoute
+import com.rafsan.newsapp.feature.search.SearchRoute
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -37,9 +41,9 @@ class MainActivity : ComponentActivity() {
 private fun AppNavHost() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = Screen.Feed.route) {
-        composable(Screen.Feed.route) { com.rafsan.newsapp.feature.news.FeedRoute(navController) }
-        composable(Screen.Search.route) { com.rafsan.newsapp.feature.search.SearchRoute(navController) }
-        composable(Screen.Favorites.route) { com.rafsan.newsapp.feature.favorite.FavoritesRoute(navController) }
-        composable(Screen.Details.route) { com.rafsan.newsapp.feature.details.DetailsRoute(navController) }
+        composable(Screen.Feed.route) { FeedRoute(navController) }
+        composable(Screen.Search.route) { SearchRoute(navController) }
+        composable(Screen.Favorites.route) { FavoritesRoute(navController) }
+        composable(Screen.Details.route) { DetailsRoute(navController) }
     }
 }

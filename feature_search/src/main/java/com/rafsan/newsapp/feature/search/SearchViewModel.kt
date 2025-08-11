@@ -7,6 +7,7 @@ import com.rafsan.newsapp.core.ui.UiState
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.usecase.SearchNewsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -25,7 +26,7 @@ class SearchViewModel @Inject constructor(
 ) : ViewModel() {
     private val query = MutableStateFlow("")
 
-    @OptIn(FlowPreview::class)
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val results: StateFlow<PagingData<NewsArticle>> =
         query
             .debounce(500)

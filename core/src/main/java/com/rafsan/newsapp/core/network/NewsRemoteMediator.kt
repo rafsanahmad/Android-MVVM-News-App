@@ -7,7 +7,6 @@ import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import com.rafsan.newsapp.core.database.NewsDatabase
 import com.rafsan.newsapp.core.database.entity.NewsArticleEntity
-import com.rafsan.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
