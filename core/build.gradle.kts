@@ -56,5 +56,6 @@ dependencies {
     implementation(Deps.Paging.runtime)
 
     testImplementation(Deps.junit)
+    testImplementation(Deps.Coroutines.test)
     androidTestImplementation(Deps.AndroidX.Test.junit)
 }
