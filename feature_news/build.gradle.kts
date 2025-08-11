@@ -36,7 +36,6 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":domain"))
-    implementation(project(":date"))
 
     implementation(platform(Deps.Compose.bom))
     implementation(Deps.Compose.ui)

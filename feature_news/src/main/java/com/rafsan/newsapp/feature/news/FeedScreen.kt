@@ -17,6 +17,8 @@ import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.domain.model.NewsArticle
+import androidx.compose.ui.res.stringResource
+import com.rafsan.newsapp.feature.news.R
 
 @Composable
 fun FeedRoute(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
@@ -44,7 +46,7 @@ fun FeedScreen(
         ) { index ->
             val article = state[index]
             if (article == null) {
-                Text("Loading...", modifier = Modifier.padding(16.dp))
+                Text(stringResource(R.string.loading), modifier = Modifier.padding(16.dp))
             } else {
                 NewsRow(article, onClick)
             }
@@ -54,7 +56,7 @@ fun FeedScreen(
                 item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
             }
             is androidx.paging.LoadState.Error -> {
-                item { Text("Error: ${refresh.error.message}", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
+                item { Text(stringResource(R.string.error_with_message, refresh.error.message ?: ""), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
             }
             else -> {}
         }
@@ -63,7 +65,7 @@ fun FeedScreen(
                 item { CircularProgressIndicator(modifier = Modifier.padding(16.dp)) }
             }
             is androidx.paging.LoadState.Error -> {
-                item { Text("Error: ${append.error.message}", color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
+                item { Text(stringResource(R.string.error_with_message, append.error.message ?: ""), color = MaterialTheme.colorScheme.error, modifier = Modifier.padding(16.dp)) }
             }
             else -> {}
         }

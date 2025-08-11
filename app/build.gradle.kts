@@ -127,7 +127,7 @@ dependencies {
     //App Compat, layout, Core
     implementation(project(":core"))
     implementation(project(":domain"))
-    implementation(project(":date"))
+    // implementation(project(":date"))
     implementation(project(":feature_news"))
     implementation(project(":feature_favorite"))
     implementation(project(":feature_search"))

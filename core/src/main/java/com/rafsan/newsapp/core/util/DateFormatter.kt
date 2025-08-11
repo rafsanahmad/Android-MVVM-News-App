@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.date
+package com.rafsan.newsapp.core.util
 
 import java.text.SimpleDateFormat
 import java.util.Date

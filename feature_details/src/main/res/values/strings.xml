@@ -1,0 +1,4 @@
+<resources>
+    <string name="invalid_article">Invalid article</string>
+    <string name="favorite">Favorite</string>
+</resources>

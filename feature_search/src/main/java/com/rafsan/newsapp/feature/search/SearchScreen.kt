@@ -17,6 +17,8 @@ import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
+import androidx.compose.ui.res.stringResource
+import com.rafsan.newsapp.feature.search.R
 
 @Composable
 fun SearchRoute(navController: NavController, viewModel: SearchViewModel = hiltViewModel()) {
@@ -30,7 +32,7 @@ fun SearchRoute(navController: NavController, viewModel: SearchViewModel = hiltV
                 viewModel.onQueryChanged(it)
             },
             modifier = Modifier.padding(16.dp),
-            label = { Text("Search") }
+            label = { Text(stringResource(R.string.search)) }
         )
         LazyColumn {
             items(count = results.itemCount, key = results.itemKey { it.url ?: it.title ?: "" }) { index ->

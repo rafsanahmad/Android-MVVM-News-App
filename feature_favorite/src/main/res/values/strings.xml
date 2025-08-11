@@ -1,0 +1,5 @@
+<resources>
+    <string name="snackbar_remove_favorite_message">Remove from favorites?</string>
+    <string name="snackbar_remove_confirm_action">Confirm</string>
+    <string name="unfavorite">Unfavorite</string>
+</resources>

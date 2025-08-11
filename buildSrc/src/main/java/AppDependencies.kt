@@ -139,6 +139,7 @@ const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
         const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata"
         const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4"
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest"
+        const val material = "androidx.compose.material:material"
     }
 
     object Coil {

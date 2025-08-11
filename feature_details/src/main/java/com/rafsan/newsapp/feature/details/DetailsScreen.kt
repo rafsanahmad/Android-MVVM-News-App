@@ -19,6 +19,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.rafsan.newsapp.domain.model.NewsArticle
 import timber.log.Timber
+import androidx.compose.ui.res.stringResource
+import com.rafsan.newsapp.feature.details.R
 
 @Composable
 fun DetailsRoute(navController: NavController, viewModel: DetailsViewModel = hiltViewModel()) {
@@ -26,7 +28,7 @@ fun DetailsRoute(navController: NavController, viewModel: DetailsViewModel = hil
     val title = navController.previousBackStackEntry?.savedStateHandle?.get<String>("title")
     val image = navController.previousBackStackEntry?.savedStateHandle?.get<String>("image")
     if (url.isNullOrBlank()) {
-        Text("Invalid article")
+        Text(stringResource(R.string.invalid_article))
         return
     }
     DetailsScreen(url = url, onFavorite = {
@@ -52,7 +54,7 @@ private fun DetailsScreen(url: String, onFavorite: () -> Unit) {
             onFavorite()
             Timber.d("Favorited: %s", url)
         }) {
-            Icon(imageVector = Icons.Default.Favorite, contentDescription = "Favorite")
+            Icon(imageVector = Icons.Default.Favorite, contentDescription = stringResource(R.string.favorite))
         }
 
         SnackbarHost(hostState = snackbarHostState)
