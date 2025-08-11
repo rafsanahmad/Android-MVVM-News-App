@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.core.database
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -16,6 +17,9 @@ interface NewsDao {
 
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
+
+    @Query("SELECT * FROM news_articles ORDER BY id DESC")
+    fun pagingSource(): PagingSource<Int, NewsArticleEntity>
 
     @Delete
     suspend fun deleteNews(newsArticle: NewsArticleEntity)
