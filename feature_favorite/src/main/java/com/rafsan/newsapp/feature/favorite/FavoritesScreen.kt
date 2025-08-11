@@ -18,7 +18,6 @@ import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material.DismissValue
 import androidx.compose.ui.res.stringResource
-import com.rafsan.newsapp.feature.favorite.R
 import kotlinx.coroutines.launch
 import androidx.compose.material.ExperimentalMaterialApi
 
@@ -34,9 +33,11 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        LazyColumn(modifier = Modifier
-            .fillMaxSize()
-            .padding(padding)) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             items(items, key = { it.url ?: it.title ?: it.hashCode().toString() }) { article ->
                 var dismissed by remember { mutableStateOf(false) }
                 if (!dismissed) {
@@ -80,12 +81,20 @@ private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
                     .fillMaxSize()
                     .background(Color.Red),
                 contentAlignment = Alignment.CenterEnd
-            ) { Text(stringResource(R.string.unfavorite), color = Color.White, modifier = Modifier.padding(16.dp)) }
+            ) {
+                Text(
+                    stringResource(R.string.unfavorite),
+                    color = Color.White,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         },
         dismissContent = {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+            ) {
                 AsyncImage(model = item.urlToImage, contentDescription = null)
                 Column(modifier = Modifier.padding(start = 12.dp)) {
                     Text(text = item.title ?: "", style = MaterialTheme.typography.titleMedium)

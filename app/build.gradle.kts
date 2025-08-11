@@ -113,13 +113,6 @@ android {
         resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
         resources.excludes += "META-INF/LICENSE*" // Changed to use a wildcard
     }
-
-    sourceSets {
-        val test by getting
-        val androidTest by getting
-        test.java.srcDirs("$projectDir/src/testShared")
-        androidTest.java.srcDirs("$projectDir/src/testShared")
-    }
 }
 
 dependencies {
