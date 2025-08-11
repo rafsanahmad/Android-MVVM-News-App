@@ -14,11 +14,16 @@ plugins {
 }
 
 android {
+    namespace = "com.rafsan.newsapp"
     compileSdk = Deps.Versions.compile_sdk
 
     buildFeatures {
-        viewBinding = true
+        compose = true
         buildConfig = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Deps.Versions.composeCompiler
     }
 
     defaultConfig {
@@ -64,9 +69,19 @@ android {
             )
         }
     }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     testOptions {
@@ -88,42 +103,34 @@ android {
         androidTest.java.srcDirs("$projectDir/src/testShared")
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
+
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     //App Compat, layout, Core
-    implementation(Deps.AndroidX.appCompat)
-    implementation(Deps.AndroidX.constraint_layout)
-    implementation(Deps.AndroidX.ktx_core)
+    implementation(project(":core"))
+    implementation(project(":domain"))
+    implementation(project(":date"))
+    implementation(project(":feature_news"))
+    implementation(project(":feature_favorite"))
+    implementation(project(":feature_search"))
+    implementation(project(":feature_details"))
 
-    //Material
+    implementation(Deps.AndroidX.appCompat)
+    implementation(Deps.AndroidX.ktx_core)
     implementation(Deps.Google.material)
 
-    //Room
-    implementation(Deps.Room.runtime)
-    implementation(Deps.Room.ktx)
-    kapt(Deps.Room.compiler)
+    // Activity Compose
+    implementation(Deps.AndroidX.activity_compose)
 
-    // Activity KTX
-    implementation(Deps.AndroidX.ktx_activity)
-
-    // Lifecycle
-    implementation(Deps.Lifecycle.extensions)
-    implementation(Deps.Lifecycle.lifeCycleLiveData)
-    implementation(Deps.Lifecycle.viewmodel)
-    implementation(Deps.Lifecycle.lifeCycleRunTime)
-
-    // Retrofit
-    implementation(Deps.Retrofit.main)
-    implementation(Deps.Retrofit.converterGSON)
-
-    // OkHTTP
-    implementation(Deps.OkHttp.main)
-    implementation(Deps.OkHttp.logging_interceptor)
+    // Compose
+    implementation(platform(Deps.Compose.bom))
+    implementation(Deps.Compose.ui)
+    implementation(Deps.Compose.uiGraphics)
+    implementation(Deps.Compose.uiToolingPreview)
+    implementation(Deps.Compose.material3)
+    debugImplementation(Deps.Compose.uiTooling)
 
     // Coroutines
     implementation(Deps.Coroutines.core)
@@ -133,19 +140,15 @@ dependencies {
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
 
-    //Navigation
-    implementation(Deps.Navigation.navigationFragment)
-    implementation(Deps.Navigation.navigationKtx)
+    // Navigation Compose
+    implementation(Deps.Navigation.navigationCompose)
 
-    // Glide
-    implementation(Deps.Glide.runtime)
-    kapt(Deps.Glide.compiler)
+    // Paging Compose
+    implementation(Deps.Paging.runtime)
+    implementation(Deps.Paging.compose)
 
-    //Swipe Refresh Layout
-    implementation(Deps.SwipeRefreshLayout)
-
-    //Idling Resource
-    implementation(Deps.AndroidX.Test.Espresso.idling_resource)
+    // Coil
+    implementation(Deps.Coil.compose)
 
     //Testing dependencies
     testImplementation(Deps.junit)
@@ -167,19 +170,7 @@ dependencies {
     androidTestImplementation(Deps.Coroutines.test) {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-debug")
     }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.core) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.contrib) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.intents) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    debugImplementation(Deps.AndroidX.Test.fragmentTest) {
-        exclude(group = "androidx.test", module = "monitor")
-    }
-    debugImplementation(Deps.AndroidX.Test.core) {
-        exclude(group = "androidx.test", module = "monitor")
-    }
+    androidTestImplementation(platform(Deps.Compose.bom))
+    androidTestImplementation(Deps.Compose.uiTestJunit4)
+    debugImplementation(Deps.Compose.uiTestManifest)
 }
