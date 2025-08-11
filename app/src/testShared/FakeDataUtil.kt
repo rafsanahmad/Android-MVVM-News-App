@@ -7,16 +7,16 @@
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.rafsan.newsapp.data.model.NewsArticle
-import com.rafsan.newsapp.data.model.NewsResponse
-import com.rafsan.newsapp.data.model.Source
+import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.model.NewsResponse
+import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.state.NetworkState
 
 object FakeDataUtil {
     fun getFakeNewsArticleResponse(): NetworkState<NewsResponse> {
         val articles = getFakeArticles()
         val newsResponse = NewsResponse(
-            articles = articles, "200", 2
+            status = "200", totalResults = 2, articles = articles
         )
         return NetworkState.Success(newsResponse)
     }
@@ -31,14 +31,14 @@ object FakeDataUtil {
     fun getFakeArticles(): MutableList<NewsArticle> {
         val articleList: MutableList<NewsArticle> = arrayListOf()
         val source1 = Source(
-            id = 1, name = "BBC"
+            id = "1", name = "BBC"
         )
         val article1 = NewsArticle(
             id = 1, author = "A", content = "ABC", description = "Desc1", publishedAt = "",
             source = source1, title = "Title1", url = "https://google.com", urlToImage = ""
         )
         val source2 = Source(
-            id = 2, name = "CNN"
+            id = "2", name = "CNN"
         )
         val article2 = NewsArticle(
             id = 2, author = "B", content = "DEF", description = "Desc2", publishedAt = "",
@@ -52,7 +52,7 @@ object FakeDataUtil {
 
     fun getFakeArticle(): NewsArticle {
         val source1 = Source(
-            id = 1, name = "BBC"
+            id = "1", name = "BBC"
         )
         val article1 = NewsArticle(
             id = 1, author = "A", content = "ABC", description = "Desc1", publishedAt = "",
