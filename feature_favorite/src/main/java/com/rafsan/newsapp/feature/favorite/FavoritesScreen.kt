@@ -2,13 +2,15 @@ package com.rafsan.newsapp.feature.favorite
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -28,7 +30,6 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    // Precompute strings used in snackbar (avoid calling stringResource from inside coroutine)
     val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
     val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
@@ -38,7 +39,9 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
                 .fillMaxSize()
                 .padding(padding)
         ) {
-            items(items, key = { it.url ?: it.title ?: it.hashCode().toString() }) { article ->
+            itemsIndexed(items, key = { index, article ->
+                article.url ?: ((article.title ?: "") + "#" + index)
+            }) { _, article ->
                 var dismissed by remember { mutableStateOf(false) }
                 if (!dismissed) {
                     DismissibleItem(
@@ -95,10 +98,30 @@ private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                AsyncImage(model = item.urlToImage, contentDescription = null)
-                Column(modifier = Modifier.padding(start = 12.dp)) {
-                    Text(text = item.title ?: "", style = MaterialTheme.typography.titleMedium)
-                    Text(text = item.description ?: "", style = MaterialTheme.typography.bodyMedium)
+                AsyncImage(
+                    model = item.urlToImage,
+                    contentDescription = null,
+                    modifier = Modifier.size(96.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Column(
+                    modifier = Modifier
+                        .padding(start = 12.dp)
+                        .weight(1f)
+                ) {
+                    Text(
+                        text = item.title ?: "",
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = item.description ?: "",
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
         }
