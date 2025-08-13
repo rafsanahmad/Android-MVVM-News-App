@@ -4,7 +4,6 @@ import androidx.paging.PagingData
 import com.google.common.truth.Truth.assertThat
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.repository.NewsRepository
-import com.rafsan.newsapp.domain.usecase.SaveFavoriteUseCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

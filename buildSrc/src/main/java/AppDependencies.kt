@@ -17,9 +17,9 @@ object Deps {
         const val coroutinesVersion = "1.8.1"
         const val junit = "4.13.2"
         const val material = "1.12.0"
-        const val android_test = "1.6.1"
-        const val espresso = "3.6.1"
-        const val android_test_junit = "1.2.1"
+        const val android_test = "1.6.1" // For androidx.test:core, runner, rules
+        const val espresso = "3.6.1" // New version for espresso
+        const val android_test_junit = "1.2.1" // For androidx.test.ext:junit
         const val arch_core_testing = "2.2.0"
         const val ktx_core = "1.13.1"
         const val ktx_activity = "1.9.2"
@@ -36,11 +36,16 @@ object Deps {
         const val composeBom = "2024.06.00"
         const val composeCompiler = "1.5.14"
         const val coilVersion = "2.6.0"
+        // New testing versions
+        const val mockkVersion = "1.13.10"
+        const val turbineVersion = "1.1.0"
+        // hiltTestingVersion can reuse hiltVersion
+        // navigationTestingVersion can reuse navigationVersion
     }
 
     const val gradle_plugin = "com.android.tools.build:gradle:${Versions.gradle_plugin}"
 
-    const val junit = "junit:junit:${Versions.junit}"
+    const val junit = "junit:junit:${Versions.junit}" // Plain JUnit4
 
     object Google {
         const val material = "com.google.android.material:material:${Versions.material}"
@@ -65,14 +70,16 @@ object Deps {
         const val ktx_core = "androidx.core:core-ktx:${Versions.ktx_core}"
         const val ktx_activity = "androidx.activity:activity-ktx:${Versions.ktx_activity}"
         const val activity_compose = "androidx.activity:activity-compose:${Versions.ktx_activity}"
+        const val arch_core_testing = "androidx.arch.core:core-testing:${Versions.arch_core_testing}" // Added for clarity
 
         object Test {
             const val core = "androidx.test:core:${Versions.android_test}"
             const val rules = "androidx.test:rules:${Versions.android_test}"
             const val runner = "androidx.test:runner:${Versions.android_test}"
-            const val junit = "androidx.test.ext:junit:${Versions.android_test_junit}"
+            const val junit = "androidx.test.ext:junit:${Versions.android_test_junit}" // androidx.test.ext:junit
             const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
             const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
+            const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso}" // Added for clarity
         }
     }
 
@@ -97,14 +104,16 @@ object Deps {
             "androidx.navigation:navigation-ui-ktx:${Versions.navigationVersion}"
         const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigationVersion}"
         const val hiltCompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
+        const val testing = "androidx.navigation:navigation-testing:${Versions.navigationVersion}" // New
     }
 
     object Hilt {
         const val android = "com.google.dagger:hilt-android:${Versions.hiltVersion}"
         const val android_compiler =
-            "com.google.dagger:hilt-android-compiler:${Versions.hiltVersion}"
+            "com.google.dagger:hilt-android-compiler:${Versions.hiltVersion}" // Used for kaptAndroidTest
         const val gradlePlugin =
             "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltVersion}"
+        const val testing = "com.google.dagger:hilt-android-testing:${Versions.hiltVersion}" // New
     }
 
     object Retrofit {
@@ -129,7 +138,7 @@ object Deps {
      }
  
      object Compose {
-const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
+        const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
         const val ui = "androidx.compose.ui:ui"
         const val uiGraphics = "androidx.compose.ui:ui-graphics"
         const val uiTooling = "androidx.compose.ui:ui-tooling"
@@ -137,8 +146,8 @@ const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
         const val material3 = "androidx.compose.material3:material3"
         const val runtime = "androidx.compose.runtime:runtime"
         const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata"
-        const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4"
-        const val uiTestManifest = "androidx.compose.ui:ui-test-manifest"
+        const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4" // Already here
+        const val uiTestManifest = "androidx.compose.ui:ui-test-manifest" // Already here
         const val material = "androidx.compose.material:material"
     }
 
@@ -147,12 +156,18 @@ const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
     }
 
     object Test {
+        // Mockito is already here
         object Mockito {
             const val core = "org.mockito:mockito-core:5.12.0"
             const val inline = "org.mockito:mockito-inline:5.2.0"
             const val kotlin = "org.mockito.kotlin:mockito-kotlin:5.3.1"
         }
-        const val truth = "com.google.truth:truth:${Versions.truth}"
-        const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
+        // Adding new ones
+        object MockK { // New object for MockK
+            const val mockk = "io.mockk:mockk:${Versions.mockkVersion}"
+        }
+        const val turbine = "app.cash.turbine:turbine:${Versions.turbineVersion}" // New
+        const val truth = "com.google.truth:truth:${Versions.truth}" // Already here
+        const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}" // Already here
     }
 }

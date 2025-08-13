@@ -6,15 +6,13 @@ plugins {
 }
 
 android {
-    namespace = "com.rafsan.newsapp.core"
+    namespace = "com.rafsan.newsapp.data"
     compileSdk = Deps.Versions.compile_sdk
 
     defaultConfig {
         minSdk = Deps.Versions.min_sdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        buildConfigField("String", "API_KEY", "\"${System.getenv(\"NEWS_API_KEY\")}\"")
-        buildConfigField("String", "BASE_URL", "\"https://newsapi.org/v2/\"")
     }
 
     compileOptions {
@@ -30,38 +28,48 @@ android {
 }
 
 dependencies {
-    // AndroidX Core
-    implementation(Deps.AndroidX.core_ktx)
-    implementation(Deps.AndroidX.appcompat)
-    implementation(Deps.AndroidX.material)
-    implementation(Deps.AndroidX.constraint_layout) // If used for any core UI components/views
-    implementation(Deps.AndroidX.splash_screen)
+    // Project Dependencies
+    implementation(project(":core"))
+    implementation(project(":domain"))
 
-    // Hilt (If core provides any DI modules or needs injection itself)
+    // Hilt
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
-    kapt(Deps.Hilt.compiler) // If using @HiltViewModel in core (unlikely)
+    kapt(Deps.Hilt.compiler) // For HiltViewModel
+
+    // Room
+    implementation(Deps.AndroidX.Room.runtime)
+    implementation(Deps.AndroidX.Room.ktx)
+    kapt(Deps.AndroidX.Room.compiler)
+    implementation(Deps.AndroidX.Room.paging) // For Room Paging 3 integration
+
+    // Paging
+    implementation(Deps.AndroidX.Paging.runtime)
+
+    // Retrofit & OkHttp
+    implementation(Deps.Retrofit.main)
+    implementation(Deps.Retrofit.converterGSON)
+    implementation(Deps.OkHttp.main)
+    implementation(Deps.OkHttp.logging_interceptor)
 
     // Coroutines
     implementation(Deps.Coroutines.core)
     implementation(Deps.Coroutines.android)
 
-    // Paging (Common, if core defines base paging configs or uses PagingData directly)
-    implementation(Deps.AndroidX.Paging.common)
-
     // Timber
     implementation(Deps.Timber.timber)
-
-    // Network DTOs (if they remain in core, e.g., NewsResponse, ArticleDto)
-    // Assuming GSON for DTO serialization if not using Kotlinx Serialization
-    implementation(Deps.Retrofit.converterGSON) // For GSON annotations in DTOs
 
     // Testing
     testImplementation(Deps.Test.junit)
     testImplementation(Deps.Test.truth)
     testImplementation(Deps.Test.MockK.mockk)
     testImplementation(Deps.Coroutines.test)
+    testImplementation(Deps.AndroidX.arch_core_testing)
 
     androidTestImplementation(Deps.AndroidX.Test.junit)
     androidTestImplementation(Deps.AndroidX.Test.espresso_core)
+    androidTestImplementation(Deps.AndroidX.Test.runner)
+    androidTestImplementation(Deps.Test.MockK.mockk_android)
+    androidTestImplementation(Deps.Hilt.android_testing) // For Hilt testing
+    kaptAndroidTest(Deps.Hilt.android_compiler) // For Hilt testing
 }

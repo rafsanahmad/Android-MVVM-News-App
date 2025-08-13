@@ -5,8 +5,6 @@ import androidx.room.Room
 import com.rafsan.newsapp.core.database.NewsDao
 import com.rafsan.newsapp.core.database.NewsDatabase
 import com.rafsan.newsapp.core.network.NewsApi
-import com.rafsan.newsapp.core.repository.NewsRepositoryImpl
-import com.rafsan.newsapp.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,9 +46,4 @@ object CoreModule {
     @Provides
     @Singleton
     fun provideDao(db: NewsDatabase): NewsDao = db.newsDao()
-
-    @Provides
-    @Singleton
-    fun provideRepository(api: NewsApi, db: NewsDatabase, dao: NewsDao, @javax.inject.Named("newsApiKey") apiKey: String): NewsRepository =
-        NewsRepositoryImpl(api = api, db = db, dao = dao, apiKey = apiKey, pageSize = 15)
 }

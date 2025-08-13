@@ -1,10 +1,7 @@
 package com.rafsan.newsapp.core.di
 
 import com.rafsan.newsapp.domain.repository.NewsRepository
-import com.rafsan.newsapp.domain.usecase.DeleteFavoriteUseCase
-import com.rafsan.newsapp.domain.usecase.GetFavoritesUseCase
 import com.rafsan.newsapp.domain.usecase.GetTopHeadlinesUseCase
-import com.rafsan.newsapp.domain.usecase.SaveFavoriteUseCase
 import com.rafsan.newsapp.domain.usecase.SearchNewsUseCase
 import dagger.Module
 import dagger.Provides

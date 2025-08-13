@@ -19,14 +19,15 @@ import com.rafsan.newsapp.domain.model.NewsArticle
 import androidx.compose.material.SwipeToDismiss
 import androidx.compose.material.rememberDismissState
 import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.CircularProgressIndicator // Added import
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
-import androidx.compose.material.ExperimentalMaterialApi
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel = hiltViewModel()) {
-    val items by viewModel.favorites.collectAsState(initial = emptyList())
+    val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
@@ -34,35 +35,57 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            itemsIndexed(items, key = { index, article ->
-                article.url ?: ((article.title ?: "") + "#" + index)
-            }) { _, article ->
-                var dismissed by remember { mutableStateOf(false) }
-                if (!dismissed) {
-                    DismissibleItem(
-                        item = article,
-                        onDismiss = {
-                            dismissed = true
-                            coroutineScope.launch {
-                                val result = snackbarHostState.showSnackbar(
-                                    message = removeMessage,
-                                    actionLabel = confirmAction,
-                                    withDismissAction = true
-                                )
-                                if (result == SnackbarResult.ActionPerformed) {
-                                    viewModel.onDeleteFavorite(article)
-                                } else {
-                                    dismissed = false
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            when (val state = uiState) {
+                is FavoritesScreenState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                is FavoritesScreenState.Success -> {
+                    val items = state.articles
+                    // Note: Empty check within Success is redundant if Empty state is handled,
+                    // but can be kept for robustness or specific UI for Success but empty.
+                    if (items.isEmpty()) {
+                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Text(stringResource(R.string.no_favorite_articles_yet))
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            itemsIndexed(items, key = { index, article ->
+                                article.id ?: article.url ?: "${article.title ?: ""}_${index}"
+                            }) { _, article ->
+                                var dismissed by remember { mutableStateOf(false) }
+                                if (!dismissed) {
+                                    DismissibleItem(
+                                        item = article,
+                                        onDismiss = {
+                                            dismissed = true
+                                            coroutineScope.launch {
+                                                val result = snackbarHostState.showSnackbar(
+                                                    message = removeMessage,
+                                                    actionLabel = confirmAction,
+                                                    withDismissAction = true
+                                                )
+                                                if (result == SnackbarResult.ActionPerformed) {
+                                                    viewModel.onDeleteFavorite(article)
+                                                } else {
+                                                    dismissed = false
+                                                }
+                                            }
+                                        }
+                                    )
                                 }
                             }
                         }
-                    )
+                    }
                 }
+                is FavoritesScreenState.Empty -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(stringResource(R.string.no_favorite_articles_found))
+                    }
+                }
+                // Add is FavoritesScreenState.Error if defined in ViewModel
             }
         }
     }
@@ -71,11 +94,16 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
-    val dismissState = rememberDismissState(confirmStateChange = { value ->
-        if (value == DismissValue.DismissedToStart || value == DismissValue.DismissedToEnd) {
-            onDismiss(); true
-        } else false
-    })
+    val itemKey = item.id ?: item.url ?: item.title
+    val dismissState = rememberDismissState(
+        key = itemKey, 
+        confirmStateChange = { value ->
+            if (value == DismissValue.DismissedToStart || value == DismissValue.DismissedToEnd) {
+                onDismiss()
+                true
+            } else false
+        }
+    )
     SwipeToDismiss(
         state = dismissState,
         background = {

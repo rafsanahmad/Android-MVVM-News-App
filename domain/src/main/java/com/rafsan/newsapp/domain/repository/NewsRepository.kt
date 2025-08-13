@@ -7,9 +7,4 @@ import kotlinx.coroutines.flow.Flow
 interface NewsRepository {
     fun getTopHeadlines(countryCode: String): Flow<PagingData<NewsArticle>>
     fun searchNews(query: String): Flow<PagingData<NewsArticle>>
-
-    suspend fun saveNews(news: NewsArticle): Long
-    fun getSavedNews(): Flow<List<NewsArticle>>
-    suspend fun deleteNews(news: NewsArticle)
-    suspend fun deleteAllNews()
 }

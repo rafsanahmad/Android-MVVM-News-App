@@ -64,12 +64,25 @@ dependencies {
     // Timber
     implementation(Deps.Timber.timber)
 
+    // Unit Test Implementations
     testImplementation(Deps.junit)
     testImplementation(Deps.Coroutines.test)
     testImplementation(Deps.Test.truth)
+    testImplementation(Deps.AndroidX.arch_core_testing)
+    testImplementation(Deps.Test.MockK.mockk) // For SearchViewModelTest
+    testImplementation(Deps.Test.turbine)
 
+    // Android Instrumented UI Test Implementations
     androidTestImplementation(platform(Deps.Compose.bom))
     androidTestImplementation(Deps.Compose.uiTestJunit4)
+    androidTestImplementation(Deps.AndroidX.Test.junit) 
+    androidTestImplementation(Deps.AndroidX.Test.espresso_core)
+    androidTestImplementation(Deps.Hilt.testing)
+    kaptAndroidTest(Deps.Hilt.android_compiler)
+    androidTestImplementation(Deps.Coroutines.test)
+    androidTestImplementation(Deps.Navigation.testing)
+    androidTestImplementation(Deps.Test.MockK.mockk) // MockK for UI tests (SearchScreenTest)
+
     debugImplementation(Deps.Compose.uiTooling)
     debugImplementation(Deps.Compose.uiTestManifest)
 }

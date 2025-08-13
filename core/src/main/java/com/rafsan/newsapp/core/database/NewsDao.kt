@@ -18,12 +18,15 @@ interface NewsDao {
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
 
+    @Query("SELECT * FROM news_articles WHERE url = :articleUrl") // New method
+    suspend fun getArticleByUrl(articleUrl: String): NewsArticleEntity?
+
     @Query("SELECT * FROM news_articles ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, NewsArticleEntity>
 
     @Delete
     suspend fun deleteNews(newsArticle: NewsArticleEntity)
 
-    @Query("Delete FROM news_articles")
+    @Query("DELETE FROM news_articles")
     suspend fun deleteAllNews()
 }

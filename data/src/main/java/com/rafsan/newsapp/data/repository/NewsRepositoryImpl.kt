@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.core.repository
+package com.rafsan.newsapp.data.repository // Updated package
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
@@ -7,13 +7,14 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import androidx.paging.map
-import com.rafsan.newsapp.core.database.NewsDao
-import com.rafsan.newsapp.core.database.NewsDatabase
-import com.rafsan.newsapp.core.network.NewsApi
-import com.rafsan.newsapp.core.network.NewsRemoteMediator
-import com.rafsan.newsapp.domain.model.NewsArticle
-import com.rafsan.newsapp.domain.repository.NewsRepository
-import com.rafsan.newsapp.domain.mapper.toDomain
+import com.rafsan.newsapp.core.database.entity.NewsArticleEntity // From core.database.entity
+import com.rafsan.newsapp.core.mapper.toDomain // From core.mapper
+import com.rafsan.newsapp.data.database.NewsDao // From data.database
+import com.rafsan.newsapp.data.database.NewsDatabase // From data.database
+import com.rafsan.newsapp.data.network.NewsApi // From data.network
+import com.rafsan.newsapp.data.repository.paging.ArticleRemoteMediator // From data.repository.paging
+import com.rafsan.newsapp.domain.model.NewsArticle // From domain
+import com.rafsan.newsapp.domain.repository.NewsRepository // From domain
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -22,20 +23,23 @@ class NewsRepositoryImpl @Inject constructor(
     private val api: NewsApi,
     private val db: NewsDatabase,
     private val dao: NewsDao,
-    private val apiKey: String,
-    private val pageSize: Int
+    private val apiKey: String, // This will be provided by RepositoryModule in data layer
+    private val pageSize: Int // This will be provided by RepositoryModule in data layer
 ) : NewsRepository {
 
     @OptIn(ExperimentalPagingApi::class)
     override fun getTopHeadlines(countryCode: String): Flow<PagingData<NewsArticle>> {
+        val pagingSourceFactory = { dao.getNewsArticles() } // Assuming dao.getNewsArticles() returns PagingSource<Int, NewsArticleEntity>
         return Pager(
             config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
-            remoteMediator = NewsRemoteMediator(countryCode, pageSize, apiKey, api, db),
-            pagingSourceFactory = { dao.pagingSource() }
+            remoteMediator = ArticleRemoteMediator(countryCode, pageSize, apiKey, api, db, dao),
+            pagingSourceFactory = pagingSourceFactory
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
     override fun searchNews(query: String): Flow<PagingData<NewsArticle>> {
+        // Assuming searchNews in NewsApi returns NewsResponse which contains ArticleDto
+        // And ArticleDto has a toDomain() extension in core.mapper
         return Pager(
             config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
             pagingSourceFactory = {
@@ -44,11 +48,11 @@ class NewsRepositoryImpl @Inject constructor(
                         val page = params.key ?: 1
                         return try {
                             val response = api.searchNews(query, page, pageSize, apiKey)
-                            val body = response.body()
-                            val articles = body?.articles ?: emptyList()
-                            val nextKey = if (articles.isEmpty()) null else page + 1
+                            val articlesDto = response.articles ?: emptyList()
+                            val articlesDomain = articlesDto.map { it.toDomain() } // Assuming ArticleDto has toDomain
+                            val nextKey = if (articlesDomain.isEmpty()) null else page + 1
                             LoadResult.Page(
-                                data = articles,
+                                data = articlesDomain,
                                 prevKey = if (page == 1) null else page - 1,
                                 nextKey = nextKey
                             )
