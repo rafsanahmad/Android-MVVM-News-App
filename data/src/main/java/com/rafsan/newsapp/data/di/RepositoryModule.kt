@@ -1,14 +1,13 @@
-package com.rafsan.newsapp.data.di // Updated package
+package com.rafsan.newsapp.data.di
 
-import com.rafsan.newsapp.core.BuildConfig // From core
-import com.rafsan.newsapp.core.PagingConstants // From core
-import com.rafsan.newsapp.data.database.NewsDao // From data.database
-import com.rafsan.newsapp.data.database.NewsDatabase // From data.database
-import com.rafsan.newsapp.data.network.NewsApi // From data.network
-import com.rafsan.newsapp.data.repository.FavoriteRepositoryImpl // From data.repository
-import com.rafsan.newsapp.data.repository.NewsRepositoryImpl // From data.repository
-import com.rafsan.newsapp.domain.repository.FavoriteRepository // From domain
-import com.rafsan.newsapp.domain.repository.NewsRepository // From domain
+import com.rafsan.newsapp.core.PagingConstants
+import com.rafsan.newsapp.data.database.NewsDao
+import com.rafsan.newsapp.data.database.NewsDatabase
+import com.rafsan.newsapp.data.network.NewsApi
+import com.rafsan.newsapp.data.repository.FavoriteRepositoryImpl
+import com.rafsan.newsapp.data.repository.NewsRepositoryImpl
+import com.rafsan.newsapp.domain.repository.FavoriteRepository
+import com.rafsan.newsapp.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,9 +21,7 @@ object RepositoryModule {
     @Provides
     @Singleton
     @Named("ApiKey")
-    fun provideApiKey(): String {
-        return BuildConfig.NEWS_API_KEY
-    }
+    fun provideApiKey(): String = com.rafsan.newsapp.data.BuildConfig.NEWS_API_KEY
 
     @Provides
     @Singleton
@@ -39,15 +36,11 @@ object RepositoryModule {
         dao: NewsDao,
         @Named("ApiKey") apiKey: String,
         @Named("PageSize") pageSize: Int
-    ): NewsRepository {
-        return NewsRepositoryImpl(api, db, dao, apiKey, pageSize)
-    }
+    ): NewsRepository = NewsRepositoryImpl(api, db, dao, apiKey, pageSize)
 
     @Provides
     @Singleton
     fun provideFavoriteRepository(
         newsDao: NewsDao
-    ): FavoriteRepository {
-        return FavoriteRepositoryImpl(newsDao)
-    }
+    ): FavoriteRepository = FavoriteRepositoryImpl(newsDao)
 }

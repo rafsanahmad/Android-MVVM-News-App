@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("com.android.library")
     kotlin("android")
@@ -22,8 +25,25 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        buildConfig = true
+    buildFeatures { buildConfig = true }
+
+    // Read API key from local.properties
+    val localProperties = Properties()
+    val localPropertiesFile = rootProject.file("local.properties") // Use rootProject.file
+    if (localPropertiesFile.exists()) {
+        FileInputStream(localPropertiesFile).use { fis ->
+            localProperties.load(fis)
+        }
+    }
+    // Define WEATHER_API_KEY in BuildConfig. Fallback to a placeholder if not found.
+    val apiKey = localProperties.getProperty(
+        "NEWS_API_KEY",
+        "YOUR_API_KEY_HERE_IF_NOT_IN_LOCAL_PROPERTIES"
+    )
+
+    buildTypes.all {
+        buildConfigField("String", "NEWS_API_KEY", "\"${apiKey}\"")
+        buildConfigField("String", "BASE_URL", "\"https://newsapi.org/\"")
     }
 }
 
@@ -35,16 +55,15 @@ dependencies {
     // Hilt
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
-    kapt(Deps.Hilt.compiler) // For HiltViewModel
 
     // Room
-    implementation(Deps.AndroidX.Room.runtime)
-    implementation(Deps.AndroidX.Room.ktx)
-    kapt(Deps.AndroidX.Room.compiler)
-    implementation(Deps.AndroidX.Room.paging) // For Room Paging 3 integration
+    implementation(Deps.Room.runtime)
+    implementation(Deps.Room.ktx)
+    kapt(Deps.Room.compiler)
+    implementation(Deps.Room.paging) // For Room Paging 3 integration
 
     // Paging
-    implementation(Deps.AndroidX.Paging.runtime)
+    implementation(Deps.Paging.runtime)
 
     // Retrofit & OkHttp
     implementation(Deps.Retrofit.main)
@@ -66,10 +85,10 @@ dependencies {
     testImplementation(Deps.Coroutines.test)
     testImplementation(Deps.AndroidX.arch_core_testing)
 
-    androidTestImplementation(Deps.AndroidX.Test.junit)
-    androidTestImplementation(Deps.AndroidX.Test.espresso_core)
-    androidTestImplementation(Deps.AndroidX.Test.runner)
+    androidTestImplementation(Deps.Test.junit)
+    androidTestImplementation(Deps.Test.espresso_core)
+    androidTestImplementation(Deps.Test.runner)
     androidTestImplementation(Deps.Test.MockK.mockk_android)
-    androidTestImplementation(Deps.Hilt.android_testing) // For Hilt testing
-    kaptAndroidTest(Deps.Hilt.android_compiler) // For Hilt testing
+    androidTestImplementation(Deps.Hilt.android_testing)
+    kaptAndroidTest(Deps.Hilt.android_compiler)
 }

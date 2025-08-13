@@ -22,9 +22,12 @@ import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.domain.model.NewsArticle
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.paging.PagingData
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun FeedRoute(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
+fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
     val pagingItems = viewModel.headlines.collectAsLazyPagingItems()
     FeedScreen(
         state = pagingItems,
@@ -50,19 +53,26 @@ fun FeedScreen(
             is LoadState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
+
             is LoadState.Error -> {
                 val error = refreshState.error
                 Text(
-                    text = stringResource(com.rafsan.newsapp.feature.news.R.string.error_loading_feed, error.message ?: "Unknown error"),
+                    text = stringResource(
+                        R.string.error_loading_feed,
+                        error.message ?: "Unknown error"
+                    ),
                     color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.align(Alignment.Center).padding(16.dp),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(16.dp),
                     textAlign = TextAlign.Center
                 )
             }
+
             is LoadState.NotLoading -> {
                 if (state.itemCount == 0) {
                     Text(
-                        text = stringResource(com.rafsan.newsapp.feature.news.R.string.no_news_found),
+                        text = stringResource(R.string.no_news_found),
                         modifier = Modifier.align(Alignment.Center)
                     )
                 } else {
@@ -84,23 +94,32 @@ fun FeedScreen(
                             is LoadState.Loading -> {
                                 item {
                                     Box(
-                                        modifier = Modifier.fillMaxWidth().padding(16.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
                                         contentAlignment = Alignment.Center
                                     ) {
                                         CircularProgressIndicator()
                                     }
                                 }
                             }
+
                             is LoadState.Error -> {
                                 item {
                                     Text(
-                                        stringResource(com.rafsan.newsapp.feature.news.R.string.error_loading_more_news, appendState.error.message ?: "Unknown error"),
+                                        stringResource(
+                                            R.string.error_loading_more_news,
+                                            appendState.error.message ?: "Unknown error"
+                                        ),
                                         color = MaterialTheme.colorScheme.error,
-                                        modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                                        modifier = Modifier
+                                            .padding(16.dp)
+                                            .fillMaxWidth(),
                                         textAlign = TextAlign.Center
                                     )
                                 }
                             }
+
                             else -> {} // NotLoading or EndOfPaginationReached
                         }
                         // Similarly handle prepend state if your PagingConfig supports it
@@ -125,13 +144,16 @@ private fun NewsRow(
     ) {
         AsyncImage(
             model = article.urlToImage,
-            contentDescription = article.title ?: stringResource(com.rafsan.newsapp.feature.news.R.string.news_article_image),
+            contentDescription = article.title
+                ?: stringResource(R.string.news_article_image),
             modifier = Modifier.size(96.dp),
             contentScale = ContentScale.Crop
         )
-        Column(modifier = Modifier
-            .padding(start = 12.dp)
-            .weight(1f)) {
+        Column(
+            modifier = Modifier
+                .padding(start = 12.dp)
+                .weight(1f)
+        ) {
             Text(
                 text = article.title ?: "",
                 style = MaterialTheme.typography.titleMedium,
@@ -147,4 +169,35 @@ private fun NewsRow(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FeedScreenPreview() {
+    val sample = listOf(
+        NewsArticle(
+            id = 1,
+            author = "Author",
+            content = "Content",
+            description = "Description",
+            publishedAt = "2024-01-01",
+            source = null,
+            title = "Sample Article",
+            url = "https://example.com",
+            urlToImage = null
+        ),
+        NewsArticle(
+            id = 2,
+            author = "Author 2",
+            content = "Content 2",
+            description = "Another description",
+            publishedAt = "2024-01-02",
+            source = null,
+            title = "Another Article",
+            url = "https://example.com/2",
+            urlToImage = null
+        )
+    )
+    val pagingItems = flowOf(PagingData.from(sample)).collectAsLazyPagingItems()
+    FeedScreen(state = pagingItems, onClick = {})
 }

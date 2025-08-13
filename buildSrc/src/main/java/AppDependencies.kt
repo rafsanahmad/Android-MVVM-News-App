@@ -36,6 +36,7 @@ object Deps {
         const val composeBom = "2024.06.00"
         const val composeCompiler = "1.5.14"
         const val coilVersion = "2.6.0"
+
         // New testing versions
         const val mockkVersion = "1.13.10"
         const val turbineVersion = "1.1.0"
@@ -70,17 +71,8 @@ object Deps {
         const val ktx_core = "androidx.core:core-ktx:${Versions.ktx_core}"
         const val ktx_activity = "androidx.activity:activity-ktx:${Versions.ktx_activity}"
         const val activity_compose = "androidx.activity:activity-compose:${Versions.ktx_activity}"
-        const val arch_core_testing = "androidx.arch.core:core-testing:${Versions.arch_core_testing}" // Added for clarity
-
-        object Test {
-            const val core = "androidx.test:core:${Versions.android_test}"
-            const val rules = "androidx.test:rules:${Versions.android_test}"
-            const val runner = "androidx.test:runner:${Versions.android_test}"
-            const val junit = "androidx.test.ext:junit:${Versions.android_test_junit}" // androidx.test.ext:junit
-            const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
-            const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
-            const val espresso_core = "androidx.test.espresso:espresso-core:${Versions.espresso}" // Added for clarity
-        }
+        const val arch_core_testing =
+            "androidx.arch.core:core-testing:${Versions.arch_core_testing}" // Added for clarity
     }
 
     object Lifecycle {
@@ -102,9 +94,11 @@ object Deps {
             "androidx.navigation:navigation-fragment-ktx:${Versions.navigationVersion}"
         const val navigationKtx =
             "androidx.navigation:navigation-ui-ktx:${Versions.navigationVersion}"
-        const val navigationCompose = "androidx.navigation:navigation-compose:${Versions.navigationVersion}"
+        const val navigationCompose =
+            "androidx.navigation:navigation-compose:${Versions.navigationVersion}"
         const val hiltCompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
-        const val testing = "androidx.navigation:navigation-testing:${Versions.navigationVersion}" // New
+        const val testing =
+            "androidx.navigation:navigation-testing:${Versions.navigationVersion}" // New
     }
 
     object Hilt {
@@ -114,6 +108,8 @@ object Deps {
         const val gradlePlugin =
             "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltVersion}"
         const val testing = "com.google.dagger:hilt-android-testing:${Versions.hiltVersion}" // New
+        // Alias to match module usage
+        const val android_testing = testing
     }
 
     object Retrofit {
@@ -126,18 +122,19 @@ object Deps {
         const val logging_interceptor =
             "com.squareup.okhttp3:logging-interceptor:${Versions.okhttp}"
         const val mockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebServer}"
-        }
- 
-     object Paging {
-         const val runtime = "androidx.paging:paging-runtime:${Versions.pagingVersion}"
-         const val compose = "androidx.paging:paging-compose:${Versions.pagingVersion}"
-     }
- 
-     object Timber {
-         const val timber = "com.jakewharton.timber:timber:5.0.1"
-     }
- 
-     object Compose {
+    }
+
+    object Paging {
+        const val runtime = "androidx.paging:paging-runtime:${Versions.pagingVersion}"
+        const val compose = "androidx.paging:paging-compose:${Versions.pagingVersion}"
+        const val common = "androidx.paging:paging-common:${Versions.pagingVersion}"
+    }
+
+    object Timber {
+        const val timber = "com.jakewharton.timber:timber:5.0.1"
+    }
+
+    object Compose {
         const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
         const val ui = "androidx.compose.ui:ui"
         const val uiGraphics = "androidx.compose.ui:ui-graphics"
@@ -162,12 +159,26 @@ object Deps {
             const val inline = "org.mockito:mockito-inline:5.2.0"
             const val kotlin = "org.mockito.kotlin:mockito-kotlin:5.3.1"
         }
+
         // Adding new ones
         object MockK { // New object for MockK
             const val mockk = "io.mockk:mockk:${Versions.mockkVersion}"
+            const val mockk_android = "io.mockk:mockk-android:${Versions.mockkVersion}"
         }
+
         const val turbine = "app.cash.turbine:turbine:${Versions.turbineVersion}" // New
-        const val truth = "com.google.truth:truth:${Versions.truth}" // Already here
-        const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}" // Already here
+        const val truth = "com.google.truth:truth:${Versions.truth}"
+        const val robolectric =
+            "org.robolectric:robolectric:${Versions.robolectric}"
+
+        const val core = "androidx.test:core:${Versions.android_test}"
+        const val rules = "androidx.test:rules:${Versions.android_test}"
+        const val runner = "androidx.test:runner:${Versions.android_test}"
+        const val junit =
+            "androidx.test.ext:junit:${Versions.android_test_junit}" // androidx.test.ext:junit
+        const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
+        const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
+        const val espresso_core =
+            "androidx.test.espresso:espresso-core:${Versions.espresso}" // Added for clarity
     }
 }

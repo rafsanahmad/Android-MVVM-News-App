@@ -13,8 +13,6 @@ android {
         minSdk = Deps.Versions.min_sdk
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
-        buildConfigField("String", "API_KEY", "\"${System.getenv(\"NEWS_API_KEY\")}\"")
-        buildConfigField("String", "BASE_URL", "\"https://newsapi.org/v2/\"")
     }
 
     compileOptions {
@@ -24,44 +22,15 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-    buildFeatures {
-        buildConfig = true
-    }
+    buildFeatures { buildConfig = false }
 }
 
 dependencies {
-    // AndroidX Core
-    implementation(Deps.AndroidX.core_ktx)
-    implementation(Deps.AndroidX.appcompat)
-    implementation(Deps.AndroidX.material)
-    implementation(Deps.AndroidX.constraint_layout) // If used for any core UI components/views
-    implementation(Deps.AndroidX.splash_screen)
-
-    // Hilt (If core provides any DI modules or needs injection itself)
+    implementation(Deps.AndroidX.ktx_core)
+    implementation(Deps.AndroidX.appCompat)
+    implementation(Deps.Google.material)
+    implementation(Deps.Timber.timber)
+    implementation(Deps.Coroutines.core)
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
-    kapt(Deps.Hilt.compiler) // If using @HiltViewModel in core (unlikely)
-
-    // Coroutines
-    implementation(Deps.Coroutines.core)
-    implementation(Deps.Coroutines.android)
-
-    // Paging (Common, if core defines base paging configs or uses PagingData directly)
-    implementation(Deps.AndroidX.Paging.common)
-
-    // Timber
-    implementation(Deps.Timber.timber)
-
-    // Network DTOs (if they remain in core, e.g., NewsResponse, ArticleDto)
-    // Assuming GSON for DTO serialization if not using Kotlinx Serialization
-    implementation(Deps.Retrofit.converterGSON) // For GSON annotations in DTOs
-
-    // Testing
-    testImplementation(Deps.Test.junit)
-    testImplementation(Deps.Test.truth)
-    testImplementation(Deps.Test.MockK.mockk)
-    testImplementation(Deps.Coroutines.test)
-
-    androidTestImplementation(Deps.AndroidX.Test.junit)
-    androidTestImplementation(Deps.AndroidX.Test.espresso_core)
 }

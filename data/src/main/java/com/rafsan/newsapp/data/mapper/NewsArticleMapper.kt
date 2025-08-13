@@ -1,8 +1,8 @@
-package com.rafsan.newsapp.domain.mapper
+package com.rafsan.newsapp.data.mapper
 
-import com.rafsan.newsapp.core.database.entity.NewsArticleEntity
+import com.rafsan.newsapp.data.database.entity.NewsArticleEntity
 import com.rafsan.newsapp.domain.model.NewsArticle
-import com.rafsan.newsapp.domain.model.Source // Ensure this import is correct
+import com.rafsan.newsapp.domain.model.Source
 
 fun NewsArticleEntity.toDomain(): NewsArticle = NewsArticle(
     id = id,
@@ -10,7 +10,7 @@ fun NewsArticleEntity.toDomain(): NewsArticle = NewsArticle(
     content = content,
     description = description,
     publishedAt = publishedAt,
-    source = Source(sourceId, sourceName ?: ""), // Assuming domain.model.Source
+    source = Source(sourceId, sourceName ?: ""),
     title = title,
     url = url,
     urlToImage = urlToImage
@@ -28,3 +28,5 @@ fun NewsArticle.toEntity(): NewsArticleEntity = NewsArticleEntity(
     url = url,
     urlToImage = urlToImage
 )
+
+

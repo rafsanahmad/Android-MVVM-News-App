@@ -1,10 +1,10 @@
-package com.rafsan.newsapp.core.repository
+package com.rafsan.newsapp.data.repository
 
-import com.rafsan.newsapp.core.database.NewsDao
+import com.rafsan.newsapp.data.database.NewsDao
+import com.rafsan.newsapp.data.mapper.toDomain
+import com.rafsan.newsapp.data.mapper.toEntity
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.repository.FavoriteRepository
-import com.rafsan.newsapp.domain.mapper.toDomain
-import com.rafsan.newsapp.domain.mapper.toEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -35,3 +35,5 @@ class FavoriteRepositoryImpl @Inject constructor(
         newsDao.deleteAllNews()
     }
 }
+
+

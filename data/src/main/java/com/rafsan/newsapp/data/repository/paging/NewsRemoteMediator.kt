@@ -1,12 +1,13 @@
-package com.rafsan.newsapp.core.network
+package com.rafsan.newsapp.data.repository.paging
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.rafsan.newsapp.core.database.NewsDatabase
-import com.rafsan.newsapp.core.database.entity.NewsArticleEntity
+import com.rafsan.newsapp.data.database.NewsDatabase
+import com.rafsan.newsapp.data.database.entity.NewsArticleEntity
+import com.rafsan.newsapp.data.network.NewsApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -67,3 +68,5 @@ class NewsRemoteMediator(
         }
     }
 }
+
+

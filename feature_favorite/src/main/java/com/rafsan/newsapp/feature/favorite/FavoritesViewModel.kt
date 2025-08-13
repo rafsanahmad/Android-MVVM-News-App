@@ -9,14 +9,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// Sealed class for UI State
-sealed class FavoritesScreenState {
-    object Loading : FavoritesScreenState()
-    data class Success(val articles: List<NewsArticle>) : FavoritesScreenState()
-    object Empty : FavoritesScreenState()
-    // data class Error(val message: String) : FavoritesScreenState() 
-}
-
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
     private val manageFavoritesUseCase: ManageNewsFavoriteUseCase // Changed to new use case

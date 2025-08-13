@@ -25,21 +25,11 @@ android {
 }
 
 dependencies {
-    // Project Dependencies
     implementation(project(":core"))
-
-    // Hilt
+    implementation(Deps.Coroutines.core)
+    implementation(Deps.Paging.common)
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
-    kapt(Deps.Hilt.compiler) // For HiltViewModel if any UseCase is a ViewModel (uncommon)
-
-    // Coroutines
-    implementation(Deps.Coroutines.core)
-
-    // Paging (Common, as repository interfaces and UseCases might deal with PagingData)
-    implementation(Deps.AndroidX.Paging.common)
-
-    // Testing
     testImplementation(Deps.Test.junit)
     testImplementation(Deps.Test.truth)
     testImplementation(Deps.Test.MockK.mockk)

@@ -33,7 +33,8 @@ class DetailsViewModel @Inject constructor(
         // However, a full NewsArticle object is preferred.
         val title: String? = savedStateHandle.get<String>("title")
         val imageUrl: String? = savedStateHandle.get<String>("image")
-        val content: String? = savedStateHandle.get<String>("content") // Assuming content might be passed
+        val content: String? =
+            savedStateHandle.get<String>("content") // Assuming content might be passed
         val publishedAt: String? = savedStateHandle.get<String>("publishedAt")
         val sourceName: String? = savedStateHandle.get<String>("sourceName")
 
@@ -53,7 +54,8 @@ class DetailsViewModel @Inject constructor(
                 description = savedStateHandle.get<String>("description")
             )
             setArticle(articleFromNav) // Initialize with what we have
-            _uiState.value = DetailScreenState.Success(articleFromNav) // Show what we have initially
+            _uiState.value =
+                DetailScreenState.Success(articleFromNav) // Show what we have initially
         } else {
             _uiState.value = DetailScreenState.Error("Article details not found.")
         }
@@ -75,7 +77,7 @@ class DetailsViewModel @Inject constructor(
                 _uiState.value = DetailScreenState.Success(article)
             }
         } else if (_uiState.value !is DetailScreenState.Success) {
-             _uiState.value = DetailScreenState.Success(article)
+            _uiState.value = DetailScreenState.Success(article)
         }
     }
 
@@ -109,14 +111,8 @@ class DetailsViewModel @Inject constructor(
             }
         } ?: run {
             Timber.w("Current article for favorite action is null.")
-            _uiState.value = DetailScreenState.Error("Article data not available to update favorite.")
+            _uiState.value =
+                DetailScreenState.Error("Article data not available to update favorite.")
         }
     }
-}
-
-// Sealed class for Details Screen UI State (Task 3 & 10)
-sealed class DetailScreenState {
-    object Loading : DetailScreenState()
-    data class Success(val article: NewsArticle) : DetailScreenState()
-    data class Error(val message: String) : DetailScreenState()
 }

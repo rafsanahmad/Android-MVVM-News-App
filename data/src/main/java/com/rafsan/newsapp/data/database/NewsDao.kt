@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.core.database
+package com.rafsan.newsapp.data.database
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
@@ -6,7 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.rafsan.newsapp.core.database.entity.NewsArticleEntity
+import com.rafsan.newsapp.data.database.entity.NewsArticleEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -18,7 +18,7 @@ interface NewsDao {
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
 
-    @Query("SELECT * FROM news_articles WHERE url = :articleUrl") // New method
+    @Query("SELECT * FROM news_articles WHERE url = :articleUrl")
     suspend fun getArticleByUrl(articleUrl: String): NewsArticleEntity?
 
     @Query("SELECT * FROM news_articles ORDER BY id DESC")
@@ -30,3 +30,5 @@ interface NewsDao {
     @Query("DELETE FROM news_articles")
     suspend fun deleteAllNews()
 }
+
+

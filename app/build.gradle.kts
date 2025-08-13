@@ -1,7 +1,3 @@
-import com.android.build.api.dsl.Packaging
-import java.io.FileInputStream
-import java.util.Properties
-
 /*
  * *
  *  * Created by Rafsan Ahmad on 9/27/21, 5:30 PM
@@ -53,23 +49,6 @@ android {
     }
     flavorDimensions("default")
 
-    // Read API key from local.properties
-    val localProperties = Properties()
-    val localPropertiesFile = rootProject.file("local.properties") // Use rootProject.file
-    if (localPropertiesFile.exists()) {
-        FileInputStream(localPropertiesFile).use { fis ->
-            localProperties.load(fis)
-        }
-    }
-    // Define WEATHER_API_KEY in BuildConfig. Fallback to a placeholder if not found.
-    val apiKey = localProperties.getProperty(
-        "NEWS_API_KEY",
-        "YOUR_API_KEY_HERE_IF_NOT_IN_LOCAL_PROPERTIES"
-    )
-
-    buildTypes.all {
-        buildConfigField("String", "NEWS_API_KEY", "\"${apiKey}\"")
-    }
     productFlavors {
         create("prod") {
             applicationId = "com.rafsan.newsapp"
@@ -120,7 +99,7 @@ dependencies {
     //App Compat, layout, Core
     implementation(project(":core"))
     implementation(project(":domain"))
-    // implementation(project(":date"))
+    implementation(project(":data"))
     implementation(project(":feature_news"))
     implementation(project(":feature_favorite"))
     implementation(project(":feature_search"))
@@ -171,9 +150,9 @@ dependencies {
     testImplementation(Deps.Test.truth)
     testImplementation(Deps.Coroutines.test)
     testImplementation(Deps.OkHttp.mockWebServer)
-    androidTestImplementation(Deps.AndroidX.Test.junit)
-    androidTestImplementation(Deps.AndroidX.Test.junitKtx)
-    androidTestImplementation(Deps.AndroidX.Test.coreKtx)
+    androidTestImplementation(Deps.Test.junit)
+    androidTestImplementation(Deps.Test.junitKtx)
+    androidTestImplementation(Deps.Test.coreKtx)
     androidTestImplementation(Deps.Coroutines.test) {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-debug")
     }

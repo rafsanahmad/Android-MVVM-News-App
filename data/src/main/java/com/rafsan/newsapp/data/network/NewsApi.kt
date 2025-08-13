@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.core.network
+package com.rafsan.newsapp.data.network
 
 import com.rafsan.newsapp.domain.model.NewsResponse
 import retrofit2.Response
@@ -22,3 +22,5 @@ interface NewsApi {
         @Query("apiKey") apiKey: String
     ): Response<NewsResponse>
 }
+
+

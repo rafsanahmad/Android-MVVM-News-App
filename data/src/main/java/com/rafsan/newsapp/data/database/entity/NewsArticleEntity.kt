@@ -1,4 +1,4 @@
-package com.rafsan.newsapp.core.database.entity
+package com.rafsan.newsapp.data.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -17,3 +17,5 @@ data class NewsArticleEntity(
     val url: String?,
     val urlToImage: String?
 )
+
+

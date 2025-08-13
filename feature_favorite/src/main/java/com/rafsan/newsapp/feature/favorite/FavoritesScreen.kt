@@ -13,20 +13,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
+import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.domain.model.NewsArticle
-import androidx.compose.material.SwipeToDismiss
-import androidx.compose.material.rememberDismissState
-import androidx.compose.material.DismissValue
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.CircularProgressIndicator // Added import
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.rememberSwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel = hiltViewModel()) {
+fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -35,17 +33,25 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
             when (val state = uiState) {
                 is FavoritesScreenState.Loading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
+
                 is FavoritesScreenState.Success -> {
                     val items = state.articles
                     // Note: Empty check within Success is redundant if Empty state is handled,
                     // but can be kept for robustness or specific UI for Success but empty.
                     if (items.isEmpty()) {
-                         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
                             Text(stringResource(R.string.no_favorite_articles_yet))
                         }
                     } else {
@@ -80,6 +86,7 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
                         }
                     }
                 }
+
                 is FavoritesScreenState.Empty -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(stringResource(R.string.no_favorite_articles_found))
@@ -91,22 +98,21 @@ fun FavoritesRoute(navController: NavController, viewModel: FavoritesViewModel =
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
-    val itemKey = item.id ?: item.url ?: item.title
-    val dismissState = rememberDismissState(
-        key = itemKey, 
-        confirmStateChange = { value ->
-            if (value == DismissValue.DismissedToStart || value == DismissValue.DismissedToEnd) {
+    //val itemKey = item.id ?: item.url ?: item.title
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd) {
                 onDismiss()
                 true
             } else false
         }
     )
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = dismissState,
-        background = {
+        backgroundContent = {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -120,7 +126,7 @@ private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
                 )
             }
         },
-        dismissContent = {
+        content = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -154,4 +160,49 @@ private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
             }
         }
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FavoritesScreenPreview() {
+    val sample = listOf(
+        NewsArticle(
+            id = 1,
+            author = "Author",
+            content = "Content",
+            description = "Description",
+            publishedAt = "2024-01-01",
+            source = null,
+            title = "Sample Article",
+            url = "https://example.com",
+            urlToImage = null
+        ),
+        NewsArticle(
+            id = 2,
+            author = "Author 2",
+            content = "Content 2",
+            description = "Another description",
+            publishedAt = "2024-01-02",
+            source = null,
+            title = "Another Article",
+            url = "https://example.com/2",
+            urlToImage = null
+        )
+    )
+
+    // Stateless preview wrapper to minimize recomposition
+    @Composable
+    fun FavoritesList(articles: List<NewsArticle>, onDismiss: (NewsArticle) -> Unit) {
+        LazyColumn(modifier = Modifier.fillMaxSize()) {
+            itemsIndexed(articles) { _, article ->
+                DismissibleItem(item = article) { onDismiss(article) }
+            }
+        }
+    }
+
+    MaterialTheme {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            FavoritesList(articles = sample, onDismiss = {})
+        }
+    }
 }

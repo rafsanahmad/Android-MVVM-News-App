@@ -36,6 +36,7 @@ android {
 dependencies {
     implementation(project(":core"))
     implementation(project(":domain"))
+    implementation(project(":data"))
 
     implementation(platform(Deps.Compose.bom))
     implementation(Deps.Compose.ui)
@@ -75,8 +76,8 @@ dependencies {
     // Android Instrumented UI Test Implementations
     androidTestImplementation(platform(Deps.Compose.bom))
     androidTestImplementation(Deps.Compose.uiTestJunit4)
-    androidTestImplementation(Deps.AndroidX.Test.junit) 
-    androidTestImplementation(Deps.AndroidX.Test.espresso_core)
+    androidTestImplementation(Deps.Test.junit)
+    androidTestImplementation(Deps.Test.espresso_core)
     androidTestImplementation(Deps.Hilt.testing)
     kaptAndroidTest(Deps.Hilt.android_compiler)
     androidTestImplementation(Deps.Coroutines.test)
