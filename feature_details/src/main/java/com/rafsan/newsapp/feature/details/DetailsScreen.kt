@@ -30,8 +30,17 @@ fun DetailsRoute(
     val uiState by viewModel.uiState.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is DetailsViewEffect.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(context.getString(effect.message))
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -59,19 +68,7 @@ fun DetailsRoute(
             if (uiState is DetailScreenState.Success) {
                 val article = (uiState as DetailScreenState.Success).article
                 if (article.url != null) {
-                    // Ensure article has a URL to be identifiable for favouring
-                    FloatingActionButton(onClick = {
-                        viewModel.toggleFavorite()
-                        coroutineScope.launch {
-                            val message =
-                                if (viewModel.isFavorite.value) { // Check the latest state from ViewModel after toggle
-                                    context.getString(R.string.added_to_favorites)
-                                } else {
-                                    context.getString(R.string.removed_from_favorites)
-                                }
-                            snackbarHostState.showSnackbar(message)
-                        }
-                    }) {
+                    FloatingActionButton(onClick = viewModel::onFavoriteClicked) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = stringResource(id = if (isFavorite) R.string.unfavorite_action_desc else R.string.favorite_action_desc)

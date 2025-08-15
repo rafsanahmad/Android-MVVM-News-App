@@ -77,14 +77,14 @@ fun FeedScreenLayout(
             isRefreshing = isRefreshing,
             onRefresh = { state.refresh() }
         ) {
+import androidx.compose.ui.platform.LocalContext
+
             Box(modifier = Modifier.fillMaxSize()) {
                 if (state.loadState.refresh is LoadState.Error) {
                     val error = (state.loadState.refresh as LoadState.Error).error
+                    val errorMessage = getErrorMessage(error = error, context = LocalContext.current)
                     Text(
-                        text = stringResource(
-                            R.string.error_loading_feed,
-                            error.localizedMessage ?: "Unknown error"
-                        ),
+                        text = errorMessage,
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .align(Alignment.Center)
@@ -105,7 +105,8 @@ fun FeedScreenLayout(
                             count = state.itemCount,
                             key = { index ->
                                 val item = state.peek(index)
-                                item?.url ?: item?.id ?: "article_${index}"
+                                // Create a more robust key to prevent crashes
+                                item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" } ?: "article_${index}"
                             },
                             contentType = { "newsArticle" }
                         ) { index ->
@@ -134,11 +135,12 @@ fun FeedScreenLayout(
 
                                 is LoadState.Error -> {
                                     item {
+                                        val errorMessage = getErrorMessage(
+                                            error = appendState.error,
+                                            context = LocalContext.current
+                                        )
                                         Text(
-                                            stringResource(
-                                                R.string.error_loading_more_news,
-                                                appendState.error.localizedMessage ?: "Unknown error"
-                                            ),
+                                            text = errorMessage,
                                             color = MaterialTheme.colorScheme.error,
                                             modifier = Modifier
                                                 .padding(16.dp)
@@ -168,6 +170,25 @@ fun FeedScreenLayout(
                 }
             }
         }
+    }
+}
+
+import android.content.Context
+import retrofit2.HttpException
+import java.io.IOException
+
+private fun getErrorMessage(error: Throwable, context: Context): String {
+    return when (error) {
+        is IOException -> context.getString(R.string.error_network)
+        is HttpException -> {
+            val code = error.code()
+            if (code in 500..599) {
+                context.getString(R.string.error_server)
+            } else {
+                context.getString(R.string.error_http, code)
+            }
+        }
+        else -> context.getString(R.string.error_unknown)
     }
 }
 

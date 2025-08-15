@@ -57,8 +57,8 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
                             items(
                                 items = items,
                                 key = { article: NewsArticle ->
-                                    article.url ?: article.id ?: article.title
-                                    ?: "favorite_article_${article.hashCode()}"
+                                    // Create a more robust key to prevent crashes on duplicate URLs or titles
+                                    "${article.url ?: ""}-${article.publishedAt ?: ""}"
                                 },
                                 contentType = { "favoriteArticle" }
                             ) { article: NewsArticle ->

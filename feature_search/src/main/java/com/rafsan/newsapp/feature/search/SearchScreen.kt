@@ -212,7 +212,8 @@ private fun HandlePagingContent(
                         count = pagingItems.itemCount,
                         key = { index ->
                             val item = pagingItems.peek(index)
-                            item?.id ?: item?.url ?: "${item?.title ?: ""}_${index}"
+                            // Create a more robust key to prevent crashes
+                            item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" } ?: "search_article_${index}"
                         }
                     ) { index ->
                         val article = pagingItems[index]

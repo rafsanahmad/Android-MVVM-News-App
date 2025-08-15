@@ -1,7 +1,8 @@
 <resources>
     <string name="invalid_article">Invalid article</string>
     <string name="favorite">Favorite</string>
-    <string name="added_to_favorites">Item is added to favorite</string>
+    <string name="item_added_to_favorites">Item added to favorites</string>
+    <string name="item_already_in_favorites">This item is already in your favorites.</string>
     <string name="details_screen_title">Details</string>
     <string name="back_button_desc">Back</string>
     <string name="removed_from_favorites">Item removed from favorites</string>
