@@ -14,13 +14,14 @@ class FavoriteRepositoryImpl @Inject constructor(
 ) : FavoriteRepository {
 
     override fun getFavorites(): Flow<List<NewsArticle>> {
-        return newsDao.getAllNews().map { entities ->
+        return newsDao.getFavoriteNews().map { entities ->
             entities.map { it.toDomain() }
         }
     }
 
     override suspend fun addFavorite(article: NewsArticle): Long {
-        return newsDao.upsert(article.toEntity())
+        // When adding a favorite, we ensure the flag is set to true.
+        return newsDao.upsert(article.copy(isFavorite = true).toEntity())
     }
 
     override suspend fun removeFavorite(article: NewsArticle) {

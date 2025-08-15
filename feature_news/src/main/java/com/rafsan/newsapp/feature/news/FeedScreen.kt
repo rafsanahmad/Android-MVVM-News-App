@@ -1,16 +1,21 @@
 package com.rafsan.newsapp.feature.news
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,49 +34,66 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
     val pagingItems = viewModel.headlines.collectAsLazyPagingItems()
-    FeedScreenLayout( // Renamed to avoid confusion with the NavController version
+    val isOnline by viewModel.isOnline.collectAsState()
+
+    FeedScreenLayout(
         state = pagingItems,
+        isOnline = isOnline,
         onClick = { article ->
-            // Consider passing only article ID or URL and fetching fresh data in details screen
-            // to ensure data consistency if it can change.
             navController.currentBackStackEntry?.savedStateHandle?.set("url", article.url)
             navController.currentBackStackEntry?.savedStateHandle?.set("title", article.title)
             navController.currentBackStackEntry?.savedStateHandle?.set("image", article.urlToImage)
-            // Potentially pass other necessary fields like content, publishedAt, source etc.
             navController.navigate(Screen.Details.route)
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreenLayout( // Renamed
+fun FeedScreenLayout(
     state: LazyPagingItems<NewsArticle>,
+    isOnline: Boolean,
     onClick: (NewsArticle) -> Unit
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (val refreshState = state.loadState.refresh) {
-            is LoadState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
+    val isRefreshing = state.loadState.refresh is LoadState.Loading
 
-            is LoadState.Error -> {
-                val error = refreshState.error
+    Column(modifier = Modifier.fillMaxSize()) {
+        if (!isOnline) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Red)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
-                    text = stringResource(
-                        R.string.error_loading_feed,
-                        error.localizedMessage ?: "Unknown error" // Use localizedMessage for better user-facing errors
-                    ),
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp),
+                    text = stringResource(R.string.network_unavailable),
+                    color = Color.White,
                     textAlign = TextAlign.Center
                 )
             }
+        }
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = { state.refresh() }
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                if (state.loadState.refresh is LoadState.Error) {
+                    val error = (state.loadState.refresh as LoadState.Error).error
+                    Text(
+                        text = stringResource(
+                            R.string.error_loading_feed,
+                            error.localizedMessage ?: "Unknown error"
+                        ),
+                        color = MaterialTheme.colorScheme.error,
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(16.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
 
-            is LoadState.NotLoading -> {
-                if (state.itemCount == 0 && state.loadState.append.endOfPaginationReached) {
-                    // This handles the case where the list is empty AND no more data will be loaded.
+                if (state.itemCount == 0 && state.loadState.append.endOfPaginationReached && !isRefreshing) {
                     Text(
                         text = stringResource(R.string.no_news_found),
                         modifier = Modifier.align(Alignment.Center),
@@ -83,24 +105,18 @@ fun FeedScreenLayout( // Renamed
                             count = state.itemCount,
                             key = { index ->
                                 val item = state.peek(index)
-                                // Prioritize URL as it's more likely to be unique.
-                                // If your NewsArticle.id is guaranteed unique and non-null, use item?.id
-                                item?.url ?: item?.id ?: "article_${index}" // Fallback to index if both are null
+                                item?.url ?: item?.id ?: "article_${index}"
                             },
-                            contentType = { "newsArticle" } // Helps with recomposition performance
+                            contentType = { "newsArticle" }
                         ) { index ->
-                            val article = state[index] // Access item, may trigger load
+                            val article = state[index]
                             if (article != null) {
                                 NewsRow(article, onClick)
                             } else {
-                                // Placeholder for items that are not yet loaded (null items)
-                                // This can happen if placeholders are enabled in PagingConfig
-                                // You can put a shimmer or a simple placeholder here if needed
-                                Spacer(modifier = Modifier.height(100.dp).fillMaxWidth()) // Example placeholder height
+                                Spacer(modifier = Modifier.height(100.dp).fillMaxWidth())
                             }
                         }
 
-                        // Append state handling (loading more, error, end of list)
                         state.loadState.append.let { appendState ->
                             when (appendState) {
                                 is LoadState.Loading -> {

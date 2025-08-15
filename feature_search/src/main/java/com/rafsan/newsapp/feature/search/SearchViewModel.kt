@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
@@ -41,6 +42,7 @@ class SearchViewModel @Inject constructor(
                     searchNewsUseCase(currentSearchQuery) // Perform search
                 }
             }
+            .cachedIn(viewModelScope)
             // .onStart { uiState.value = UiState.Loading } // Removed: LoadState handled by PagingItems
             // .catch { e -> uiState.value = UiState.Error(...) } // Errors also handled by PagingItems LoadState
             .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())

@@ -4,6 +4,21 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 
+import com.rafsan.newsapp.core.util.NetworkMonitor
+import com.rafsan.newsapp.core.util.NetworkMonitorImpl
+import dagger.Binds
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
+
 @Module
 @InstallIn(SingletonComponent::class)
-object CoreModule
+abstract class CoreModule {
+
+    @Binds
+    @Singleton
+    abstract fun bindNetworkMonitor(
+        networkMonitor: NetworkMonitorImpl
+    ): NetworkMonitor
+}

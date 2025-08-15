@@ -46,9 +46,7 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             manageFavoritesUseCase.getFavorites()
                 .catch { e ->
-                    // Handle error state, e.g., by emitting a new state or logging
-                    // _uiState.value = FavoritesScreenState.Error(e.message ?: "Unknown error loading favorites")
-                    // For now, let's assume errors are not explicitly handled with a distinct UI state.
+                    _uiState.value = FavoritesScreenState.Error(e.message ?: "Unknown error loading favorites")
                 }
                 .map { articles ->
                     if (articles.isEmpty()) {

@@ -13,7 +13,8 @@ fun NewsArticleEntity.toDomain(): NewsArticle = NewsArticle(
     source = Source(sourceId, sourceName ?: ""),
     title = title,
     url = url,
-    urlToImage = urlToImage
+    urlToImage = urlToImage,
+    isFavorite = isFavorite
 )
 
 fun NewsArticle.toEntity(): NewsArticleEntity = NewsArticleEntity(
@@ -26,7 +27,8 @@ fun NewsArticle.toEntity(): NewsArticleEntity = NewsArticleEntity(
     sourceName = source?.name,
     title = title,
     url = url,
-    urlToImage = urlToImage
+    urlToImage = urlToImage,
+    isFavorite = isFavorite
 )
 
 

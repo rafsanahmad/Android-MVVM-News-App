@@ -18,6 +18,9 @@ interface NewsDao {
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
 
+    @Query("SELECT * FROM news_articles WHERE is_favorite = 1")
+    fun getFavoriteNews(): Flow<List<NewsArticleEntity>>
+
     @Query("SELECT * FROM news_articles WHERE url = :articleUrl")
     suspend fun getArticleByUrl(articleUrl: String): NewsArticleEntity?
 
@@ -26,6 +29,9 @@ interface NewsDao {
 
     @Delete
     suspend fun deleteNews(newsArticle: NewsArticleEntity)
+
+    @Query("DELETE FROM news_articles WHERE is_favorite = 0")
+    suspend fun deleteCachedArticles()
 
     @Query("DELETE FROM news_articles")
     suspend fun deleteAllNews()

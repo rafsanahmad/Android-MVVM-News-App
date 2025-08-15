@@ -14,5 +14,5 @@ sealed class FavoritesScreenState {
     object Loading : FavoritesScreenState()
     data class Success(val articles: List<NewsArticle>) : FavoritesScreenState()
     object Empty : FavoritesScreenState()
-    // data class Error(val message: String) : FavoritesScreenState()
+    data class Error(val message: String) : FavoritesScreenState()
 }

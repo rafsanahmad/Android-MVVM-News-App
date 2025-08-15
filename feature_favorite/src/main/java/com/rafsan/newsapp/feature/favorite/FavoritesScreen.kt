@@ -50,23 +50,25 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
                         }
                     } else {
                         LazyColumn(
-                            modifier = Modifier.fillMaxSize()
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(MaterialTheme.colorScheme.background)
                         ) {
-                            itemsIndexed(
+                            items(
                                 items = items,
-                                key = { _, article ->
+                                key = { article: NewsArticle ->
                                     article.url ?: article.id ?: article.title
                                     ?: "favorite_article_${article.hashCode()}"
                                 },
                                 contentType = { "favoriteArticle" }
-                            ) { index, article ->
+                            ) { article: NewsArticle ->
                                 DismissibleFavoriteItem(
                                     article = article,
                                     viewModel = viewModel, // Pass the actual viewModel instance
                                     snackbarHostState = snackbarHostState,
                                     coroutineScope = coroutineScope
                                 )
-                                if (index < items.lastIndex) {
+                                if (items.indexOf(article) < items.lastIndex) {
                                     HorizontalDivider()
                                 }
                             }
@@ -75,21 +77,38 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
                 }
 
                 is FavoritesScreenState.Empty -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Text(stringResource(R.string.no_favorite_articles_found))
                     }
                 }
-                // is FavoritesScreenState.Error -> { ... } // Optional: Handle error state
+                is FavoritesScreenState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class) // Changed from ExperimentalMaterial3Api
 @Composable
 private fun DismissibleFavoriteItem(
     article: NewsArticle,
-    viewModel: FavoritesViewModel, // Use the concrete FavoritesViewModel
+    viewModel: FavoritesViewModel,
     snackbarHostState: SnackbarHostState,
     coroutineScope: CoroutineScope
 ) {
@@ -97,55 +116,55 @@ private fun DismissibleFavoriteItem(
     val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
     val undoAction = stringResource(R.string.undo)
 
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { dismissValue ->
-            if (dismissValue == SwipeToDismissBoxValue.EndToStart || dismissValue == SwipeToDismissBoxValue.StartToEnd) {
+    // Using rememberDismissState from M2
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
                 coroutineScope.launch {
                     val snackbarResult = snackbarHostState.showSnackbar(
                         message = removeMessage,
                         actionLabel = undoAction,
-                        withDismissAction = true
+                        duration = SnackbarDuration.Short
                     )
-                    if (snackbarResult == SnackbarResult.ActionPerformed) { // "Undo" was pressed
-                        dismissState.reset()
-                    } else {
-                        // Snackbar dismissed (timeout or swiped away) or no action
+                    if (snackbarResult != SnackbarResult.ActionPerformed) {
                         viewModel.onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
                     }
                 }
-                return@rememberSwipeToDismissBoxState true
+                return@rememberDismissState true
             }
             false
         }
     )
 
-    SwipeToDismissBox(
+    // Using SwipeToDismiss from M2
+    SwipeToDismiss(
         state = dismissState,
-        backgroundContent = {
+        directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
+        background = {
             val color by animateColorAsState(
-                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) Color.Transparent else MaterialTheme.colorScheme.errorContainer,
+                targetValue = when (dismissState.targetValue) {
+                    DismissValue.Default -> Color.Transparent
+                    else -> MaterialTheme.colorScheme.errorContainer
+                },
                 label = "background color"
-            )
-            val iconColor by animateColorAsState(
-                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) Color.Transparent else MaterialTheme.colorScheme.onErrorContainer,
-                label = "icon color"
             )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(color)
                     .padding(horizontal = 16.dp),
-                contentAlignment = if (dismissState.direction == SwipeToDismissBoxValue.EndToStart) Alignment.CenterEnd else Alignment.CenterStart
+                contentAlignment = Alignment.CenterEnd
             ) {
                 Text(
                     stringResource(R.string.unfavorite),
-                    color = iconColor,
+                    color = MaterialTheme.colorScheme.onErrorContainer,
                     style = MaterialTheme.typography.labelLarge
                 )
             }
-        },
-        content = { FavoriteItemRow(article = currentArticle) }
-    )
+        }
+    ) {
+        FavoriteItemRow(article = currentArticle)
+    }
 }
 
 @Composable

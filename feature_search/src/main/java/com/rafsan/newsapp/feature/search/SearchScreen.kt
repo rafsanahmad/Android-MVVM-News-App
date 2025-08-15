@@ -137,6 +137,8 @@ private fun HandlePagingContent(
     pagingItems: LazyPagingItems<NewsArticle>,
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     when (val refreshState = pagingItems.loadState.refresh) {
         is LoadState.Loading -> {
             if (query.isNotBlank() && pagingItems.itemCount == 0) {
@@ -160,18 +162,15 @@ private fun HandlePagingContent(
 
         is LoadState.Error -> {
             if (query.isNotBlank()) {
+                val errorMessage = getErrorMessage(error = refreshState.error, context = context)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(16.dp),
                     contentAlignment = Alignment.Center
                 ) {
-                    val error = refreshState.error
                     Text(
-                        text = stringResource(
-                            id = R.string.error_searching_news,
-                            error.message ?: "Unknown error"
-                        ),
+                        text = errorMessage,
                         color = MaterialTheme.colorScheme.error,
                         textAlign = TextAlign.Center
                     )
@@ -252,6 +251,7 @@ private fun HandlePagingContent(
 
                         is LoadState.Error -> {
                             item {
+                                val errorMessage = getErrorMessage(error = appendState.error, context = context)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -259,23 +259,50 @@ private fun HandlePagingContent(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        stringResource(
-                                            id = R.string.error_loading_more_news,
-                                            appendState.error.message ?: "Unknown error"
-                                        ),
+                                        text = errorMessage,
                                         color = MaterialTheme.colorScheme.error,
                                         textAlign = TextAlign.Center
                                     )
                                 }
                             }
                         }
-
-                        else -> { /* No explicit else needed */
+                        is LoadState.NotLoading -> {
+                            if (appendState.endOfPaginationReached) {
+                                item {
+                                    Text(
+                                        text = stringResource(R.string.no_more_news_available),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                        textAlign = TextAlign.Center,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+import android.content.Context
+import retrofit2.HttpException
+import java.io.IOException
+
+private fun getErrorMessage(error: Throwable, context: Context): String {
+    return when (error) {
+        is IOException -> context.getString(R.string.error_network)
+        is HttpException -> {
+            val code = error.code()
+            if (code in 500..599) {
+                context.getString(R.string.error_server)
+            } else {
+                context.getString(R.string.error_http, code)
+            }
+        }
+        else -> context.getString(R.string.error_unknown)
     }
 }
 

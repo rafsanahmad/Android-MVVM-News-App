@@ -8,4 +8,9 @@
     <string name="no_results_found_for_query">No results found for \"%1$s\"</string>
     <string name="news_article_image_description">Image for news article</string>
     <string name="error_loading_more_news">Error loading more news: %1$s</string>
+    <string name="error_network">Network error. Please check your connection.</string>
+    <string name="error_server">Server error. Please try again later.</string>
+    <string name="error_http">An unexpected error occurred (Code: %1$d).</string>
+    <string name="error_unknown">An unknown error occurred.</string>
+    <string name="no_more_news_available">No more news item available.</string>
 </resources>
