@@ -49,14 +49,6 @@ private fun AppScaffold() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = backStackEntry?.destination
 
-    // Determine if TopAppBar and BottomNavigationBar should be shown
-    // val showBars = currentDestination?.route !in listOf(Screen.Details.route) // Example: Hide for DetailsScreen
-    // For SearchScreen, the screen itself provides a search bar in TopAppBar slot.
-    // So, the main Scaffold's TopAppBar should ideally be hidden for SearchScreen too.
-    // Or SearchScreen doesn't use the main Scaffold's topBar slot.
-    // My SearchScreen refactor uses its own Scaffold's topBar.
-    // So the main Scaffold's topBar should not render for SearchScreen.
-
     val showMainTopAppBar = when (currentDestination?.route) {
         Screen.Feed.route, Screen.Favorites.route -> true
         else -> false // Hide for Search (has its own), Details, etc.

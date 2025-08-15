@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.feature.favorite
 
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -10,27 +11,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.domain.model.NewsArticle
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.rememberSwipeToDismissBoxState
-import androidx.compose.material3.SwipeToDismissBoxValue
-import androidx.compose.ui.res.stringResource
+import com.rafsan.newsapp.domain.model.Source
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-
-    val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
-    val confirmAction = stringResource(R.string.snackbar_remove_confirm_action)
 
     Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
         Box(
@@ -45,8 +41,6 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
 
                 is FavoritesScreenState.Success -> {
                     val items = state.articles
-                    // Note: Empty check within Success is redundant if Empty state is handled,
-                    // but can be kept for robustness or specific UI for Success but empty.
                     if (items.isEmpty()) {
                         Box(
                             modifier = Modifier.fillMaxSize(),
@@ -58,29 +52,22 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            itemsIndexed(items, key = { index, article ->
-                                article.id ?: article.url ?: "${article.title ?: ""}_${index}"
-                            }) { _, article ->
-                                var dismissed by remember { mutableStateOf(false) }
-                                if (!dismissed) {
-                                    DismissibleItem(
-                                        item = article,
-                                        onDismiss = {
-                                            dismissed = true
-                                            coroutineScope.launch {
-                                                val result = snackbarHostState.showSnackbar(
-                                                    message = removeMessage,
-                                                    actionLabel = confirmAction,
-                                                    withDismissAction = true
-                                                )
-                                                if (result == SnackbarResult.ActionPerformed) {
-                                                    viewModel.onDeleteFavorite(article)
-                                                } else {
-                                                    dismissed = false
-                                                }
-                                            }
-                                        }
-                                    )
+                            itemsIndexed(
+                                items = items,
+                                key = { _, article ->
+                                    article.url ?: article.id ?: article.title
+                                    ?: "favorite_article_${article.hashCode()}"
+                                },
+                                contentType = { "favoriteArticle" }
+                            ) { index, article ->
+                                DismissibleFavoriteItem(
+                                    article = article,
+                                    viewModel = viewModel, // Pass the actual viewModel instance
+                                    snackbarHostState = snackbarHostState,
+                                    coroutineScope = coroutineScope
+                                )
+                                if (index < items.lastIndex) {
+                                    HorizontalDivider()
                                 }
                             }
                         }
@@ -92,7 +79,7 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
                         Text(stringResource(R.string.no_favorite_articles_found))
                     }
                 }
-                // Add is FavoritesScreenState.Error if defined in ViewModel
+                // is FavoritesScreenState.Error -> { ... } // Optional: Handle error state
             }
         }
     }
@@ -100,109 +87,130 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DismissibleItem(item: NewsArticle, onDismiss: () -> Unit) {
-    //val itemKey = item.id ?: item.url ?: item.title
+private fun DismissibleFavoriteItem(
+    article: NewsArticle,
+    viewModel: FavoritesViewModel, // Use the concrete FavoritesViewModel
+    snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope
+) {
+    val currentArticle by rememberUpdatedState(article)
+    val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
+    val undoAction = stringResource(R.string.undo)
+
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd) {
-                onDismiss()
-                true
-            } else false
+        confirmValueChange = { dismissValue ->
+            if (dismissValue == SwipeToDismissBoxValue.EndToStart || dismissValue == SwipeToDismissBoxValue.StartToEnd) {
+                coroutineScope.launch {
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = removeMessage,
+                        actionLabel = undoAction,
+                        withDismissAction = true
+                    )
+                    if (snackbarResult == SnackbarResult.ActionPerformed) { // "Undo" was pressed
+                        dismissState.reset()
+                    } else {
+                        // Snackbar dismissed (timeout or swiped away) or no action
+                        viewModel.onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
+                    }
+                }
+                return@rememberSwipeToDismissBoxState true
+            }
+            false
         }
     )
+
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
+            val color by animateColorAsState(
+                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) Color.Transparent else MaterialTheme.colorScheme.errorContainer,
+                label = "background color"
+            )
+            val iconColor by animateColorAsState(
+                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.Settled) Color.Transparent else MaterialTheme.colorScheme.onErrorContainer,
+                label = "icon color"
+            )
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Red),
-                contentAlignment = Alignment.CenterEnd
+                    .background(color)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = if (dismissState.direction == SwipeToDismissBoxValue.EndToStart) Alignment.CenterEnd else Alignment.CenterStart
             ) {
                 Text(
                     stringResource(R.string.unfavorite),
-                    color = Color.White,
-                    modifier = Modifier.padding(16.dp)
+                    color = iconColor,
+                    style = MaterialTheme.typography.labelLarge
                 )
             }
         },
-        content = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-            ) {
-                AsyncImage(
-                    model = item.urlToImage,
-                    contentDescription = null,
-                    modifier = Modifier.size(96.dp),
-                    contentScale = ContentScale.Crop
-                )
-                Column(
-                    modifier = Modifier
-                        .padding(start = 12.dp)
-                        .weight(1f)
-                ) {
-                    Text(
-                        text = item.title ?: "",
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = item.description ?: "",
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
-        }
+        content = { FavoriteItemRow(article = currentArticle) }
     )
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun FavoritesScreenPreview() {
-    val sample = listOf(
-        NewsArticle(
-            id = 1,
-            author = "Author",
-            content = "Content",
-            description = "Description",
-            publishedAt = "2024-01-01",
-            source = null,
-            title = "Sample Article",
-            url = "https://example.com",
-            urlToImage = null
-        ),
-        NewsArticle(
-            id = 2,
-            author = "Author 2",
-            content = "Content 2",
-            description = "Another description",
-            publishedAt = "2024-01-02",
-            source = null,
-            title = "Another Article",
-            url = "https://example.com/2",
-            urlToImage = null
+private fun FavoriteItemRow(article: NewsArticle) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surface)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AsyncImage(
+            model = article.urlToImage,
+            contentDescription = stringResource(R.string.article_image_description),
+            modifier = Modifier.size(96.dp),
+            contentScale = ContentScale.Crop
         )
-    )
-
-    // Stateless preview wrapper to minimize recomposition
-    @Composable
-    fun FavoritesList(articles: List<NewsArticle>, onDismiss: (NewsArticle) -> Unit) {
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            itemsIndexed(articles) { _, article ->
-                DismissibleItem(item = article) { onDismiss(article) }
+        Column(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .weight(1f)
+        ) {
+            Text(
+                text = article.title ?: "",
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = article.description ?: "",
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+            )
+            article.source?.name?.let {
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.labelSmall,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }
+}
 
+// --- Preview Section ---
+
+@Preview(showBackground = true, name = "Favorite Item Row Preview")
+@Composable
+private fun FavoriteItemRowPreview() {
+    val sampleArticle = NewsArticle(
+        id = 1,
+        author = "Author X",
+        content = "Some interesting content here.",
+        description = "This is a sample description of a news article that might be a bit long and could overflow.",
+        publishedAt = "2024-07-30T10:00:00Z",
+        source = Source(id = "src-id", name = "Sample News Source"),
+        title = "Sample Favorite Article Title - Lorem Ipsum Dolor Sit Amet",
+        url = "https://example.com/sample-article",
+        urlToImage = "https://example.com/image.jpg"
+    )
     MaterialTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            FavoritesList(articles = sample, onDismiss = {})
-        }
+        FavoriteItemRow(article = sampleArticle)
     }
 }

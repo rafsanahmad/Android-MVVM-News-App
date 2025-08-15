@@ -7,4 +7,6 @@
     <string name="no_favorite_articles_yet">No favorite articles yet.</string>
     <string name="back">Back</string>
     <string name="favorites_title">Favorites</string>
+    <string name="undo">Undo</string>
+    <string name="article_image_description">image description</string>
 </resources>

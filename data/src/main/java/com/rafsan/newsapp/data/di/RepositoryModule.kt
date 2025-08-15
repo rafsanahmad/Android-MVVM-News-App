@@ -1,6 +1,6 @@
 package com.rafsan.newsapp.data.di
 
-import com.rafsan.newsapp.core.PagingConstants
+import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.data.database.NewsDao
 import com.rafsan.newsapp.data.database.NewsDatabase
 import com.rafsan.newsapp.data.network.NewsApi

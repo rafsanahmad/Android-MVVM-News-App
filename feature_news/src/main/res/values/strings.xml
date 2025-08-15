@@ -6,4 +6,5 @@
     <string name="no_news_found">No news found.</string>
     <string name="error_loading_more_news">Error loading more news: %s</string>
     <string name="news_article_image">News article image</string>
+    <string name="no_more_news_available">No more news item available.</string>
 </resources>
