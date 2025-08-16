@@ -5,14 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.*
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -114,7 +107,7 @@ private fun FavoritesScreenLayout(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DismissibleFavoriteItem(
     article: NewsArticle,
@@ -126,9 +119,9 @@ private fun DismissibleFavoriteItem(
     val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
     val undoAction = stringResource(R.string.undo)
 
-    val dismissState = rememberDismissState(
-        confirmStateChange = {
-            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = {
+            if (it != SwipeToDismissBoxValue.Settled) {
                 coroutineScope.launch {
                     val snackbarResult = snackbarHostState.showSnackbar(
                         message = removeMessage,
@@ -139,19 +132,18 @@ private fun DismissibleFavoriteItem(
                         onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
                     }
                 }
-                return@rememberDismissState true
+                return@rememberSwipeToDismissBoxState true
             }
             false
         }
     )
 
-    SwipeToDismiss(
+    SwipeToDismissBox(
         state = dismissState,
-        directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
-        background = {
+        backgroundContent = {
             val color by animateColorAsState(
                 targetValue = when (dismissState.targetValue) {
-                    DismissValue.Default -> Color.Transparent
+                    SwipeToDismissBoxValue.Settled -> Color.Transparent
                     else -> MaterialTheme.colorScheme.errorContainer
                 },
                 label = "background color"
