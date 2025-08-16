@@ -19,11 +19,17 @@ import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import javax.inject.Inject
 
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+
 @HiltViewModel
 class FeedViewModel @Inject constructor(
-    getTopHeadlinesUseCase: GetTopHeadlinesUseCase,
+    private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase,
     networkMonitor: NetworkMonitor
 ) : ViewModel() {
+
+    private val _selectedCountryCode = MutableStateFlow(PagingConstants.DEFAULT_COUNTRY_CODE)
+    val selectedCountryCode: StateFlow<String> = _selectedCountryCode.asStateFlow()
 
     val isOnline: StateFlow<Boolean> = networkMonitor.isOnline
         .stateIn(
@@ -32,8 +38,13 @@ class FeedViewModel @Inject constructor(
             initialValue = true
         )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val headlines: StateFlow<PagingData<NewsArticle>> =
-        getTopHeadlinesUseCase(countryCode = PagingConstants.DEFAULT_COUNTRY_CODE)
+        selectedCountryCode
+            .distinctUntilChanged()
+            .flatMapLatest { countryCode ->
+                getTopHeadlinesUseCase(countryCode = countryCode)
+            }
             .onStart { uiState.value = UiState.Loading }
             .catch { e ->
                 Timber.e(e, "Failed to load headlines")
@@ -43,4 +54,8 @@ class FeedViewModel @Inject constructor(
             .stateIn(viewModelScope, SharingStarted.Lazily, PagingData.empty())
 
     val uiState: MutableStateFlow<UiState<Unit>> = MutableStateFlow(UiState.Idle)
+
+    fun selectCountry(countryCode: String) {
+        _selectedCountryCode.value = countryCode
+    }
 }

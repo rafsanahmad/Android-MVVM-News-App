@@ -31,14 +31,23 @@ import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.flowOf
 
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.TextField
+import com.rafsan.newsapp.feature.news.model.supportedCountries
+
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
     val pagingItems = viewModel.headlines.collectAsLazyPagingItems()
     val isOnline by viewModel.isOnline.collectAsState()
+    val selectedCountryCode by viewModel.selectedCountryCode.collectAsState()
 
     FeedScreenLayout(
         state = pagingItems,
         isOnline = isOnline,
+        selectedCountryCode = selectedCountryCode,
+        onCountrySelected = viewModel::selectCountry,
         onClick = { article ->
             navController.currentBackStackEntry?.savedStateHandle?.set("url", article.url)
             navController.currentBackStackEntry?.savedStateHandle?.set("title", article.title)
@@ -53,11 +62,52 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
 fun FeedScreenLayout(
     state: LazyPagingItems<NewsArticle>,
     isOnline: Boolean,
+    selectedCountryCode: String,
+    onCountrySelected: (String) -> Unit,
     onClick: (NewsArticle) -> Unit
 ) {
     val isRefreshing = state.loadState.refresh is LoadState.Loading
+    var expanded by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                TextField(
+                    value = supportedCountries.find { it.code == selectedCountryCode }?.name ?: "",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Country") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false }
+                ) {
+                    supportedCountries.forEach { country ->
+                        DropdownMenuItem(
+                            text = { Text(country.name) },
+                            onClick = {
+                                onCountrySelected(country.code)
+                                expanded = false
+                            }
+                        )
+                    }
+                }
+            }
+        }
+
         if (!isOnline) {
             Box(
                 modifier = Modifier
