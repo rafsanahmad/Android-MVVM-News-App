@@ -2,6 +2,7 @@ package com.rafsan.newsapp.feature.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.usecase.ManageNewsFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*

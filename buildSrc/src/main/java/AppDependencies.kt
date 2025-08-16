@@ -33,7 +33,7 @@ object Deps {
         const val robolectric = "4.12.2"
         const val navigationVersion = "2.7.7"
         const val pagingVersion = "3.3.2"
-        const val composeBom = "2025.08.00"
+        const val composeBom = "2024.06.00"
         const val composeCompiler = "1.5.14"
         const val coilVersion = "2.6.0"
 
@@ -146,6 +146,7 @@ object Deps {
         const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4" // Already here
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest" // Already here
         const val material = "androidx.compose.material:material"
+        const val pull_refresh = "androidx.compose.material3:material3-pull-refresh"
     }
 
     object Coil {

@@ -12,10 +12,17 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
+import androidx.annotation.StringRes
+import com.rafsan.newsapp.feature.details.R
+
+sealed class DetailsViewEffect {
+    data class ShowSnackbar(@StringRes val message: Int) : DetailsViewEffect()
+}
+
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val manageNewsFavoriteUseCase: ManageNewsFavoriteUseCase,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val articleUrl: String? = savedStateHandle.get<String>("url")
