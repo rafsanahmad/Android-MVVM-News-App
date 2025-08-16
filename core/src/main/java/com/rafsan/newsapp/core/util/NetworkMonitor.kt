@@ -63,5 +63,5 @@ class NetworkMonitorImpl @Inject constructor(
             connectivityManager.unregisterNetworkCallback(callback)
         }
     }
-    .conflate()
+        .conflate()
 }

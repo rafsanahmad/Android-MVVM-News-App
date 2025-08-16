@@ -4,11 +4,11 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.paging.PagingData
+import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.rafsan.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.flowOf
-import androidx.paging.PagingData
-import androidx.paging.compose.collectAsLazyPagingItems
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

@@ -214,7 +214,8 @@ private fun HandlePagingContent(
                         key = { index ->
                             val item = pagingItems.peek(index)
                             // Create a more robust key to prevent crashes
-                            item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" } ?: "search_article_${index}"
+                            item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" }
+                                ?: "search_article_${index}"
                         }
                     ) { index ->
                         val article = pagingItems[index]
@@ -253,7 +254,8 @@ private fun HandlePagingContent(
 
                         is LoadState.Error -> {
                             item {
-                                val errorMessage = getErrorMessage(error = appendState.error, context = context)
+                                val errorMessage =
+                                    getErrorMessage(error = appendState.error, context = context)
                                 Box(
                                     modifier = Modifier
                                         .fillMaxWidth()
@@ -268,6 +270,7 @@ private fun HandlePagingContent(
                                 }
                             }
                         }
+
                         is LoadState.NotLoading -> {
                             if (appendState.endOfPaginationReached) {
                                 item {

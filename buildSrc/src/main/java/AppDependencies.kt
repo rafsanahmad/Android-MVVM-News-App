@@ -7,12 +7,12 @@
 
 object Deps {
     object Versions {
-        const val compile_sdk = 34
+        const val compile_sdk = 35
         const val min_sdk = 21
-        const val target_sdk = 34
+        const val target_sdk = 35
         const val app_version_code = 1
         const val app_version_name = "1.0"
-        const val gradle_plugin = "8.5.2"
+        const val gradle_plugin = "8.6.0"
         const val kotlinVersion = "1.9.24"
         const val coroutinesVersion = "1.8.1"
         const val junit = "4.13.2"
@@ -33,7 +33,7 @@ object Deps {
         const val robolectric = "4.12.2"
         const val navigationVersion = "2.7.7"
         const val pagingVersion = "3.3.2"
-        const val composeBom = "2024.06.00"
+        const val composeBom = "2025.08.00"
         const val composeCompiler = "1.5.14"
         const val coilVersion = "2.6.0"
 
@@ -108,6 +108,7 @@ object Deps {
         const val gradlePlugin =
             "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltVersion}"
         const val testing = "com.google.dagger:hilt-android-testing:${Versions.hiltVersion}" // New
+
         // Alias to match module usage
         const val android_testing = testing
     }

@@ -2,9 +2,6 @@ package com.rafsan.newsapp.feature.favorite
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performTouchInput
-import androidx.compose.ui.test.swipeLeft
 import androidx.navigation.testing.TestNavHostController
 import org.junit.Rule
 import org.junit.Test

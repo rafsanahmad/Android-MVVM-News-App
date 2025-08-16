@@ -29,6 +29,7 @@ dependencies {
     implementation(Deps.AndroidX.ktx_core)
     implementation(Deps.AndroidX.appCompat)
     implementation(Deps.Google.material)
+    implementation(Deps.Retrofit.main)
     implementation(Deps.Timber.timber)
     implementation(Deps.Coroutines.core)
     implementation(Deps.Hilt.android)

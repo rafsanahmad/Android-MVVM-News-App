@@ -7,22 +7,18 @@ import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.usecase.ManageNewsFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-import androidx.annotation.StringRes
-import com.rafsan.newsapp.feature.details.R
-
-sealed class DetailsViewEffect {
-    data class ShowSnackbar(@StringRes val message: Int) : DetailsViewEffect()
-}
-
 @HiltViewModel
 class DetailsViewModel @Inject constructor(
     private val manageNewsFavoriteUseCase: ManageNewsFavoriteUseCase,
-    private val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val articleUrl: String? = savedStateHandle.get<String>("url")

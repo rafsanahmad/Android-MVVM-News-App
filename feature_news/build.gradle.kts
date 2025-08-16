@@ -43,7 +43,6 @@ dependencies {
     implementation(Deps.Compose.uiGraphics)
     implementation(Deps.Compose.uiToolingPreview)
     implementation(Deps.Compose.material3)
-    implementation(Deps.Compose.pull_refresh)
     implementation(Deps.AndroidX.activity_compose)
     implementation(Deps.Navigation.navigationCompose)
     implementation(Deps.Navigation.hiltCompose)

@@ -1,14 +1,14 @@
 package com.rafsan.newsapp.feature.search
 
+// Import R from the feature module explicitly
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.semantics.SemanticsProperties // Added for SemanticsProperties.HintText
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.*
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.navigation.testing.TestNavHostController
 import androidx.paging.PagingData
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
-import com.rafsan.newsapp.core.navigation.Screen // Ensure this is the correct Screen import
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.mockk.every
@@ -19,10 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.Assert.assertEquals // For navigation assertion
-
-// Import R from the feature module explicitly
-import com.rafsan.newsapp.feature.search.R
 
 @HiltAndroidTest
 class SearchScreenTest {
