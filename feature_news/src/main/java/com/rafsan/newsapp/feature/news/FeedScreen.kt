@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
+import androidx.paging.LoadStates
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -47,6 +48,7 @@ import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.core.util.getErrorMessage
 import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.feature.news.model.supportedCountries
 import kotlinx.coroutines.flow.flowOf
 
@@ -178,9 +180,11 @@ fun FeedScreenLayout(
                             if (article != null) {
                                 NewsRow(article, onClick)
                             } else {
-                                Spacer(modifier = Modifier
-                                    .height(100.dp)
-                                    .fillMaxWidth())
+                                Spacer(
+                                    modifier = Modifier
+                                        .height(100.dp)
+                                        .fillMaxWidth()
+                                )
                             }
                         }
 
@@ -297,7 +301,7 @@ private fun FeedScreenLayoutPreview() {
             content = "Content",
             description = "This is a sample news description to see how it looks in the preview. It might be a bit longer.",
             publishedAt = "2024-01-01",
-            source = com.rafsan.newsapp.domain.model.Source(id = "cnn", name = "CNN News"),
+            source = Source(id = "cnn", name = "CNN News"),
             title = "Sample Article Title - A Long Title to Test Ellipsis",
             url = "https://example.com",
             urlToImage = "https://via.placeholder.com/150"
@@ -308,7 +312,7 @@ private fun FeedScreenLayoutPreview() {
             content = "Content 2",
             description = "Another short description for a news item.",
             publishedAt = "2024-01-02",
-            source = com.rafsan.newsapp.domain.model.Source(id = "bbc", name = "BBC World"),
+            source = Source(id = "bbc", name = "BBC World"),
             title = "Second Article",
             url = "https://example.com/2",
             urlToImage = "https://via.placeholder.com/150"
@@ -331,7 +335,7 @@ private fun FeedScreenLayoutPreview() {
 private fun FeedScreenLayoutEmptyPreview() {
     val emptyPagingItems = flowOf(
         PagingData.empty<NewsArticle>(
-            sourceLoadStates = androidx.paging.LoadStates(
+            sourceLoadStates = LoadStates(
                 refresh = LoadState.NotLoading(endOfPaginationReached = true),
                 append = LoadState.NotLoading(endOfPaginationReached = true),
                 prepend = LoadState.NotLoading(endOfPaginationReached = true)
@@ -354,7 +358,7 @@ private fun FeedScreenLayoutEmptyPreview() {
 private fun FeedScreenLayoutLoadingPreview() {
     val loadingPagingItems = flowOf(
         PagingData.empty<NewsArticle>(
-            sourceLoadStates = androidx.paging.LoadStates(
+            sourceLoadStates = LoadStates(
                 refresh = LoadState.Loading,
                 append = LoadState.NotLoading(endOfPaginationReached = false),
                 prepend = LoadState.NotLoading(endOfPaginationReached = false)
@@ -377,7 +381,7 @@ private fun FeedScreenLayoutLoadingPreview() {
 private fun FeedScreenLayoutErrorPreview() {
     val errorPagingItems = flowOf(
         PagingData.empty<NewsArticle>(
-            sourceLoadStates = androidx.paging.LoadStates(
+            sourceLoadStates = LoadStates(
                 refresh = LoadState.Error(RuntimeException("Failed to load data!")),
                 append = LoadState.NotLoading(endOfPaginationReached = false),
                 prepend = LoadState.NotLoading(endOfPaginationReached = false)

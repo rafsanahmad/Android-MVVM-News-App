@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.domain.usecase.ManageNewsFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -48,7 +49,7 @@ class DetailsViewModel @Inject constructor(
                 urlToImage = imageUrl,
                 content = content,
                 publishedAt = publishedAt,
-                source = sourceName?.let { com.rafsan.newsapp.domain.model.Source(null, it) },
+                source = sourceName?.let { Source(null, it) },
                 author = savedStateHandle.get<String>("author"),
                 description = savedStateHandle.get<String>("description")
             )

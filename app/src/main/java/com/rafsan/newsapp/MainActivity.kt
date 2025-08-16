@@ -73,7 +73,6 @@ private fun AppScaffold() {
                 val titleRes = when (currentDestination?.route) {
                     Screen.Feed.route -> R.string.today_news
                     Screen.Favorites.route -> R.string.favorite_news
-                    // Screen.Search.route -> R.string.search // Search has its own bar
                     else -> R.string.app_name
                 }
                 Text(text = stringResource(id = titleRes))
