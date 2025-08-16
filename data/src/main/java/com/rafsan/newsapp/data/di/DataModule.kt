@@ -47,7 +47,11 @@ object DataModule {
     @Provides
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): NewsDatabase =
-        Room.databaseBuilder(context, NewsDatabase::class.java, "news.db").build()
+        Room.databaseBuilder(
+            context,
+            NewsDatabase::class.java,
+            "news.db"
+        ).fallbackToDestructiveMigration().build()
 
     @Provides
     @Singleton

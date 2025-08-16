@@ -6,7 +6,7 @@ import com.rafsan.newsapp.data.database.entity.NewsArticleEntity
 
 @Database(
     entities = [NewsArticleEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class NewsDatabase : RoomDatabase() {
