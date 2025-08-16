@@ -52,6 +52,8 @@ dependencies {
 
     implementation(Deps.Coil.compose)
 
+    implementation(Deps.Retrofit.main)
+
     implementation(Deps.Coroutines.core)
     implementation(Deps.Coroutines.android)
 

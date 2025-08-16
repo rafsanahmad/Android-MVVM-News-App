@@ -30,12 +30,16 @@ import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.flowOf
-
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.TextField
 import com.rafsan.newsapp.feature.news.model.supportedCountries
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import com.rafsan.newsapp.core.util.getErrorMessage
 
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
@@ -68,6 +72,7 @@ fun FeedScreenLayout(
 ) {
     val isRefreshing = state.loadState.refresh is LoadState.Loading
     var expanded by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -128,12 +133,10 @@ fun FeedScreenLayout(
             isRefreshing = isRefreshing,
             onRefresh = { state.refresh() }
         ) {
-import androidx.compose.ui.platform.LocalContext
-
             Box(modifier = Modifier.fillMaxSize()) {
                 if (state.loadState.refresh is LoadState.Error) {
                     val error = (state.loadState.refresh as LoadState.Error).error
-                    val errorMessage = getErrorMessage(error = error, context = LocalContext.current)
+                    val errorMessage = getErrorMessage(error = error, context = context)
                     Text(
                         text = errorMessage,
                         color = MaterialTheme.colorScheme.error,
@@ -188,7 +191,7 @@ import androidx.compose.ui.platform.LocalContext
                                     item {
                                         val errorMessage = getErrorMessage(
                                             error = appendState.error,
-                                            context = LocalContext.current
+                                            context = context
                                         )
                                         Text(
                                             text = errorMessage,
@@ -224,25 +227,6 @@ import androidx.compose.ui.platform.LocalContext
     }
 }
 
-import android.content.Context
-import retrofit2.HttpException
-import java.io.IOException
-
-private fun getErrorMessage(error: Throwable, context: Context): String {
-    return when (error) {
-        is IOException -> context.getString(R.string.error_network)
-        is HttpException -> {
-            val code = error.code()
-            if (code in 500..599) {
-                context.getString(R.string.error_server)
-            } else {
-                context.getString(R.string.error_http, code)
-            }
-        }
-        else -> context.getString(R.string.error_unknown)
-    }
-}
-
 @Composable
 private fun NewsRow(
     article: NewsArticle,
@@ -260,14 +244,11 @@ private fun NewsRow(
                 ?: stringResource(R.string.news_article_image),
             modifier = Modifier.size(96.dp),
             contentScale = ContentScale.Crop,
-            // Add placeholder and error drawables for better UX
-            // placeholder = painterResource(id = R.drawable.ic_placeholder_image),
-            // error = painterResource(id = R.drawable.ic_error_image)
         )
         Column(
             modifier = Modifier
                 .padding(start = 12.dp)
-                .weight(1f) // Ensure Column takes available width
+                .weight(1f)
         ) {
             Text(
                 text = article.title ?: "",
@@ -277,7 +258,7 @@ private fun NewsRow(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = article.source?.name ?: "", // Display source name if available
+                text = article.source?.name ?: "",
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -296,7 +277,7 @@ private fun NewsRow(
 
 @Preview(showBackground = true, name = "Feed Screen with Data")
 @Composable
-private fun FeedScreenLayoutPreview() { // Renamed to match composable
+private fun FeedScreenLayoutPreview() {
     val sample = listOf(
         NewsArticle(
             id = 1,
@@ -307,7 +288,7 @@ private fun FeedScreenLayoutPreview() { // Renamed to match composable
             source = com.rafsan.newsapp.domain.model.Source(id= "cnn", name="CNN News"),
             title = "Sample Article Title - A Long Title to Test Ellipsis",
             url = "https://example.com",
-            urlToImage = "https://via.placeholder.com/150" // Placeholder image URL
+            urlToImage = "https://via.placeholder.com/150"
         ),
         NewsArticle(
             id = 2,
@@ -322,11 +303,14 @@ private fun FeedScreenLayoutPreview() { // Renamed to match composable
         )
     )
     val pagingItems = flowOf(PagingData.from(sample)).collectAsLazyPagingItems()
-    // Simulate end of pagination for preview if needed by adjusting PagingData
-    // val pagingItemsEndOfList = flowOf(PagingData.from(sample, LoadStates(refresh = LoadState.NotLoading(false), prepend = LoadState.NotLoading(false), append = LoadState.NotLoading(true)))).collectAsLazyPagingItems()
-
-    MaterialTheme { // Wrap with your app's theme
-        FeedScreenLayout(state = pagingItems, onClick = {})
+    MaterialTheme {
+        FeedScreenLayout(
+            state = pagingItems,
+            isOnline = true,
+            selectedCountryCode = "us",
+            onCountrySelected = {},
+            onClick = {}
+        )
     }
 }
 
@@ -335,13 +319,19 @@ private fun FeedScreenLayoutPreview() { // Renamed to match composable
 private fun FeedScreenLayoutEmptyPreview() {
     val emptyPagingItems = flowOf(PagingData.empty<NewsArticle>(
         sourceLoadStates = androidx.paging.LoadStates(
-            refresh = LoadState.NotLoading(endOfPaginationReached = true), // Indicate that loading is done and list is empty
+            refresh = LoadState.NotLoading(endOfPaginationReached = true),
             append = LoadState.NotLoading(endOfPaginationReached = true),
             prepend = LoadState.NotLoading(endOfPaginationReached = true)
         )
     )).collectAsLazyPagingItems()
     MaterialTheme {
-         FeedScreenLayout(state = emptyPagingItems, onClick = {})
+         FeedScreenLayout(
+             state = emptyPagingItems,
+             isOnline = true,
+             selectedCountryCode = "us",
+             onCountrySelected = {},
+             onClick = {}
+         )
     }
 }
 
@@ -356,7 +346,13 @@ private fun FeedScreenLayoutLoadingPreview() {
         )
     )).collectAsLazyPagingItems()
      MaterialTheme {
-        FeedScreenLayout(state = loadingPagingItems, onClick = {})
+        FeedScreenLayout(
+            state = loadingPagingItems,
+            isOnline = true,
+            selectedCountryCode = "us",
+            onCountrySelected = {},
+            onClick = {}
+        )
     }
 }
 
@@ -371,6 +367,12 @@ private fun FeedScreenLayoutErrorPreview() {
         )
     )).collectAsLazyPagingItems()
     MaterialTheme {
-        FeedScreenLayout(state = errorPagingItems, onClick = {})
+        FeedScreenLayout(
+            state = errorPagingItems,
+            isOnline = true,
+            selectedCountryCode = "us",
+            onCountrySelected = {},
+            onClick = {}
+        )
     }
 }

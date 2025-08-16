@@ -50,6 +50,7 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
+import com.rafsan.newsapp.core.util.getErrorMessage
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
 import kotlinx.coroutines.flow.flowOf
@@ -285,25 +286,6 @@ private fun HandlePagingContent(
                 }
             }
         }
-    }
-}
-
-import android.content.Context
-import retrofit2.HttpException
-import java.io.IOException
-
-private fun getErrorMessage(error: Throwable, context: Context): String {
-    return when (error) {
-        is IOException -> context.getString(R.string.error_network)
-        is HttpException -> {
-            val code = error.code()
-            if (code in 500..599) {
-                context.getString(R.string.error_server)
-            } else {
-                context.getString(R.string.error_http, code)
-            }
-        }
-        else -> context.getString(R.string.error_unknown)
     }
 }
 
