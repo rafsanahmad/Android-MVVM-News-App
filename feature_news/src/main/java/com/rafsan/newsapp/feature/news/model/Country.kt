@@ -4,7 +4,7 @@ fun countryCodeToEmojiFlag(countryCode: String): String {
     return countryCode
         .uppercase()
         .map { char ->
-            Character.toChars(char.code + 0x1F1A5)
+            String(Character.toChars(char.code + 0x1F1A5))
         }
         .joinToString("")
 }
