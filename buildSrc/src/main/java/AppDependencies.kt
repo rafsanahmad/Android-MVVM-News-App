@@ -145,7 +145,7 @@ object Deps {
         const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata"
         const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4" // Already here
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest" // Already here
-        const val material = "androidx.compose.material:material"
+        const val material = "androidx.compose.material:material:1.6.8"
         const val pull_refresh = "androidx.compose.material3:material3-pull-refresh"
     }
 
