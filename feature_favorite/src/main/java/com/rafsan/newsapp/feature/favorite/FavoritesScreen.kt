@@ -3,8 +3,13 @@ package com.rafsan.newsapp.feature.favorite
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -34,7 +39,6 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
     )
 }
 
-/*
 @OptIn(ExperimentalMaterialApi::class) // Changed from ExperimentalMaterial3Api
 @Composable
 private fun DismissibleFavoriteItem(
@@ -97,7 +101,6 @@ private fun DismissibleFavoriteItem(
         FavoriteItemRow(article = currentArticle)
     }
 }
-*/
 
 @Composable
 private fun FavoriteItemRow(article: NewsArticle) {
@@ -195,6 +198,7 @@ private fun FavoritesScreenLayout(
                         Text(stringResource(R.string.no_favorite_articles_found))
                     }
                 }
+
                 is FavoritesScreenState.Error -> {
                     Box(
                         modifier = Modifier
@@ -229,7 +233,12 @@ private fun FavoritesScreenPreview_Success() {
     )
     MaterialTheme {
         FavoritesScreenLayout(
-            uiState = FavoritesScreenState.Success(listOf(sampleArticle, sampleArticle.copy(id = 2))),
+            uiState = FavoritesScreenState.Success(
+                listOf(
+                    sampleArticle,
+                    sampleArticle.copy(id = 2)
+                )
+            ),
             onEvent = {},
             snackbarHostState = SnackbarHostState()
         )

@@ -19,11 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DetailsRoute(
+fun DetailsScreen(
     navController: NavController,
     viewModel: DetailsViewModel = hiltViewModel()
 ) {
