@@ -47,7 +47,7 @@ val supportedCountries = listOf(
     Country("jp", "Japan"),
     Country("kr", "South Korea"),
     Country("lt", "Lithuania"),
-    Country_("lv", "Latvia"),
+    Country("lv", "Latvia"),
     Country("ma", "Morocco"),
     Country("mx", "Mexico"),
     Country("my", "Malaysia"),

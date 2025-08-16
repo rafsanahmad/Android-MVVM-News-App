@@ -146,6 +146,7 @@ object Deps {
         const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4" // Already here
         const val uiTestManifest = "androidx.compose.ui:ui-test-manifest" // Already here
         const val material = "androidx.compose.material:material"
+        const val pull_refresh = "androidx.compose.material3:material3-pull-refresh"
     }
 
     object Coil {

@@ -3,24 +3,24 @@ package com.rafsan.newsapp.feature.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.rafsan.newsapp.core.ui.UiState
+import com.rafsan.newsapp.core.util.NetworkMonitor
 import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.domain.model.NewsArticle
-import com.rafsan.newsapp.core.util.NetworkMonitor
 import com.rafsan.newsapp.domain.usecase.GetTopHeadlinesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import androidx.paging.cachedIn
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import javax.inject.Inject
-
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @HiltViewModel
 class FeedViewModel @Inject constructor(
@@ -41,7 +41,6 @@ class FeedViewModel @Inject constructor(
     @OptIn(ExperimentalCoroutinesApi::class)
     val headlines: StateFlow<PagingData<NewsArticle>> =
         selectedCountryCode
-            .distinctUntilChanged()
             .flatMapLatest { countryCode ->
                 getTopHeadlinesUseCase(countryCode = countryCode)
             }
