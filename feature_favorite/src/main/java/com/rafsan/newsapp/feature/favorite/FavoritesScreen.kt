@@ -3,9 +3,16 @@ package com.rafsan.newsapp.feature.favorite
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +41,139 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
     )
 }
 
-// The DismissibleFavoriteItem has been removed to resolve compilation issues
-// related to the project's build environment. The swipe-to-delete functionality
-// can be re-added once the underlying dependency issues are fixed.
+@Composable
+private fun FavoritesScreenLayout(
+    uiState: FavoritesScreenState,
+    onEvent: (FavoritesEvent) -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    val coroutineScope = rememberCoroutineScope()
+
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when (val state = uiState) {
+                is FavoritesScreenState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+
+                is FavoritesScreenState.Success -> {
+                    val items = state.articles
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        items(
+                            items = items,
+                            key = { article ->
+                                "${article.url ?: ""}-${article.publishedAt ?: ""}"
+                            }
+                        ) { article ->
+                            DismissibleFavoriteItem(
+                                article = article,
+                                onEvent = onEvent,
+                                snackbarHostState = snackbarHostState,
+                                coroutineScope = coroutineScope
+                            )
+                            if (items.indexOf(article) < items.lastIndex) {
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                }
+
+                is FavoritesScreenState.Empty -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(stringResource(R.string.no_favorite_articles_found))
+                    }
+                }
+                is FavoritesScreenState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun DismissibleFavoriteItem(
+    article: NewsArticle,
+    onEvent: (FavoritesEvent) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope
+) {
+    val currentArticle by rememberUpdatedState(article)
+    val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
+    val undoAction = stringResource(R.string.undo)
+
+    val dismissState = rememberDismissState(
+        confirmStateChange = {
+            if (it == DismissValue.DismissedToEnd || it == DismissValue.DismissedToStart) {
+                coroutineScope.launch {
+                    val snackbarResult = snackbarHostState.showSnackbar(
+                        message = removeMessage,
+                        actionLabel = undoAction,
+                        duration = SnackbarDuration.Short
+                    )
+                    if (snackbarResult != SnackbarResult.ActionPerformed) {
+                        onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
+                    }
+                }
+                return@rememberDismissState true
+            }
+            false
+        }
+    )
+
+    SwipeToDismiss(
+        state = dismissState,
+        directions = setOf(DismissDirection.EndToStart, DismissDirection.StartToEnd),
+        background = {
+            val color by animateColorAsState(
+                targetValue = when (dismissState.targetValue) {
+                    DismissValue.Default -> Color.Transparent
+                    else -> MaterialTheme.colorScheme.errorContainer
+                },
+                label = "background color"
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color)
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                Text(
+                    stringResource(R.string.unfavorite),
+                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    style = MaterialTheme.typography.labelLarge
+                )
+            }
+        }
+    ) {
+        FavoriteItemRow(article = currentArticle)
+    }
+}
 
 @Composable
 private fun FavoriteItemRow(article: NewsArticle) {
@@ -85,72 +222,6 @@ private fun FavoriteItemRow(article: NewsArticle) {
 }
 
 // --- Preview Section ---
-
-@Composable
-private fun FavoritesScreenLayout(
-    uiState: FavoritesScreenState,
-    onEvent: (FavoritesEvent) -> Unit,
-    snackbarHostState: SnackbarHostState
-) {
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            when (val state = uiState) {
-                is FavoritesScreenState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-
-                is FavoritesScreenState.Success -> {
-                    val items = state.articles
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background)
-                    ) {
-                        items(
-                            items = items,
-                            key = { article ->
-                                "${article.url ?: ""}-${article.publishedAt ?: ""}"
-                            }
-                        ) { article ->
-                            FavoriteItemRow(article = article)
-                            if (items.indexOf(article) < items.lastIndex) {
-                                HorizontalDivider()
-                            }
-                        }
-                    }
-                }
-
-                is FavoritesScreenState.Empty -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(stringResource(R.string.no_favorite_articles_found))
-                    }
-                }
-                is FavoritesScreenState.Error -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = state.message,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
 
 @Preview(showBackground = true, name = "Favorites Screen - Success")
 @Composable
