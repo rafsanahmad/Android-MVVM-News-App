@@ -79,8 +79,9 @@ fun FeedScreenLayout(
                 expanded = expanded,
                 onExpandedChange = { expanded = !expanded }
             ) {
+                val selectedCountry = supportedCountries.find { it.code == selectedCountryCode }
                 TextField(
-                    value = supportedCountries.find { it.code == selectedCountryCode }?.name ?: "",
+                    value = selectedCountry?.let { "${it.flag} ${it.name}" } ?: "Select Country",
                     onValueChange = {},
                     readOnly = true,
                     label = { Text("Country") },
@@ -97,7 +98,7 @@ fun FeedScreenLayout(
                 ) {
                     supportedCountries.forEach { country ->
                         DropdownMenuItem(
-                            text = { Text(country.name) },
+                            text = { Text("${country.flag} ${country.name}") },
                             onClick = {
                                 onCountrySelected(country.code)
                                 expanded = false
