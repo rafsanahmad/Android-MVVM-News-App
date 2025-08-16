@@ -1,10 +1,13 @@
 package com.rafsan.newsapp.core.util
 
+import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.os.Build
+import androidx.annotation.RequiresPermission
 import androidx.core.content.getSystemService
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.awaitClose
@@ -20,6 +23,7 @@ interface NetworkMonitor {
 class NetworkMonitorImpl @Inject constructor(
     @ApplicationContext private val context: Context
 ) : NetworkMonitor {
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     override val isOnline: Flow<Boolean> = callbackFlow {
         val connectivityManager = context.getSystemService<ConnectivityManager>()
         if (connectivityManager == null) {
@@ -47,7 +51,13 @@ class NetworkMonitorImpl @Inject constructor(
             .build()
         connectivityManager.registerNetworkCallback(request, callback)
 
-        channel.trySend(connectivityManager.activeNetwork != null)
+        val isCurrentlyConnected = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            connectivityManager.activeNetwork != null
+        } else {
+            @Suppress("DEPRECATION")
+            connectivityManager.activeNetworkInfo?.isConnected == true
+        }
+        channel.trySend(isCurrentlyConnected)
 
         awaitClose {
             connectivityManager.unregisterNetworkCallback(callback)
