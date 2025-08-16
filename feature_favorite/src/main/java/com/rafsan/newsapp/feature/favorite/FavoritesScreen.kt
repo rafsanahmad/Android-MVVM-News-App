@@ -26,84 +26,15 @@ import kotlinx.coroutines.launch
 fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
 
-    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            when (val state = uiState) {
-                is FavoritesScreenState.Loading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-
-                is FavoritesScreenState.Success -> {
-                    val items = state.articles
-                    if (items.isEmpty()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(stringResource(R.string.no_favorite_articles_yet))
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(MaterialTheme.colorScheme.background)
-                        ) {
-                            items(
-                                items = items,
-                                key = { article: NewsArticle ->
-                                    // Create a more robust key to prevent crashes on duplicate URLs or titles
-                                    "${article.url ?: ""}-${article.publishedAt ?: ""}"
-                                },
-                                contentType = { "favoriteArticle" }
-                            ) { article: NewsArticle ->
-                                DismissibleFavoriteItem(
-                                    article = article,
-                                    viewModel = viewModel, // Pass the actual viewModel instance
-                                    snackbarHostState = snackbarHostState,
-                                    coroutineScope = coroutineScope
-                                )
-                                if (items.indexOf(article) < items.lastIndex) {
-                                    HorizontalDivider()
-                                }
-                            }
-                        }
-                    }
-                }
-
-                is FavoritesScreenState.Empty -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(stringResource(R.string.no_favorite_articles_found))
-                    }
-                }
-                is FavoritesScreenState.Error -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = state.message,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
-        }
-    }
+    FavoritesScreenLayout(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+        snackbarHostState = snackbarHostState
+    )
 }
 
+/*
 @OptIn(ExperimentalMaterialApi::class) // Changed from ExperimentalMaterial3Api
 @Composable
 private fun DismissibleFavoriteItem(
@@ -166,6 +97,7 @@ private fun DismissibleFavoriteItem(
         FavoriteItemRow(article = currentArticle)
     }
 }
+*/
 
 @Composable
 private fun FavoriteItemRow(article: NewsArticle) {
@@ -215,9 +147,75 @@ private fun FavoriteItemRow(article: NewsArticle) {
 
 // --- Preview Section ---
 
-@Preview(showBackground = true, name = "Favorite Item Row Preview")
 @Composable
-private fun FavoriteItemRowPreview() {
+private fun FavoritesScreenLayout(
+    uiState: FavoritesScreenState,
+    onEvent: (FavoritesEvent) -> Unit,
+    snackbarHostState: SnackbarHostState
+) {
+    Scaffold(snackbarHost = { SnackbarHost(snackbarHostState) }) { padding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+        ) {
+            when (val state = uiState) {
+                is FavoritesScreenState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+
+                is FavoritesScreenState.Success -> {
+                    val items = state.articles
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background)
+                    ) {
+                        items(
+                            items = items,
+                            key = { article ->
+                                "${article.url ?: ""}-${article.publishedAt ?: ""}"
+                            }
+                        ) { article ->
+                            FavoriteItemRow(article = article)
+                            if (items.indexOf(article) < items.lastIndex) {
+                                HorizontalDivider()
+                            }
+                        }
+                    }
+                }
+
+                is FavoritesScreenState.Empty -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(stringResource(R.string.no_favorite_articles_found))
+                    }
+                }
+                is FavoritesScreenState.Error -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colorScheme.background),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = state.message,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, name = "Favorites Screen - Success")
+@Composable
+private fun FavoritesScreenPreview_Success() {
     val sampleArticle = NewsArticle(
         id = 1,
         author = "Author X",
@@ -230,6 +228,46 @@ private fun FavoriteItemRowPreview() {
         urlToImage = "https://example.com/image.jpg"
     )
     MaterialTheme {
-        FavoriteItemRow(article = sampleArticle)
+        FavoritesScreenLayout(
+            uiState = FavoritesScreenState.Success(listOf(sampleArticle, sampleArticle.copy(id = 2))),
+            onEvent = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Favorites Screen - Empty")
+@Composable
+private fun FavoritesScreenPreview_Empty() {
+    MaterialTheme {
+        FavoritesScreenLayout(
+            uiState = FavoritesScreenState.Empty,
+            onEvent = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Favorites Screen - Loading")
+@Composable
+private fun FavoritesScreenPreview_Loading() {
+    MaterialTheme {
+        FavoritesScreenLayout(
+            uiState = FavoritesScreenState.Loading,
+            onEvent = {},
+            snackbarHostState = SnackbarHostState()
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Favorites Screen - Error")
+@Composable
+private fun FavoritesScreenPreview_Error() {
+    MaterialTheme {
+        FavoritesScreenLayout(
+            uiState = FavoritesScreenState.Error("Something went wrong!"),
+            onEvent = {},
+            snackbarHostState = SnackbarHostState()
+        )
     }
 }
