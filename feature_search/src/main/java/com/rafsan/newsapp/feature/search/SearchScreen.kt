@@ -42,6 +42,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import android.net.Uri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
@@ -54,6 +55,8 @@ import com.rafsan.newsapp.core.util.getErrorMessage
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -221,19 +224,9 @@ private fun HandlePagingContent(
                         val article = pagingItems[index]
                         if (article != null) {
                             SearchNewsRow(article = article, onClick = {
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                    "url",
-                                    article.url
-                                )
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                    "title",
-                                    article.title
-                                )
-                                navController.currentBackStackEntry?.savedStateHandle?.set(
-                                    "image",
-                                    article.urlToImage
-                                )
-                                navController.navigate(Screen.Details.route)
+                                val articleJson = Json.encodeToString(article)
+                                val encodedArticleJson = Uri.encode(articleJson)
+                                navController.navigate("details/$encodedArticleJson")
                             })
                         }
                     }

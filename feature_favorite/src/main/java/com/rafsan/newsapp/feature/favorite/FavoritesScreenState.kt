@@ -4,6 +4,7 @@ import com.rafsan.newsapp.domain.model.NewsArticle
 
 sealed interface FavoritesEvent {
     data class OnRemoveFavorite(val article: NewsArticle) : FavoritesEvent
+    data class OnUndoRemoveFavorite(val article: NewsArticle) : FavoritesEvent
 }
 
 sealed class FavoritesScreenState {

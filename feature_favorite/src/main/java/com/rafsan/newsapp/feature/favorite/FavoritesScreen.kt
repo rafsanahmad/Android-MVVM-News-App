@@ -46,16 +46,24 @@ import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import android.net.Uri
+import androidx.navigation.NavController
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
-fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
+fun FavoritesScreen(
+    navController: NavController,
+    viewModel: FavoritesViewModel = hiltViewModel()
+) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
 
     FavoritesScreenLayout(
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        snackbarHostState = snackbarHostState
+        snackbarHostState = snackbarHostState,
+        navController = navController
     )
 }
 
@@ -63,7 +71,8 @@ fun FavoritesScreen(viewModel: FavoritesViewModel = hiltViewModel()) {
 private fun FavoritesScreenLayout(
     uiState: FavoritesScreenState,
     onEvent: (FavoritesEvent) -> Unit,
-    snackbarHostState: SnackbarHostState
+    snackbarHostState: SnackbarHostState,
+    navController: NavController
 ) {
     val coroutineScope = rememberCoroutineScope()
 
@@ -95,7 +104,12 @@ private fun FavoritesScreenLayout(
                                 article = article,
                                 onEvent = onEvent,
                                 snackbarHostState = snackbarHostState,
-                                coroutineScope = coroutineScope
+                                coroutineScope = coroutineScope,
+                                onClick = {
+                                    val articleJson = Json.encodeToString(article)
+                                    val encodedArticleJson = Uri.encode(articleJson)
+                                    navController.navigate("details/$encodedArticleJson")
+                                }
                             )
                             if (items.indexOf(article) < items.lastIndex) {
                                 HorizontalDivider()
@@ -139,7 +153,8 @@ private fun DismissibleFavoriteItem(
     article: NewsArticle,
     onEvent: (FavoritesEvent) -> Unit,
     snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    onClick: () -> Unit
 ) {
     val currentArticle by rememberUpdatedState(article)
     val removeMessage = stringResource(R.string.snackbar_remove_favorite_message)
@@ -148,14 +163,15 @@ private fun DismissibleFavoriteItem(
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
             if (it != SwipeToDismissBoxValue.Settled) {
+                onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
                 coroutineScope.launch {
                     val snackbarResult = snackbarHostState.showSnackbar(
                         message = removeMessage,
                         actionLabel = undoAction,
-                        duration = SnackbarDuration.Short
+                        duration = SnackbarDuration.Long
                     )
-                    if (snackbarResult != SnackbarResult.ActionPerformed) {
-                        onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
+                    if (snackbarResult == SnackbarResult.ActionPerformed) {
+                        onEvent(FavoritesEvent.OnUndoRemoveFavorite(currentArticle))
                     }
                 }
                 return@rememberSwipeToDismissBoxState true
@@ -189,16 +205,17 @@ private fun DismissibleFavoriteItem(
             }
         }
     ) {
-        FavoriteItemRow(article = currentArticle)
+        FavoriteItemRow(article = currentArticle, onClick = onClick)
     }
 }
 
 @Composable
-private fun FavoriteItemRow(article: NewsArticle) {
+private fun FavoriteItemRow(article: NewsArticle, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
+            .clickable(onClick = onClick)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

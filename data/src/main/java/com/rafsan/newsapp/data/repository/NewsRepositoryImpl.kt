@@ -31,7 +31,7 @@ class NewsRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
             remoteMediator = NewsRemoteMediator(countryCode, pageSize, apiKey, api, db),
-            pagingSourceFactory = { dao.pagingSource() }
+            pagingSourceFactory = { dao.feedPagingSource() }
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 

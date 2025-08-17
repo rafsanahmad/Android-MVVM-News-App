@@ -31,6 +31,12 @@ class FavoritesViewModel @Inject constructor(
                     manageFavoritesUseCase.removeFavorite(event.article)
                 }
             }
+
+            is FavoritesEvent.OnUndoRemoveFavorite -> {
+                viewModelScope.launch {
+                    manageFavoritesUseCase.addFavorite(event.article)
+                }
+            }
         }
     }
 
