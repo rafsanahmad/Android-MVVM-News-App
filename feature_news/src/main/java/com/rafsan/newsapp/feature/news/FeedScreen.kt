@@ -38,6 +38,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import android.net.Uri
 import androidx.navigation.NavController
 import androidx.paging.LoadState
 import androidx.paging.LoadStates
@@ -51,6 +52,8 @@ import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.feature.news.model.supportedCountries
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 @Composable
 fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltViewModel()) {
@@ -64,7 +67,9 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
         selectedCountryCode = selectedCountryCode,
         onCountrySelected = viewModel::selectCountry,
         onClick = { article ->
-            navController.navigate(Screen.Details.withArticle(article))
+            val articleJson = Json.encodeToString(article)
+            val encodedArticleJson = Uri.encode(articleJson)
+            navController.navigate("details/$encodedArticleJson")
         }
     )
 }

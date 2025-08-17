@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.feature.details
 
+import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,7 +35,8 @@ class DetailsViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     init {
-        savedStateHandle.get<String>("article")?.let { articleJson ->
+        savedStateHandle.get<String>("article")?.let { encodedArticleJson ->
+            val articleJson = Uri.decode(encodedArticleJson)
             val article = Json.decodeFromString<NewsArticle>(articleJson)
             setArticle(article)
         } ?: run {
