@@ -64,4 +64,8 @@ class NewsRepositoryImpl @Inject constructor(
             }
         ).flow
     }
+
+    override suspend fun clearCachedArticles() {
+        dao.deleteCachedArticles()
+    }
 }

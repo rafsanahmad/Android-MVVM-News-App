@@ -8,9 +8,11 @@ import com.rafsan.newsapp.core.ui.UiState
 import com.rafsan.newsapp.core.util.NetworkMonitor
 import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.usecase.ClearCachedArticlesUseCase
 import com.rafsan.newsapp.domain.usecase.GetTopHeadlinesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class FeedViewModel @Inject constructor(
     private val getTopHeadlinesUseCase: GetTopHeadlinesUseCase,
+    private val clearCachedArticlesUseCase: ClearCachedArticlesUseCase,
     networkMonitor: NetworkMonitor
 ) : ViewModel() {
 
@@ -55,6 +58,9 @@ class FeedViewModel @Inject constructor(
     val uiState: MutableStateFlow<UiState<Unit>> = MutableStateFlow(UiState.Idle)
 
     fun selectCountry(countryCode: String) {
-        _selectedCountryCode.value = countryCode
+        viewModelScope.launch {
+            clearCachedArticlesUseCase()
+            _selectedCountryCode.value = countryCode
+        }
     }
 }
