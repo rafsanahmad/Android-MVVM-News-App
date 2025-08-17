@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -55,6 +56,7 @@ dependencies {
 
     // Hilt
     implementation(Deps.Hilt.android)
+    implementation(Deps.Kotlin.serialization_json)
     kapt(Deps.Hilt.android_compiler)
 
     implementation(Deps.Coil.compose)

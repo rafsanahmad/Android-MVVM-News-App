@@ -2,6 +2,7 @@ package com.rafsan.newsapp.feature.favorite
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -281,7 +283,8 @@ private fun FavoritesScreenPreview_Success() {
                 )
             ),
             onEvent = {},
-            snackbarHostState = SnackbarHostState()
+            snackbarHostState = SnackbarHostState(),
+            navController = NavController(LocalContext.current)
         )
     }
 }
@@ -293,7 +296,8 @@ private fun FavoritesScreenPreview_Empty() {
         FavoritesScreenLayout(
             uiState = FavoritesScreenState.Empty,
             onEvent = {},
-            snackbarHostState = SnackbarHostState()
+            snackbarHostState = SnackbarHostState(),
+            navController = NavController(LocalContext.current)
         )
     }
 }
@@ -305,7 +309,8 @@ private fun FavoritesScreenPreview_Loading() {
         FavoritesScreenLayout(
             uiState = FavoritesScreenState.Loading,
             onEvent = {},
-            snackbarHostState = SnackbarHostState()
+            snackbarHostState = SnackbarHostState(),
+            navController = NavController(LocalContext.current)
         )
     }
 }
@@ -317,7 +322,8 @@ private fun FavoritesScreenPreview_Error() {
         FavoritesScreenLayout(
             uiState = FavoritesScreenState.Error("Something went wrong!"),
             onEvent = {},
-            snackbarHostState = SnackbarHostState()
+            snackbarHostState = SnackbarHostState(),
+            navController = NavController(LocalContext.current)
         )
     }
 }
