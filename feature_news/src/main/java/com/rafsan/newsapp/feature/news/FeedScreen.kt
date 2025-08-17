@@ -358,6 +358,7 @@ private fun FeedScreenLayoutPreview() {
         FeedScreenLayout(
             state = pagingItems,
             isOnline = true,
+            showNetworkAvailable = false,
             selectedCountryCode = "us",
             onCountrySelected = {},
             onClick = {}
@@ -381,6 +382,7 @@ private fun FeedScreenLayoutEmptyPreview() {
         FeedScreenLayout(
             state = emptyPagingItems,
             isOnline = true,
+            showNetworkAvailable = false,
             selectedCountryCode = "us",
             onCountrySelected = {},
             onClick = {}
@@ -404,6 +406,7 @@ private fun FeedScreenLayoutLoadingPreview() {
         FeedScreenLayout(
             state = loadingPagingItems,
             isOnline = true,
+            showNetworkAvailable = false,
             selectedCountryCode = "us",
             onCountrySelected = {},
             onClick = {}
@@ -427,6 +430,7 @@ private fun FeedScreenLayoutErrorPreview() {
         FeedScreenLayout(
             state = errorPagingItems,
             isOnline = true,
+            showNetworkAvailable = false,
             selectedCountryCode = "us",
             onCountrySelected = {},
             onClick = {}
