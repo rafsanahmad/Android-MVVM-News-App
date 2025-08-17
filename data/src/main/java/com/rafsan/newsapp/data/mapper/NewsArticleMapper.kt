@@ -14,7 +14,8 @@ fun NewsArticleEntity.toDomain(): NewsArticle = NewsArticle(
     title = title,
     url = url,
     urlToImage = urlToImage,
-    isFavorite = isFavorite
+    isFavorite = isFavorite,
+    favoritedAt = favoritedAt
 )
 
 fun NewsArticle.toEntity(): NewsArticleEntity = NewsArticleEntity(
@@ -28,7 +29,8 @@ fun NewsArticle.toEntity(): NewsArticleEntity = NewsArticleEntity(
     title = title,
     url = url,
     urlToImage = urlToImage,
-    isFavorite = isFavorite
+    isFavorite = isFavorite,
+    favoritedAt = favoritedAt
 )
 
 

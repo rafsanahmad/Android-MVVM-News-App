@@ -20,8 +20,13 @@ class FavoriteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addFavorite(article: NewsArticle): Long {
-        // When adding a favorite, we ensure the flag is set to true.
-        return newsDao.upsert(article.copy(isFavorite = true).toEntity())
+        // When adding a favorite, we ensure the flag is set to true and record the time.
+        return newsDao.upsert(
+            article.copy(
+                isFavorite = true,
+                favoritedAt = System.currentTimeMillis()
+            ).toEntity()
+        )
     }
 
     override suspend fun removeFavorite(article: NewsArticle) {

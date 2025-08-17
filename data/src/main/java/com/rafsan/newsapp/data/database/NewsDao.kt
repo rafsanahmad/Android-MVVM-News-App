@@ -21,7 +21,7 @@ interface NewsDao {
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
 
-    @Query("SELECT * FROM news_articles WHERE is_favorite = 1")
+    @Query("SELECT * FROM news_articles WHERE is_favorite = 1 ORDER BY favoritedAt DESC")
     fun getFavoriteNews(): Flow<List<NewsArticleEntity>>
 
     @Query("SELECT * FROM news_articles WHERE url = :articleUrl")

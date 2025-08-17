@@ -16,5 +16,6 @@ data class NewsArticle(
     val title: String?,
     val url: String?,
     val urlToImage: String?,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val favoritedAt: Long? = null
 ) : Parcelable

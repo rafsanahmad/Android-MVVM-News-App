@@ -19,7 +19,8 @@ data class NewsArticleEntity(
     val url: String?,
     val urlToImage: String?,
     @ColumnInfo(name = "is_favorite", defaultValue = "0")
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val favoritedAt: Long? = null
 )
 
 
