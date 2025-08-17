@@ -81,11 +81,6 @@ android {
         jvmTarget = "17"
     }
 
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-        animationsDisabled = true
-    }
-
     testBuildType = "debug"
 
     packaging {

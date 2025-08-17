@@ -48,7 +48,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
-import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.core.util.Constants
 import com.rafsan.newsapp.core.util.getErrorMessage
 import com.rafsan.newsapp.domain.model.NewsArticle

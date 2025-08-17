@@ -85,8 +85,7 @@ fun DetailsScreenContent(
             TopAppBar(
                 title = {
                     val titleText = if (uiState is DetailScreenState.Success) {
-                        (uiState as DetailScreenState.Success).article.title
-                            ?: stringResource(id = R.string.details_screen_title)
+                        uiState.article.title ?: stringResource(id = R.string.details_screen_title)
                     } else {
                         stringResource(id = R.string.details_screen_title)
                     }
@@ -104,7 +103,7 @@ fun DetailsScreenContent(
         },
         floatingActionButton = {
             if (uiState is DetailScreenState.Success) {
-                val article = (uiState as DetailScreenState.Success).article
+                val article = uiState.article
                 if (article.url != null) {
                     FloatingActionButton(onClick = onFavoriteClicked) {
                         Icon(
