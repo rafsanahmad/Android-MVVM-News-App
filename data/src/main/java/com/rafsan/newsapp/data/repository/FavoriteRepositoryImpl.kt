@@ -29,7 +29,7 @@ class FavoriteRepositoryImpl @Inject constructor(
     }
 
     override suspend fun isFavorite(articleUrl: String): Boolean {
-        return newsDao.getArticleByUrl(articleUrl) != null
+        return newsDao.getFavoriteArticleByUrl(articleUrl) != null
     }
 
     override suspend fun removeAllFavorites() {

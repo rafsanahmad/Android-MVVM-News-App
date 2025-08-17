@@ -170,12 +170,7 @@ fun FeedScreenLayout(
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
                         items(
                             count = state.itemCount,
-                            key = { index ->
-                                val item = state.peek(index)
-                                // Create a more robust key to prevent crashes
-                                item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" }
-                                    ?: "article_${index}"
-                            },
+                            key = { index -> state.peek(index)?.url ?: index },
                             contentType = { "newsArticle" }
                         ) { index ->
                             val article = state[index]

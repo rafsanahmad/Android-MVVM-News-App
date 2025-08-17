@@ -55,31 +55,18 @@ class DetailsViewModel @Inject constructor(
     }
 
     fun onFavoriteClicked() {
-        currentArticleForFavoriteAction?.let { articleToAdd ->
-            if (articleToAdd.url == null) {
-                Timber.w("Cannot favorite article with null URL.")
-                return
-            }
-
+        currentArticleForFavoriteAction?.let { article ->
             viewModelScope.launch {
                 if (_isFavorite.value) {
-                    _effect.send(DetailsViewEffect.ShowSnackbar(R.string.item_already_in_favorites))
+                    manageNewsFavoriteUseCase.removeFavorite(article)
+                    _isFavorite.value = false
+                    _effect.send(DetailsViewEffect.ShowSnackbar(R.string.removed_from_favorites))
                 } else {
-                    try {
-                        manageNewsFavoriteUseCase.addFavorite(articleToAdd)
-                        _isFavorite.value = true
-                        _effect.send(DetailsViewEffect.ShowSnackbar(R.string.item_added_to_favorites))
-                        Timber.d("Saved favorite: %s", articleToAdd.url)
-                    } catch (e: Exception) {
-                        Timber.e(e, "Failed to add favorite")
-                        // It would be better to send an effect for error as well
-                        // For now, mapping to an error state as before
-                        _uiState.value = DetailScreenState.Error("Error adding favorite.")
-                    }
+                    manageNewsFavoriteUseCase.addFavorite(article)
+                    _isFavorite.value = true
+                    _effect.send(DetailsViewEffect.ShowSnackbar(R.string.item_added_to_favorites))
                 }
             }
-        } ?: run {
-            Timber.w("Current article is null, cannot perform favorite action.")
         }
     }
 }

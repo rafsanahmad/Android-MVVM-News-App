@@ -22,7 +22,6 @@ val supportedCountries = listOf(
     Country("ar", "Argentina"),
     Country("at", "Austria"),
     Country("au", "Australia"),
-    Country("bd", "Bangladesh"),
     Country("be", "Belgium"),
     Country("bg", "Bulgaria"),
     Country("br", "Brazil"),

@@ -24,6 +24,9 @@ interface NewsDao {
     @Query("SELECT * FROM news_articles WHERE url = :articleUrl")
     suspend fun getArticleByUrl(articleUrl: String): NewsArticleEntity?
 
+    @Query("SELECT * FROM news_articles WHERE url = :articleUrl AND is_favorite = 1")
+    suspend fun getFavoriteArticleByUrl(articleUrl: String): NewsArticleEntity?
+
     @Query("SELECT * FROM news_articles ORDER BY id DESC")
     fun pagingSource(): PagingSource<Int, NewsArticleEntity>
 
