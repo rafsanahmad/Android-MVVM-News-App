@@ -7,7 +7,9 @@
     <string name="error_loading_more_news">Error loading more news: %s</string>
     <string name="news_article_image">News article image</string>
     <string name="no_more_news_available">No more news item available.</string>
-    <string name="network_unavailable">Network unavailable, showing data from cache</string>
+    <string name="network_unavailable">Network unavailable</string>
+    <string name="network_available">Network available</string>
+    <string name="retry">Retry</string>
     <string name="error_network">Network error. Please check your connection.</string>
     <string name="error_server">Server error. Please try again later.</string>
     <string name="error_http">An unexpected error occurred (Code: %1$d).</string>

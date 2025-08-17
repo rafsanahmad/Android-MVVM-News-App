@@ -1,8 +1,8 @@
 package com.rafsan.newsapp.data.di
 
-import com.rafsan.newsapp.core.util.NetworkMonitor
 import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.data.database.NewsDao
+import com.rafsan.newsapp.data.database.NewsDatabase
 import com.rafsan.newsapp.data.network.NewsApi
 import com.rafsan.newsapp.data.repository.FavoriteRepositoryImpl
 import com.rafsan.newsapp.data.repository.NewsRepositoryImpl
@@ -32,11 +32,11 @@ object RepositoryModule {
     @Singleton
     fun provideNewsRepository(
         api: NewsApi,
+        db: NewsDatabase,
         dao: NewsDao,
         @Named("ApiKey") apiKey: String,
-        @Named("PageSize") pageSize: Int,
-        networkMonitor: NetworkMonitor
-    ): NewsRepository = NewsRepositoryImpl(api, dao, apiKey, pageSize, networkMonitor)
+        @Named("PageSize") pageSize: Int
+    ): NewsRepository = NewsRepositoryImpl(api, db, dao, apiKey, pageSize)
 
     @Provides
     @Singleton

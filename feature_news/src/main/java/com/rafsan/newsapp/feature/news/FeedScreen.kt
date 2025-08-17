@@ -18,10 +18,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,10 +49,12 @@ import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.core.navigation.Screen
+import com.rafsan.newsapp.core.util.Constants
 import com.rafsan.newsapp.core.util.getErrorMessage
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.feature.news.model.supportedCountries
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -60,10 +64,24 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
     val pagingItems = viewModel.headlines.collectAsLazyPagingItems()
     val isOnline by viewModel.isOnline.collectAsState()
     val selectedCountryCode by viewModel.selectedCountryCode.collectAsState()
+    var wasOffline by remember { mutableStateOf(!isOnline) }
+    var showNetworkAvailable by remember { mutableStateOf(false) }
+
+    LaunchedEffect(isOnline) {
+        if (wasOffline && isOnline) {
+            showNetworkAvailable = true
+            pagingItems.refresh()
+            delay(Constants.NETWORK_AVAILABLE_BANNER_DURATION)
+            showNetworkAvailable = false
+        }
+        wasOffline = !isOnline
+    }
+
 
     FeedScreenLayout(
         state = pagingItems,
         isOnline = isOnline,
+        showNetworkAvailable = showNetworkAvailable,
         selectedCountryCode = selectedCountryCode,
         onCountrySelected = viewModel::selectCountry,
         onClick = { article ->
@@ -79,6 +97,7 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
 fun FeedScreenLayout(
     state: LazyPagingItems<NewsArticle>,
     isOnline: Boolean,
+    showNetworkAvailable: Boolean,
     selectedCountryCode: String,
     onCountrySelected: (String) -> Unit,
     onClick: (NewsArticle) -> Unit
@@ -127,7 +146,21 @@ fun FeedScreenLayout(
             }
         }
 
-        if (!isOnline) {
+        if (showNetworkAvailable) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.Green)
+                    .padding(8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.network_available),
+                    color = Color.White,
+                    textAlign = TextAlign.Center
+                )
+            }
+        } else if (!isOnline) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -202,18 +235,23 @@ fun FeedScreenLayout(
 
                                 is LoadState.Error -> {
                                     item {
-                                        val errorMessage = getErrorMessage(
-                                            error = appendState.error,
-                                            context = context
-                                        )
-                                        Text(
-                                            text = errorMessage,
-                                            color = MaterialTheme.colorScheme.error,
-                                            modifier = Modifier
-                                                .padding(16.dp)
-                                                .fillMaxWidth(),
-                                            textAlign = TextAlign.Center
-                                        )
+                                        Column(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            val errorMessage = getErrorMessage(
+                                                error = appendState.error,
+                                                context = context
+                                            )
+                                            Text(
+                                                text = errorMessage,
+                                                color = MaterialTheme.colorScheme.error,
+                                                modifier = Modifier.padding(8.dp)
+                                            )
+                                            Button(onClick = { state.retry() }) {
+                                                Text(stringResource(R.string.retry))
+                                            }
+                                        }
                                     }
                                 }
 
