@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("plugin.serialization") version Deps.Versions.kotlinVersion
 }
 
 android {
@@ -29,6 +30,7 @@ dependencies {
     implementation(Deps.Coroutines.core)
     implementation(Deps.Paging.common)
     implementation(Deps.Hilt.android)
+    implementation(Deps.Kotlin.serialization_json)
     kapt(Deps.Hilt.android_compiler)
     testImplementation(Deps.Test.junit)
     testImplementation(Deps.Test.truth)

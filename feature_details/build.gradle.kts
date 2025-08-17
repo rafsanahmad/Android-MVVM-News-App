@@ -3,6 +3,7 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
+    kotlin("plugin.serialization") version Deps.Versions.kotlinVersion
 }
 
 android {
@@ -56,6 +57,7 @@ dependencies {
 
     // Hilt
     implementation(Deps.Hilt.android)
+    implementation(Deps.Kotlin.serialization_json)
     kapt(Deps.Hilt.android_compiler)
 
     // Timber

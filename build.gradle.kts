@@ -14,6 +14,7 @@ buildscript {
     dependencies {
         classpath(Deps.gradle_plugin)
         classpath(Deps.Kotlin.gradle_plugin)
+        classpath(Deps.Kotlin.serialization_gradle_plugin)
         classpath(Deps.Hilt.gradlePlugin)
     }
 }

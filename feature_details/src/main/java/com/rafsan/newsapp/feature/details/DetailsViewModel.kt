@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rafsan.newsapp.domain.model.NewsArticle
-import com.rafsan.newsapp.domain.model.Source
 import com.rafsan.newsapp.domain.usecase.ManageNewsFavoriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -13,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,7 +22,6 @@ class DetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val articleUrl: String? = savedStateHandle.get<String>("url")
     private var currentArticleForFavoriteAction: NewsArticle? = null
 
     private val _uiState = MutableStateFlow<DetailScreenState>(DetailScreenState.Loading)
@@ -35,41 +34,22 @@ class DetailsViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     init {
-        // Attempt to load initial data if enough info is in SavedStateHandle
-        val title: String? = savedStateHandle.get<String>("title")
-        val imageUrl: String? = savedStateHandle.get<String>("image")
-        val content: String? = savedStateHandle.get<String>("content")
-        val publishedAt: String? = savedStateHandle.get<String>("publishedAt")
-        val sourceName: String? = savedStateHandle.get<String>("sourceName")
-
-        if (articleUrl != null) {
-            val articleFromNav = NewsArticle(
-                url = articleUrl,
-                title = title,
-                urlToImage = imageUrl,
-                content = content,
-                publishedAt = publishedAt,
-                source = sourceName?.let { Source(null, it) },
-                author = savedStateHandle.get<String>("author"),
-                description = savedStateHandle.get<String>("description")
-            )
-            setArticle(articleFromNav)
-            _uiState.value = DetailScreenState.Success(articleFromNav)
-        } else {
+        savedStateHandle.get<String>("article")?.let { articleJson ->
+            val article = Json.decodeFromString<NewsArticle>(articleJson)
+            setArticle(article)
+        } ?: run {
             _uiState.value = DetailScreenState.Error("Article details not found.")
         }
     }
 
-    fun setArticle(article: NewsArticle) {
+    private fun setArticle(article: NewsArticle) {
         currentArticleForFavoriteAction = article
         article.url?.let {
             viewModelScope.launch {
                 _isFavorite.value = manageNewsFavoriteUseCase.isFavorite(it)
             }
         }
-        if (_uiState.value !is DetailScreenState.Success || (_uiState.value as DetailScreenState.Success).article != article) {
-            _uiState.value = DetailScreenState.Success(article)
-        }
+        _uiState.value = DetailScreenState.Success(article)
     }
 
     fun onFavoriteClicked() {

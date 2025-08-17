@@ -14,6 +14,8 @@ object Deps {
         const val app_version_name = "1.0"
         const val gradle_plugin = "8.6.0"
         const val kotlinVersion = "1.9.24"
+        const val kotlinxSerializationVersion = "1.9.24"
+        const val kotlinxSerializationJsonVersion = "1.6.3"
         const val coroutinesVersion = "1.8.1"
         const val junit = "4.13.2"
         const val material = "1.12.0"
@@ -55,6 +57,8 @@ object Deps {
     object Kotlin {
         const val gradle_plugin =
             "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}"
+        const val serialization_gradle_plugin = "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlinxSerializationVersion}"
+        const val serialization_json = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerializationJsonVersion}"
     }
 
     object Coroutines {

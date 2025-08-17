@@ -64,10 +64,7 @@ fun FeedScreen(navController: NavController, viewModel: FeedViewModel = hiltView
         selectedCountryCode = selectedCountryCode,
         onCountrySelected = viewModel::selectCountry,
         onClick = { article ->
-            navController.currentBackStackEntry?.savedStateHandle?.set("url", article.url)
-            navController.currentBackStackEntry?.savedStateHandle?.set("title", article.title)
-            navController.currentBackStackEntry?.savedStateHandle?.set("image", article.urlToImage)
-            navController.navigate(Screen.Details.route)
+            navController.navigate(Screen.Details.withArticle(article))
         }
     )
 }

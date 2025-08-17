@@ -33,10 +33,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.model.Source
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,6 +62,24 @@ fun DetailsScreen(
         }
     }
 
+    DetailsScreenContent(
+        uiState = uiState,
+        isFavorite = isFavorite,
+        snackbarHostState = snackbarHostState,
+        onFavoriteClicked = viewModel::onFavoriteClicked,
+        onBack = { navController.navigateUp() }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DetailsScreenContent(
+    uiState: DetailScreenState,
+    isFavorite: Boolean,
+    snackbarHostState: SnackbarHostState,
+    onFavoriteClicked: () -> Unit,
+    onBack: () -> Unit
+) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +93,7 @@ fun DetailsScreen(
                     Text(text = titleText, maxLines = 1)
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = onBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_button_desc)
@@ -85,7 +106,7 @@ fun DetailsScreen(
             if (uiState is DetailScreenState.Success) {
                 val article = (uiState as DetailScreenState.Success).article
                 if (article.url != null) {
-                    FloatingActionButton(onClick = viewModel::onFavoriteClicked) {
+                    FloatingActionButton(onClick = onFavoriteClicked) {
                         Icon(
                             imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                             contentDescription = stringResource(id = if (isFavorite) R.string.unfavorite_action_desc else R.string.favorite_action_desc)
@@ -128,6 +149,58 @@ fun DetailsScreen(
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true, name = "Details Screen Success")
+@Composable
+private fun DetailsScreenSuccessPreview() {
+    val article = NewsArticle(
+        author = "Author",
+        content = "Content",
+        description = "Description",
+        publishedAt = "2024-01-01T12:00:00Z",
+        source = Source(id = "cnn", name = "CNN"),
+        title = "A long title to test how it looks in the app bar",
+        url = "https://www.google.com",
+        urlToImage = ""
+    )
+    MaterialTheme {
+        DetailsScreenContent(
+            uiState = DetailScreenState.Success(article),
+            isFavorite = false,
+            snackbarHostState = remember { SnackbarHostState() },
+            onFavoriteClicked = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Details Screen Loading")
+@Composable
+private fun DetailsScreenLoadingPreview() {
+    MaterialTheme {
+        DetailsScreenContent(
+            uiState = DetailScreenState.Loading,
+            isFavorite = false,
+            snackbarHostState = remember { SnackbarHostState() },
+            onFavoriteClicked = {},
+            onBack = {}
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "Details Screen Error")
+@Composable
+private fun DetailsScreenErrorPreview() {
+    MaterialTheme {
+        DetailsScreenContent(
+            uiState = DetailScreenState.Error("Something went wrong"),
+            isFavorite = false,
+            snackbarHostState = remember { SnackbarHostState() },
+            onFavoriteClicked = {},
+            onBack = {}
+        )
     }
 }
 

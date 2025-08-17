@@ -4,7 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.rafsan.newsapp.core.navigation.Screen
 import com.rafsan.newsapp.feature.details.DetailsScreen
 import com.rafsan.newsapp.feature.favorite.FavoritesScreen
@@ -27,7 +29,10 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.Favorites.route) {
             FavoritesScreen()
         }
-        composable(Screen.Details.route) {
+        composable(
+            route = Screen.Details.route,
+            arguments = listOf(navArgument("article") { type = NavType.StringType })
+        ) {
             DetailsScreen(navController = navController)
         }
     }
