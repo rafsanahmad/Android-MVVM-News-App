@@ -15,6 +15,9 @@ interface NewsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(newsArticle: NewsArticleEntity): Long
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(newsArticles: List<NewsArticleEntity>)
+
     @Query("SELECT * FROM news_articles")
     fun getAllNews(): Flow<List<NewsArticleEntity>>
 
