@@ -7,47 +7,48 @@
 
 object Deps {
     object Versions {
-        const val compile_sdk = 33
+        const val compile_sdk = 35
         const val min_sdk = 21
-        const val target_sdk = 33
+        const val target_sdk = 35
         const val app_version_code = 1
         const val app_version_name = "1.0"
-        const val gradle_plugin = "7.0.0"
-        const val constraint_layout = "2.0.4"
-        const val lifecycle = "2.2.0"
-        const val junit = "4.12"
-        const val material = "1.2.1"
-        const val kotlinVersion = "1.6.21"
-        const val coroutinesVersion = "1.4.2"
-        const val android_test = "1.4.0-beta01"
-        const val espresso = "3.4.0"
-        const val android_test_junit = "1.1.3"
-        const val arch_core_testing = "2.1.0"
-        const val ktx_core = "1.3.2"
-        const val ktx_fragment = "1.2.4"
-        const val ktx_activity = "1.1.0"
-        const val annotation = "1.1.0"
-        const val roomVersion = "2.3.0-alpha04"
-        const val hiltVersion = "2.38.1"
-        const val retrofit = "2.9.0"
-        const val okhttp = "4.9.0"
-        const val glide = "4.11.0"
-        const val mockito = "3.7.7"
-        const val mockitoInline = "3.2.4"
-        const val mockitoKotlin = "2.2.0"
-        const val robolectric = "4.6.1"
-        const val truth = "1.0.1"
-        const val navigationVersion = "2.4.0-alpha02"
-        const val appCompatVersion = "1.2.0"
-        const val swipeRefreshVersion = "1.1.0"
-        const val mockwebServer = "4.7.2"
-        const val fragment_test_version = "1.3.0-alpha08"
-        const val dexmaker_version = "2.28.1"
+        const val gradle_plugin = "8.6.0"
+        const val kotlinVersion = "1.9.24"
+        const val kotlinxSerializationVersion = "1.9.24"
+        const val kotlinxSerializationJsonVersion = "1.6.3"
+        const val coroutinesVersion = "1.8.1"
+        const val junit = "4.13.2"
+        const val material = "1.12.0"
+        const val android_test = "1.6.1" // For androidx.test:core, runner, rules
+        const val espresso = "3.6.1" // New version for espresso
+        const val android_test_junit = "1.2.1" // For androidx.test.ext:junit
+        const val arch_core_testing = "2.2.0"
+        const val ktx_core = "1.13.1"
+        const val ktx_activity = "1.9.2"
+        const val appCompatVersion = "1.7.0"
+        const val roomVersion = "2.6.1"
+        const val hiltVersion = "2.51.1"
+        const val retrofit = "2.11.0"
+        const val okhttp = "4.12.0"
+        const val mockwebServer = "4.12.0"
+        const val truth = "1.4.2"
+        const val robolectric = "4.12.2"
+        const val navigationVersion = "2.7.7"
+        const val pagingVersion = "3.3.2"
+        const val composeBom = "2025.08.00"
+        const val composeCompiler = "1.5.14"
+        const val coilVersion = "2.6.0"
+
+        // New testing versions
+        const val mockkVersion = "1.13.10"
+        const val turbineVersion = "1.1.0"
+        // hiltTestingVersion can reuse hiltVersion
+        // navigationTestingVersion can reuse navigationVersion
     }
 
     const val gradle_plugin = "com.android.tools.build:gradle:${Versions.gradle_plugin}"
 
-    const val junit = "junit:junit:${Versions.junit}"
+    const val junit = "junit:junit:${Versions.junit}" // Plain JUnit4
 
     object Google {
         const val material = "com.google.android.material:material:${Versions.material}"
@@ -56,6 +57,8 @@ object Deps {
     object Kotlin {
         const val gradle_plugin =
             "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlinVersion}"
+        const val serialization_gradle_plugin = "org.jetbrains.kotlin:kotlin-serialization:${Versions.kotlinxSerializationVersion}"
+        const val serialization_json = "org.jetbrains.kotlinx:kotlinx-serialization-json:${Versions.kotlinxSerializationJsonVersion}"
     }
 
     object Coroutines {
@@ -68,75 +71,50 @@ object Deps {
     }
 
     object AndroidX {
-
         const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompatVersion}"
-
-        object Test {
-            const val core = "androidx.test:core:${Versions.android_test}"
-            const val rules = "androidx.test:rules:${Versions.android_test}"
-            const val runner = "androidx.test:runner:${Versions.android_test}"
-            const val junit = "androidx.test.ext:junit:${Versions.android_test_junit}"
-            const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
-            const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
-            const val fragmentTest =
-                "androidx.fragment:fragment-testing:${Versions.fragment_test_version}"
-
-            object Espresso {
-                const val core = "androidx.test.espresso:espresso-core:${Versions.espresso}"
-                const val contrib = "androidx.test.espresso:espresso-contrib:${Versions.espresso}"
-                const val idling_resource =
-                    "androidx.test.espresso:espresso-idling-resource:${Versions.espresso}"
-                const val intents =
-                    "androidx.test.espresso:espresso-intents:${Versions.espresso}"
-            }
-
-            const val arch_core_testing =
-                "androidx.arch.core:core-testing:${Versions.arch_core_testing}"
-        }
-
-        const val constraint_layout =
-            "androidx.constraintlayout:constraintlayout:${Versions.constraint_layout}"
-
         const val ktx_core = "androidx.core:core-ktx:${Versions.ktx_core}"
-        const val ktx_fragment = "androidx.fragment:fragment-ktx:${Versions.ktx_fragment}"
         const val ktx_activity = "androidx.activity:activity-ktx:${Versions.ktx_activity}"
-        const val annotation = "androidx.annotation:annotation:${Versions.annotation}"
+        const val activity_compose = "androidx.activity:activity-compose:${Versions.ktx_activity}"
+        const val arch_core_testing =
+            "androidx.arch.core:core-testing:${Versions.arch_core_testing}" // Added for clarity
     }
 
     object Lifecycle {
-        const val extensions = "androidx.lifecycle:lifecycle-extensions:${Versions.lifecycle}"
-        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
-        const val compiler = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
-        const val lifeCycleLiveData =
-            "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
-        const val lifeCycleRunTime =
-            "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
+        const val viewmodel = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4"
+        const val lifeCycleLiveData = "androidx.lifecycle:lifecycle-livedata-ktx:2.8.4"
+        const val lifeCycleRunTime = "androidx.lifecycle:lifecycle-runtime-ktx:2.8.4"
     }
 
     object Room {
         const val runtime = "androidx.room:room-runtime:${Versions.roomVersion}"
         const val compiler = "androidx.room:room-compiler:${Versions.roomVersion}"
         const val ktx = "androidx.room:room-ktx:${Versions.roomVersion}"
+        const val paging = "androidx.room:room-paging:${Versions.roomVersion}"
         const val testing = "androidx.room:room-testing:${Versions.roomVersion}"
     }
 
     object Navigation {
-        const val safeArgs_gradle =
-            "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigationVersion}"
         const val navigationFragment =
             "androidx.navigation:navigation-fragment-ktx:${Versions.navigationVersion}"
         const val navigationKtx =
             "androidx.navigation:navigation-ui-ktx:${Versions.navigationVersion}"
+        const val navigationCompose =
+            "androidx.navigation:navigation-compose:${Versions.navigationVersion}"
+        const val hiltCompose = "androidx.hilt:hilt-navigation-compose:1.2.0"
+        const val testing =
+            "androidx.navigation:navigation-testing:${Versions.navigationVersion}" // New
     }
 
     object Hilt {
-        const val viewmodel = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltVersion}"
-        const val compiler = "androidx.hilt:hilt-compiler:${Versions.hiltVersion}"
         const val android = "com.google.dagger:hilt-android:${Versions.hiltVersion}"
         const val android_compiler =
-            "com.google.dagger:hilt-android-compiler:${Versions.hiltVersion}"
+            "com.google.dagger:hilt-android-compiler:${Versions.hiltVersion}" // Used for kaptAndroidTest
         const val gradlePlugin =
             "com.google.dagger:hilt-android-gradle-plugin:${Versions.hiltVersion}"
+        const val testing = "com.google.dagger:hilt-android-testing:${Versions.hiltVersion}" // New
+
+        // Alias to match module usage
+        const val android_testing = testing
     }
 
     object Retrofit {
@@ -151,28 +129,62 @@ object Deps {
         const val mockWebServer = "com.squareup.okhttp3:mockwebserver:${Versions.mockwebServer}"
     }
 
-    object Glide {
-        const val runtime = "com.github.bumptech.glide:glide:${Versions.glide}"
-        const val compiler = "com.github.bumptech.glide:compiler:${Versions.glide}"
-        const val okhttp_integration =
-            "com.github.bumptech.glide:okhttp3-integration:${Versions.glide}"
+    object Paging {
+        const val runtime = "androidx.paging:paging-runtime:${Versions.pagingVersion}"
+        const val compose = "androidx.paging:paging-compose:${Versions.pagingVersion}"
+        const val common = "androidx.paging:paging-common:${Versions.pagingVersion}"
     }
 
-    const val SwipeRefreshLayout =
-        "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swipeRefreshVersion}"
+    object Timber {
+        const val timber = "com.jakewharton.timber:timber:5.0.1"
+    }
+
+    object Compose {
+        const val bom = "androidx.compose:compose-bom:${Versions.composeBom}"
+        const val ui = "androidx.compose.ui:ui"
+        const val uiGraphics = "androidx.compose.ui:ui-graphics"
+        const val uiTooling = "androidx.compose.ui:ui-tooling"
+        const val uiToolingPreview = "androidx.compose.ui:ui-tooling-preview"
+        const val material3 = "androidx.compose.material3:material3"
+        const val runtime = "androidx.compose.runtime:runtime"
+        const val runtimeLivedata = "androidx.compose.runtime:runtime-livedata"
+        const val uiTestJunit4 = "androidx.compose.ui:ui-test-junit4" // Already here
+        const val uiTestManifest = "androidx.compose.ui:ui-test-manifest" // Already here
+        const val material = "androidx.compose.material:material:1.6.8"
+        const val pull_refresh = "androidx.compose.material3:material3-pull-refresh"
+    }
+
+    object Coil {
+        const val compose = "io.coil-kt:coil-compose:${Versions.coilVersion}"
+    }
 
     object Test {
+        // Mockito is already here
         object Mockito {
-            const val core = "org.mockito:mockito-core:${Versions.mockito}"
-            const val android = "org.mockito:mockito-android:${Versions.mockito}"
-            const val inline = "org.mockito:mockito-inline:${Versions.mockitoInline}"
-            const val kotlin =
-                "com.nhaarman.mockitokotlin2:mockito-kotlin:${Versions.mockitoKotlin}"
-            const val dexMaker =
-                "com.linkedin.dexmaker:dexmaker-mockito-inline:${Versions.dexmaker_version}"
+            const val core = "org.mockito:mockito-core:5.12.0"
+            const val inline = "org.mockito:mockito-inline:5.2.0"
+            const val kotlin = "org.mockito.kotlin:mockito-kotlin:5.3.1"
         }
 
+        // Adding new ones
+        object MockK { // New object for MockK
+            const val mockk = "io.mockk:mockk:${Versions.mockkVersion}"
+            const val mockk_android = "io.mockk:mockk-android:${Versions.mockkVersion}"
+        }
+
+        const val turbine = "app.cash.turbine:turbine:${Versions.turbineVersion}" // New
         const val truth = "com.google.truth:truth:${Versions.truth}"
-        const val robolectric = "org.robolectric:robolectric:${Versions.robolectric}"
+        const val robolectric =
+            "org.robolectric:robolectric:${Versions.robolectric}"
+
+        const val core = "androidx.test:core:${Versions.android_test}"
+        const val rules = "androidx.test:rules:${Versions.android_test}"
+        const val runner = "androidx.test:runner:${Versions.android_test}"
+        const val junit =
+            "androidx.test.ext:junit:${Versions.android_test_junit}" // androidx.test.ext:junit
+        const val junitKtx = "androidx.test.ext:junit-ktx:${Versions.android_test_junit}"
+        const val coreKtx = "androidx.test:core-ktx:${Versions.android_test}"
+        const val espresso_core =
+            "androidx.test.espresso:espresso-core:${Versions.espresso}" // Added for clarity
     }
 }

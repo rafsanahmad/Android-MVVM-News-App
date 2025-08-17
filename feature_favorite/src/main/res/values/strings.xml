@@ -1,0 +1,12 @@
+<resources>
+    <string name="snackbar_remove_favorite_message">Remove from favorites?</string>
+    <string name="snackbar_remove_confirm_action">Remove</string> <!-- Changed from Confirm to Remove -->
+    <string name="unfavorite">Unfavorite</string>
+
+    <string name="no_favorite_articles_found">No favorite articles found.</string>
+    <string name="no_favorite_articles_yet">No favorite articles yet.</string>
+    <string name="back">Back</string>
+    <string name="favorites_title">Favorites</string>
+    <string name="undo">Undo</string>
+    <string name="article_image_description">image description</string>
+</resources>

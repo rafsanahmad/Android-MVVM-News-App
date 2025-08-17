@@ -10,15 +10,21 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
-    id("androidx.navigation.safeargs")
+
 }
 
 android {
+    namespace = "com.rafsan.newsapp"
     compileSdk = Deps.Versions.compile_sdk
 
     buildFeatures {
-        viewBinding = true
+        compose = true
         buildConfig = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = Deps.Versions.composeCompiler
     }
 
     defaultConfig {
@@ -42,6 +48,7 @@ android {
         }
     }
     flavorDimensions("default")
+
     productFlavors {
         create("prod") {
             applicationId = "com.rafsan.newsapp"
@@ -64,66 +71,49 @@ android {
             )
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
-    testOptions {
-        unitTests.isIncludeAndroidResources = true
-        animationsDisabled = true
+    kotlinOptions {
+        jvmTarget = "17"
     }
 
     testBuildType = "debug"
 
-    packagingOptions {
-        resources.excludes.add("META-INF/*")
-        resources.excludes.add(".readme")
-    }
-
-    sourceSets {
-        val test by getting
-        val androidTest by getting
-        test.java.srcDirs("$projectDir/src/testShared")
-        androidTest.java.srcDirs("$projectDir/src/testShared")
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
+    packaging {
+        resources.excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        resources.excludes += "META-INF/LICENSE*" // Changed to use a wildcard
     }
 }
 
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     //App Compat, layout, Core
-    implementation(Deps.AndroidX.appCompat)
-    implementation(Deps.AndroidX.constraint_layout)
-    implementation(Deps.AndroidX.ktx_core)
+    implementation(project(":core"))
+    implementation(project(":domain"))
+    implementation(project(":data"))
+    implementation(project(":feature_news"))
+    implementation(project(":feature_favorite"))
+    implementation(project(":feature_search"))
+    implementation(project(":feature_details"))
 
-    //Material
+    implementation(Deps.AndroidX.appCompat)
+    implementation(Deps.AndroidX.ktx_core)
     implementation(Deps.Google.material)
 
-    //Room
-    implementation(Deps.Room.runtime)
-    implementation(Deps.Room.ktx)
-    kapt(Deps.Room.compiler)
+    // Activity Compose
+    implementation(Deps.AndroidX.activity_compose)
 
-    // Activity KTX
-    implementation(Deps.AndroidX.ktx_activity)
-
-    // Lifecycle
-    implementation(Deps.Lifecycle.extensions)
-    implementation(Deps.Lifecycle.lifeCycleLiveData)
-    implementation(Deps.Lifecycle.viewmodel)
-    implementation(Deps.Lifecycle.lifeCycleRunTime)
-
-    // Retrofit
-    implementation(Deps.Retrofit.main)
-    implementation(Deps.Retrofit.converterGSON)
-
-    // OkHTTP
-    implementation(Deps.OkHttp.main)
-    implementation(Deps.OkHttp.logging_interceptor)
+    // Compose
+    implementation(platform(Deps.Compose.bom))
+    implementation(Deps.Compose.ui)
+    implementation(Deps.Compose.uiGraphics)
+    implementation(Deps.Compose.uiToolingPreview)
+    implementation(Deps.Compose.material3)
+    debugImplementation(Deps.Compose.uiTooling)
 
     // Coroutines
     implementation(Deps.Coroutines.core)
@@ -133,53 +123,35 @@ dependencies {
     implementation(Deps.Hilt.android)
     kapt(Deps.Hilt.android_compiler)
 
-    //Navigation
-    implementation(Deps.Navigation.navigationFragment)
-    implementation(Deps.Navigation.navigationKtx)
+    // Timber
+    implementation(Deps.Timber.timber)
 
-    // Glide
-    implementation(Deps.Glide.runtime)
-    kapt(Deps.Glide.compiler)
+    // Navigation Compose
+    implementation(Deps.Navigation.navigationCompose)
 
-    //Swipe Refresh Layout
-    implementation(Deps.SwipeRefreshLayout)
+    // Paging Compose
+    implementation(Deps.Paging.runtime)
+    implementation(Deps.Paging.compose)
 
-    //Idling Resource
-    implementation(Deps.AndroidX.Test.Espresso.idling_resource)
+    // Coil
+    implementation(Deps.Coil.compose)
 
     //Testing dependencies
     testImplementation(Deps.junit)
     testImplementation(Deps.Test.Mockito.core)
     testImplementation(Deps.Test.Mockito.inline)
     testImplementation(Deps.Test.Mockito.kotlin)
-    testImplementation(Deps.AndroidX.Test.arch_core_testing)
-    testImplementation(Deps.AndroidX.Test.core)
-    testImplementation(Deps.Test.robolectric)
+    testImplementation(Deps.junit)
     testImplementation(Deps.Test.truth)
     testImplementation(Deps.Coroutines.test)
     testImplementation(Deps.OkHttp.mockWebServer)
-    androidTestImplementation(Deps.AndroidX.Test.arch_core_testing)
-    androidTestImplementation(Deps.AndroidX.Test.junit)
-    androidTestImplementation(Deps.AndroidX.Test.junitKtx)
-    androidTestImplementation(Deps.AndroidX.Test.coreKtx)
-    androidTestImplementation(Deps.Test.Mockito.kotlin)
-    androidTestImplementation(Deps.Test.Mockito.dexMaker)
+    androidTestImplementation(Deps.Test.junit)
+    androidTestImplementation(Deps.Test.junitKtx)
+    androidTestImplementation(Deps.Test.coreKtx)
     androidTestImplementation(Deps.Coroutines.test) {
         exclude(group = "org.jetbrains.kotlinx", module = "kotlinx-coroutines-debug")
     }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.core) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.contrib) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    androidTestImplementation(Deps.AndroidX.Test.Espresso.intents) {
-        exclude(group = "org.checkerframework", module = "checker")
-    }
-    debugImplementation(Deps.AndroidX.Test.fragmentTest) {
-        exclude(group = "androidx.test", module = "monitor")
-    }
-    debugImplementation(Deps.AndroidX.Test.core) {
-        exclude(group = "androidx.test", module = "monitor")
-    }
+    androidTestImplementation(platform(Deps.Compose.bom))
+    androidTestImplementation(Deps.Compose.uiTestJunit4)
+    debugImplementation(Deps.Compose.uiTestManifest)
 }

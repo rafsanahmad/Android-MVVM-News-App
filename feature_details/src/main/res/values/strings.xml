@@ -1,0 +1,12 @@
+<resources>
+    <string name="invalid_article">Invalid article</string>
+    <string name="favorite">Favorite</string>
+    <string name="item_added_to_favorites">Item added to favorites</string>
+    <string name="item_already_in_favorites">This item is already in your favorites.</string>
+    <string name="details_screen_title">Details</string>
+    <string name="back_button_desc">Back</string>
+    <string name="removed_from_favorites">Item removed from favorites</string>
+    <string name="unfavorite_action_desc">Remove from favorites</string>
+    <string name="favorite_action_desc">Add to favorites</string>
+    <string name="invalid_article_url_message">Invalid article URL</string>
+</resources>

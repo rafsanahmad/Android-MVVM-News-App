@@ -10,9 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
-include(":app")
+include(":app", ":core", ":domain", ":feature_news", ":feature_favorite", ":feature_search", ":feature_details", ":data")
 rootProject.name = "News App"
 
