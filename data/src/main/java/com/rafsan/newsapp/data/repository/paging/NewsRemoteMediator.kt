@@ -37,9 +37,12 @@ class NewsRemoteMediator(
             val body = response.body()
             val articles = body?.articles ?: emptyList()
 
-            val entities = articles.map {
-                NewsArticleEntity(
-                    id = null,
+            val entities = articles
+                .filter { it.url != null } // Ensure URL is not null
+                .distinctBy { it.url } // De-duplicate by URL
+                .map {
+                    NewsArticleEntity(
+                        id = null,
                     author = it.author,
                     content = it.content,
                     description = it.description,
@@ -51,7 +54,7 @@ class NewsRemoteMediator(
                     urlToImage = it.urlToImage,
                     isFavorite = false // Explicitly set as not favorite
                 )
-            }
+                }
 
             db.withTransaction {
                 if (loadType == LoadType.REFRESH) {

@@ -3,7 +3,6 @@ package com.rafsan.newsapp.data.di
 import android.content.Context
 import androidx.room.Room
 import com.rafsan.newsapp.data.BuildConfig
-import com.rafsan.newsapp.data.database.MIGRATION_2_3
 import com.rafsan.newsapp.data.database.NewsDao
 import com.rafsan.newsapp.data.database.NewsDatabase
 import com.rafsan.newsapp.data.network.NewsApi
@@ -52,7 +51,7 @@ object DataModule {
             context,
             NewsDatabase::class.java,
             "news.db"
-        ).addMigrations(MIGRATION_2_3).build()
+        ).fallbackToDestructiveMigration().build()
 
     @Provides
     @Singleton

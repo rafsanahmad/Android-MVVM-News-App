@@ -1,12 +1,11 @@
 package com.rafsan.newsapp.data.database.entity
 
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
 import androidx.room.ColumnInfo
 
-@Entity(tableName = "news_articles", indices = [Index(value = ["url"], unique = true)])
+@Entity(tableName = "news_articles")
 data class NewsArticleEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int? = null,
