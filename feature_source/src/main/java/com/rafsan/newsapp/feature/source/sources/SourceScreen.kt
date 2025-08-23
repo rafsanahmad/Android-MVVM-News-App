@@ -37,8 +37,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.R
 import com.rafsan.newsapp.core.util.Constants
+import com.rafsan.newsapp.core.util.countryCodeToEmojiFlag
 import com.rafsan.newsapp.core.util.getDomainName
-import com.rafsan.newsapp.core.util.getFlagEmoji
 import com.rafsan.newsapp.domain.model.NewsSource
 
 @Composable
@@ -166,7 +166,7 @@ fun SourceItem(
             )
             Spacer(modifier = Modifier.width(16.dp))
         }
-        Text(text = getFlagEmoji(source.country), modifier = Modifier.padding(end = 16.dp))
+        Text(text = countryCodeToEmojiFlag(source.country), modifier = Modifier.padding(end = 16.dp))
         Column {
             Text(text = source.name)
             Text(text = "Category: ${source.category}")

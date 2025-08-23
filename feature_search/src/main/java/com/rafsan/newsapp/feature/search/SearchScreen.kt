@@ -66,15 +66,12 @@ fun SearchScreen(navController: NavController, viewModel: SearchViewModel = hilt
     val query by viewModel.currentQuery.collectAsState()
     val pagingItems = viewModel.searchResults.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
-    val uiState by viewModel.uiState.collectAsState()
-
     SearchScreenLayout(
         query = query,
         pagingItems = pagingItems,
         onQueryChanged = viewModel::onQueryChanged,
         navController = navController,
-        focusManager = focusManager,
-        uiState = uiState
+        focusManager = focusManager
     )
 }
 
@@ -85,8 +82,7 @@ fun SearchScreenLayout(
     pagingItems: LazyPagingItems<NewsArticle>,
     onQueryChanged: (String) -> Unit,
     navController: NavController,
-    focusManager: FocusManager,
-    uiState: SearchScreenState
+    focusManager: FocusManager
 ) {
     Scaffold(
         topBar = {
@@ -134,7 +130,6 @@ fun SearchScreenLayout(
                 query = query,
                 pagingItems = pagingItems,
                 navController = navController,
-                uiState = uiState,
                 focusManager = focusManager
             )
         }
@@ -146,7 +141,6 @@ private fun HandlePagingContent(
     query: String,
     pagingItems: LazyPagingItems<NewsArticle>,
     navController: NavController,
-    uiState: SearchScreenState,
     focusManager: FocusManager
 ) {
     val context = LocalContext.current
@@ -158,7 +152,16 @@ private fun HandlePagingContent(
         }
     }
 
-    if (uiState is SearchScreenState.QueryTooShort) {
+    // Full-screen loading indicator for initial search
+    if (pagingItems.loadState.refresh is LoadState.Loading) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    }
+    // Full-screen error message
+    else if (pagingItems.loadState.refresh is LoadState.Error) {
+        val error = (pagingItems.loadState.refresh as LoadState.Error).error
+        val errorMessage = getErrorMessage(error = error, context = context)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -166,79 +169,32 @@ private fun HandlePagingContent(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                stringResource(id = R.string.search_query_too_short, uiState.minLength),
+                text = errorMessage,
+                color = MaterialTheme.colorScheme.error,
                 textAlign = TextAlign.Center
             )
         }
-        return
     }
-
-    when (val refreshState = pagingItems.loadState.refresh) {
-        is LoadState.Loading -> {
-            if (query.isNotBlank() && pagingItems.itemCount == 0) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else if (query.isBlank()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        stringResource(id = R.string.start_typing_to_search),
-                        textAlign = TextAlign.Center
-                    )
-                }
+    // Empty state or results
+    else {
+        if (pagingItems.itemCount == 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = if (query.isBlank()) {
+                        stringResource(id = R.string.start_typing_to_search)
+                    } else {
+                        stringResource(id = R.string.no_results_found_for_query, query)
+                    },
+                    textAlign = TextAlign.Center
+                )
             }
-        }
-
-        is LoadState.Error -> {
-            if (query.isNotBlank()) {
-                val errorMessage = getErrorMessage(error = refreshState.error, context = context)
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-
-        is LoadState.NotLoading -> {
-            if (query.isBlank()) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        stringResource(id = R.string.start_typing_to_search),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            } else if (pagingItems.itemCount == 0 && uiState is SearchScreenState.Searching) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        stringResource(id = R.string.no_results_found_for_query, query),
-                        textAlign = TextAlign.Center
-                    )
-                }
-            } else {
-                LazyColumn(
+        } else {
+            LazyColumn(
                     state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 8.dp)
@@ -348,6 +304,14 @@ private fun SearchNewsRow(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
+                text = article.source?.name ?: "",
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
                 text = article.description ?: "",
                 style = MaterialTheme.typography.bodySmall,
                 maxLines = 3,
@@ -388,8 +352,7 @@ fun SearchScreenLayoutPreview_Empty() {
             pagingItems = emptyPagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current,
-            uiState = SearchScreenState.Empty
+            focusManager = LocalFocusManager.current
         )
     }
 }
@@ -419,8 +382,7 @@ fun SearchScreenLayoutPreview_WithResults() {
             pagingItems = pagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current,
-            uiState = SearchScreenState.Searching
+            focusManager = LocalFocusManager.current
         )
     }
 }

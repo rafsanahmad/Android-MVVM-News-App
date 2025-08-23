@@ -32,7 +32,7 @@ class SourceNewsViewModel @Inject constructor(
     val newsState: StateFlow<PagingData<NewsArticle>> = _newsState.asStateFlow()
 
     val sourceId: String = savedStateHandle.get<String>("sourceId") ?: ""
-    val sourceName: String = savedStateHandle.get<String>("sourceName") ?: "Source News"
+    val sourceName: String = java.net.URLDecoder.decode(savedStateHandle.get<String>("sourceName"), "UTF-8") ?: "Source News"
 
     init {
         if (sourceId.isNotEmpty()) {
