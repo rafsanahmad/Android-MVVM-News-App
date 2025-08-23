@@ -401,7 +401,7 @@ fun SearchScreenLayoutPreview_WithResults() {
         NewsArticle(
             id = index,
             title = "Preview Article $index",
-            description = "Description for article $index",.
+            description = "Description for article $index",
             url = "http://example.com/preview/$index",
             urlToImage = "https://via.placeholder.com/100",
             author = "Preview Author",
