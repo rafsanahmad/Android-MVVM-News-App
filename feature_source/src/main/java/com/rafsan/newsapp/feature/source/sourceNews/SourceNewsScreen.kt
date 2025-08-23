@@ -11,10 +11,11 @@ import android.net.Uri
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,16 +27,17 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.rafsan.newsapp.domain.model.NewsArticle
 import kotlinx.coroutines.flow.flowOf
-import androidx.paging.compose.collectAsLazyPagingItems
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
@@ -73,7 +75,7 @@ fun SourceNewsContent(
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back"
                         )
                     }
@@ -94,7 +96,7 @@ fun SourceNewsContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (newsArticles.loadState.refresh is androidx.paging.LoadState.Loading) {
+            if (newsArticles.loadState.refresh is LoadState.Loading) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
@@ -116,7 +118,7 @@ fun SourceNewsContent(
                             )
                         }
                     }
-                    if (newsArticles.loadState.append is androidx.paging.LoadState.Loading) {
+                    if (newsArticles.loadState.append is LoadState.Loading) {
                         item {
                             Box(
                                 modifier = Modifier.fillMaxSize(),

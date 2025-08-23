@@ -35,11 +35,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.rafsan.newsapp.R
 import com.rafsan.newsapp.core.util.Constants
 import com.rafsan.newsapp.core.util.getDomainName
 import com.rafsan.newsapp.core.util.getFlagEmoji
 import com.rafsan.newsapp.domain.model.NewsSource
+import com.rafsan.newsapp.feature.source.R
+import java.net.URLEncoder
 
 @Composable
 fun SourceScreen(
@@ -54,7 +55,7 @@ fun SourceScreen(
         searchQuery = searchQuery,
         onSearchQueryChanged = viewModel::onSearchQueryChanged,
         onSourceClick = { source ->
-            val encodedSourceName = java.net.URLEncoder.encode(source.name, "UTF-8")
+            val encodedSourceName = URLEncoder.encode(source.name, "UTF-8")
             navController.navigate("source_news/${source.id}/${encodedSourceName}")
         }
     )
@@ -161,8 +162,8 @@ fun SourceItem(
                 model = "${Constants.CLEARBIT_LOGO_API}$domain",
                 contentDescription = source.name,
                 modifier = Modifier.size(40.dp),
-                placeholder = painterResource(id = R.drawable.ic_launcher_background),
-                error = painterResource(id = R.drawable.ic_launcher_background)
+                placeholder = painterResource(id = R.drawable.placeholder_image),
+                error = painterResource(id = R.drawable.placeholder_image)
             )
             Spacer(modifier = Modifier.width(16.dp))
         }
