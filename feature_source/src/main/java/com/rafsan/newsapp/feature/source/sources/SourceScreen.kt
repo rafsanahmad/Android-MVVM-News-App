@@ -1,4 +1,11 @@
-package com.rafsan.newsapp.feature.source
+/*
+ * *
+ *  * Created by Rafsan Ahmad on 8/23/25, 4:11PM
+ *  * Copyright (c) 2025 . All rights reserved.
+ *
+ */
+
+package com.rafsan.newsapp.feature.source.sources
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -46,6 +53,7 @@ fun SourceScreen(
                     CircularProgressIndicator()
                 }
             }
+
             is SourceState.Success -> {
                 SourceList(
                     sources = sourceState.sources,
@@ -54,6 +62,7 @@ fun SourceScreen(
                     }
                 )
             }
+
             is SourceState.Error -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),

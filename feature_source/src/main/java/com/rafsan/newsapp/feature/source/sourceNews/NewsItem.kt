@@ -1,4 +1,11 @@
-package com.rafsan.newsapp.feature.source
+/*
+ * *
+ *  * Created by Rafsan Ahmad on 8/23/25, 4:12PM
+ *  * Copyright (c) 2025 . All rights reserved.
+ *
+ */
+
+package com.rafsan.newsapp.feature.source.sourceNews
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -13,7 +20,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage

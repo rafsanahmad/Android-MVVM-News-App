@@ -1,4 +1,11 @@
-package com.rafsan.newsapp.feature.source
+/*
+ * *
+ *  * Created by Rafsan Ahmad on 8/23/25, 4:11PM
+ *  * Copyright (c) 2025 . All rights reserved.
+ *
+ */
+
+package com.rafsan.newsapp.feature.source.sources
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -51,10 +58,4 @@ class SourceViewModel @Inject constructor(
         }
         _state.value = SourceState.Success(filteredSources)
     }
-}
-
-sealed class SourceState {
-    data object Loading : SourceState()
-    data class Success(val sources: List<NewsSource>) : SourceState()
-    data class Error(val message: String) : SourceState()
 }

@@ -99,6 +99,7 @@ dependencies {
     implementation(project(":feature_favorite"))
     implementation(project(":feature_search"))
     implementation(project(":feature_details"))
+    implementation(project(":feature_source"))
 
     implementation(Deps.AndroidX.appCompat)
     implementation(Deps.AndroidX.ktx_core)

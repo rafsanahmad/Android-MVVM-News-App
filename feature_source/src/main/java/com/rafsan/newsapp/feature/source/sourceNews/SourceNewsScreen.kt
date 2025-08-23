@@ -1,11 +1,17 @@
-package com.rafsan.newsapp.feature.source
+/*
+ * *
+ *  * Created by Rafsan Ahmad on 8/23/25, 4:12PM
+ *  * Copyright (c) 2025 . All rights reserved.
+ *
+ */
+
+package com.rafsan.newsapp.feature.source.sourceNews
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
