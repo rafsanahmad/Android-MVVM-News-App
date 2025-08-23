@@ -13,4 +13,5 @@
     <string name="error_http">An unexpected error occurred (Code: %1$d).</string>
     <string name="error_unknown">An unknown error occurred.</string>
     <string name="no_more_news_available">No more news item available.</string>
+    <string name="search_query_too_short">Please enter at least %d characters to search</string>
 </resources>

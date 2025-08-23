@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.feature.search
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +30,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import android.net.Uri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
@@ -132,7 +134,8 @@ fun SearchScreenLayout(
                 query = query,
                 pagingItems = pagingItems,
                 navController = navController,
-                uiState = uiState
+                uiState = uiState,
+                focusManager = focusManager
             )
         }
     }
@@ -143,9 +146,17 @@ private fun HandlePagingContent(
     query: String,
     pagingItems: LazyPagingItems<NewsArticle>,
     navController: NavController,
-    uiState: SearchScreenState
+    uiState: SearchScreenState,
+    focusManager: FocusManager
 ) {
     val context = LocalContext.current
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
 
     if (uiState is SearchScreenState.QueryTooShort) {
         Box(
@@ -228,6 +239,7 @@ private fun HandlePagingContent(
                 }
             } else {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
@@ -389,7 +401,7 @@ fun SearchScreenLayoutPreview_WithResults() {
         NewsArticle(
             id = index,
             title = "Preview Article $index",
-            description = "Description for article $index",
+            description = "Description for article $index",.
             url = "http://example.com/preview/$index",
             urlToImage = "https://via.placeholder.com/100",
             author = "Preview Author",
