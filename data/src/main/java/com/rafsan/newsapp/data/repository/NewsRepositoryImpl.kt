@@ -44,7 +44,7 @@ class NewsRepositoryImpl @Inject constructor(
                         val page = params.key ?: 1
                         return try {
                             val response = api.searchNews(query, page, pageSize, apiKey, sources)
-                            val articles = response.body()?.articles?.map { it.toDomain() } ?: emptyList()
+                            val articles = response.body()?.articles ?: emptyList()
                             val nextKey = if (articles.isEmpty()) null else page + 1
                             LoadResult.Page(
                                 data = articles,
