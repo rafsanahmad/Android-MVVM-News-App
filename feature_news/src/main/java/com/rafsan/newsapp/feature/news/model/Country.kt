@@ -1,13 +1,6 @@
 package com.rafsan.newsapp.feature.news.model
 
-fun countryCodeToEmojiFlag(countryCode: String): String {
-    return countryCode
-        .uppercase()
-        .map { char ->
-            String(Character.toChars(char.code + 0x1F1A5))
-        }
-        .joinToString("")
-}
+import com.rafsan.newsapp.core.util.countryCodeToEmojiFlag
 
 data class Country(
     val code: String,

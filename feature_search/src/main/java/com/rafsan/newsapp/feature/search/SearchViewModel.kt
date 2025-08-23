@@ -35,22 +35,9 @@ class SearchViewModel @Inject constructor(
     // This StateFlow handles the active query typed by the user.
     val currentQuery: StateFlow<String> = query.asStateFlow()
 
-    private val _uiState = MutableStateFlow<SearchScreenState>(SearchScreenState.Empty)
-    val uiState: StateFlow<SearchScreenState> = _uiState.asStateFlow()
-
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResults: StateFlow<PagingData<NewsArticle>> = // Renamed for clarity
         query
-            .onEach { newQuery ->
-                if (newQuery.isBlank()) {
-                    _uiState.value = SearchScreenState.Empty
-                } else if (newQuery.length < PagingConstants.MIN_SEARCH_LENGTH) {
-                    _uiState.value =
-                        SearchScreenState.QueryTooShort(PagingConstants.MIN_SEARCH_LENGTH)
-                } else {
-                    _uiState.value = SearchScreenState.Searching
-                }
-            }
             .debounce(PagingConstants.DEBOUNCE_INTERVAL)
             .distinctUntilChanged()
             .flatMapLatest { currentSearchQuery ->
