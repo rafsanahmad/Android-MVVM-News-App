@@ -18,4 +18,5 @@
     <string name="description">DESCRIPTION</string>
     <string name="source">SOURCE</string>
     <string name="published_at">PUBLISHED AT</string>
+    <string name="search_query_too_short">Please enter at least %d characters to search</string>
 </resources>

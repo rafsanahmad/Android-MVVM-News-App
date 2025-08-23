@@ -64,13 +64,15 @@ fun SearchScreen(navController: NavController, viewModel: SearchViewModel = hilt
     val query by viewModel.currentQuery.collectAsState()
     val pagingItems = viewModel.searchResults.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
+    val uiState by viewModel.uiState.collectAsState()
 
     SearchScreenLayout(
         query = query,
         pagingItems = pagingItems,
         onQueryChanged = viewModel::onQueryChanged,
         navController = navController,
-        focusManager = focusManager
+        focusManager = focusManager,
+        uiState = uiState
     )
 }
 
@@ -81,7 +83,8 @@ fun SearchScreenLayout(
     pagingItems: LazyPagingItems<NewsArticle>,
     onQueryChanged: (String) -> Unit,
     navController: NavController,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    uiState: SearchScreenState
 ) {
     Scaffold(
         topBar = {
@@ -128,7 +131,8 @@ fun SearchScreenLayout(
             HandlePagingContent(
                 query = query,
                 pagingItems = pagingItems,
-                navController = navController
+                navController = navController,
+                uiState = uiState
             )
         }
     }
@@ -138,9 +142,25 @@ fun SearchScreenLayout(
 private fun HandlePagingContent(
     query: String,
     pagingItems: LazyPagingItems<NewsArticle>,
-    navController: NavController
+    navController: NavController,
+    uiState: SearchScreenState
 ) {
     val context = LocalContext.current
+
+    if (uiState is SearchScreenState.QueryTooShort) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                stringResource(id = R.string.search_query_too_short, uiState.minLength),
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
 
     when (val refreshState = pagingItems.loadState.refresh) {
         is LoadState.Loading -> {
@@ -194,7 +214,7 @@ private fun HandlePagingContent(
                         textAlign = TextAlign.Center
                     )
                 }
-            } else if (pagingItems.itemCount == 0) {
+            } else if (pagingItems.itemCount == 0 && uiState is SearchScreenState.Searching) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -356,7 +376,8 @@ fun SearchScreenLayoutPreview_Empty() {
             pagingItems = emptyPagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current
+            focusManager = LocalFocusManager.current,
+            uiState = SearchScreenState.Empty
         )
     }
 }
@@ -386,7 +407,8 @@ fun SearchScreenLayoutPreview_WithResults() {
             pagingItems = pagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current
+            focusManager = LocalFocusManager.current,
+            uiState = SearchScreenState.Searching
         )
     }
 }
