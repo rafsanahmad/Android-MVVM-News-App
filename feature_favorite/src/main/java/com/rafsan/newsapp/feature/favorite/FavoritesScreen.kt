@@ -164,7 +164,7 @@ private fun DismissibleFavoriteItem(
 
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = {
-            if (it != SwipeToDismissBoxValue.Settled) {
+            if (it == SwipeToDismissBoxValue.EndToStart) {
                 onEvent(FavoritesEvent.OnRemoveFavorite(currentArticle))
                 coroutineScope.launch {
                     val snackbarResult = snackbarHostState.showSnackbar(
@@ -179,7 +179,8 @@ private fun DismissibleFavoriteItem(
                 return@rememberSwipeToDismissBoxState true
             }
             false
-        }
+        },
+        positionalThreshold = { it }
     )
 
     SwipeToDismissBox(

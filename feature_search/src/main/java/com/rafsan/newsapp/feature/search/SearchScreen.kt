@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.feature.search
 
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -28,6 +30,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import android.net.Uri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.paging.LoadState
@@ -64,13 +66,15 @@ fun SearchScreen(navController: NavController, viewModel: SearchViewModel = hilt
     val query by viewModel.currentQuery.collectAsState()
     val pagingItems = viewModel.searchResults.collectAsLazyPagingItems()
     val focusManager = LocalFocusManager.current
+    val uiState by viewModel.uiState.collectAsState()
 
     SearchScreenLayout(
         query = query,
         pagingItems = pagingItems,
         onQueryChanged = viewModel::onQueryChanged,
         navController = navController,
-        focusManager = focusManager
+        focusManager = focusManager,
+        uiState = uiState
     )
 }
 
@@ -81,7 +85,8 @@ fun SearchScreenLayout(
     pagingItems: LazyPagingItems<NewsArticle>,
     onQueryChanged: (String) -> Unit,
     navController: NavController,
-    focusManager: FocusManager
+    focusManager: FocusManager,
+    uiState: SearchScreenState
 ) {
     Scaffold(
         topBar = {
@@ -128,7 +133,9 @@ fun SearchScreenLayout(
             HandlePagingContent(
                 query = query,
                 pagingItems = pagingItems,
-                navController = navController
+                navController = navController,
+                uiState = uiState,
+                focusManager = focusManager
             )
         }
     }
@@ -138,9 +145,33 @@ fun SearchScreenLayout(
 private fun HandlePagingContent(
     query: String,
     pagingItems: LazyPagingItems<NewsArticle>,
-    navController: NavController
+    navController: NavController,
+    uiState: SearchScreenState,
+    focusManager: FocusManager
 ) {
     val context = LocalContext.current
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
+
+    if (uiState is SearchScreenState.QueryTooShort) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                stringResource(id = R.string.search_query_too_short, uiState.minLength),
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
 
     when (val refreshState = pagingItems.loadState.refresh) {
         is LoadState.Loading -> {
@@ -194,7 +225,7 @@ private fun HandlePagingContent(
                         textAlign = TextAlign.Center
                     )
                 }
-            } else if (pagingItems.itemCount == 0) {
+            } else if (pagingItems.itemCount == 0 && uiState is SearchScreenState.Searching) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -208,6 +239,7 @@ private fun HandlePagingContent(
                 }
             } else {
                 LazyColumn(
+                    state = listState,
                     modifier = Modifier.fillMaxSize(),
                     contentPadding = PaddingValues(vertical = 8.dp)
                 ) {
@@ -356,7 +388,8 @@ fun SearchScreenLayoutPreview_Empty() {
             pagingItems = emptyPagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current
+            focusManager = LocalFocusManager.current,
+            uiState = SearchScreenState.Empty
         )
     }
 }
@@ -386,7 +419,8 @@ fun SearchScreenLayoutPreview_WithResults() {
             pagingItems = pagingItems,
             onQueryChanged = {},
             navController = NavController(LocalContext.current),
-            focusManager = LocalFocusManager.current
+            focusManager = LocalFocusManager.current,
+            uiState = SearchScreenState.Searching
         )
     }
 }

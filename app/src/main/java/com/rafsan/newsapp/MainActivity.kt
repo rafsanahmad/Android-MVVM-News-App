@@ -7,7 +7,6 @@
 
 package com.rafsan.newsapp
 
-// Import the new SetupNavGraph
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
