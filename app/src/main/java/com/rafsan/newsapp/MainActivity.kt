@@ -12,6 +12,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
@@ -58,11 +59,11 @@ private fun AppScaffold() {
     val currentDestination = backStackEntry?.destination
 
     val showMainTopAppBar = when (currentDestination?.route) {
-        Screen.Feed.route, Screen.Favorites.route -> true
+        Screen.Feed.route, Screen.Favorites.route, Screen.Source.route -> true
         else -> false // Hide for Search (has its own), Details, etc.
     }
     val showBottomNavBar = when (currentDestination?.route) {
-        Screen.Feed.route, Screen.Favorites.route -> true // Show for main tabs
+        Screen.Feed.route, Screen.Favorites.route, Screen.Source.route -> true // Show for main tabs
         else -> false
     }
 
@@ -72,12 +73,13 @@ private fun AppScaffold() {
                 val titleRes = when (currentDestination?.route) {
                     Screen.Feed.route -> R.string.today_news
                     Screen.Favorites.route -> R.string.favorite_news
+                    Screen.Source.route -> R.string.sources
                     else -> R.string.app_name
                 }
                 Text(text = stringResource(id = titleRes))
             }, actions = {
                 // Show search icon only on screens where it makes sense (e.g., Feed, Favorites)
-                if (currentDestination?.route == Screen.Feed.route || currentDestination?.route == Screen.Favorites.route) {
+                if (currentDestination?.route == Screen.Feed.route || currentDestination?.route == Screen.Favorites.route || currentDestination?.route == Screen.Source.route) {
                     IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -92,7 +94,8 @@ private fun AppScaffold() {
             NavigationBar {
                 val items = listOf(
                     Screen.Feed to Icons.Default.Home,
-                    Screen.Favorites to Icons.Default.Favorite
+                    Screen.Favorites to Icons.Default.Favorite,
+                    Screen.Source to Icons.AutoMirrored.Filled.List
                 )
                 items.forEach { (screen, icon) ->
                     val selected =
@@ -119,10 +122,18 @@ private fun AppScaffold() {
                         icon = {
                             Icon(
                                 imageVector = icon,
-                                contentDescription = stringResource(id = if (screen == Screen.Feed) R.string.feed else R.string.favorites)
+                                contentDescription = stringResource(id = R.string.sources)
                             )
                         },
-                        label = { Text(text = stringResource(id = if (screen == Screen.Feed) R.string.feed else R.string.favorites)) })
+                        label = {
+                            val labelRes = when (screen) {
+                                Screen.Feed -> R.string.feed
+                                Screen.Favorites -> R.string.favorites
+                                Screen.Source -> R.string.sources
+                                else -> R.string.app_name
+                            }
+                            Text(text = stringResource(id = labelRes))
+                        })
                 }
             }
         }

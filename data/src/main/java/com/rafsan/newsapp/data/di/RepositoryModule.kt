@@ -4,10 +4,13 @@ import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.data.database.NewsDao
 import com.rafsan.newsapp.data.database.NewsDatabase
 import com.rafsan.newsapp.data.network.NewsApi
+import com.rafsan.newsapp.data.database.SourceDao
 import com.rafsan.newsapp.data.repository.FavoriteRepositoryImpl
 import com.rafsan.newsapp.data.repository.NewsRepositoryImpl
+import com.rafsan.newsapp.data.repository.SourceRepositoryImpl
 import com.rafsan.newsapp.domain.repository.FavoriteRepository
 import com.rafsan.newsapp.domain.repository.NewsRepository
+import com.rafsan.newsapp.domain.repository.SourceRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -43,4 +46,11 @@ object RepositoryModule {
     fun provideFavoriteRepository(
         newsDao: NewsDao
     ): FavoriteRepository = FavoriteRepositoryImpl(newsDao)
+
+    @Provides
+    @Singleton
+    fun provideSourceRepository(
+        api: NewsApi,
+        sourceDao: SourceDao
+    ): SourceRepository = SourceRepositoryImpl(api, sourceDao)
 }

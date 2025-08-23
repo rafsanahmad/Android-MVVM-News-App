@@ -1,5 +1,6 @@
 package com.rafsan.newsapp.feature.search
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -18,43 +19,31 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val searchNewsUseCase: SearchNewsUseCase
+    private val searchNewsUseCase: SearchNewsUseCase,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
     private val query = MutableStateFlow("")
+    private val sourceId: String? = savedStateHandle["sourceId"]
 
     // This StateFlow handles the active query typed by the user.
     val currentQuery: StateFlow<String> = query.asStateFlow()
 
-    private val _uiState = MutableStateFlow<SearchScreenState>(SearchScreenState.Empty)
-    val uiState: StateFlow<SearchScreenState> = _uiState.asStateFlow()
-
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     val searchResults: StateFlow<PagingData<NewsArticle>> = // Renamed for clarity
         query
-            .onEach { newQuery ->
-                if (newQuery.isBlank()) {
-                    _uiState.value = SearchScreenState.Empty
-                } else if (newQuery.length < PagingConstants.MIN_SEARCH_LENGTH) {
-                    _uiState.value =
-                        SearchScreenState.QueryTooShort(PagingConstants.MIN_SEARCH_LENGTH)
-                } else {
-                    _uiState.value = SearchScreenState.Searching
-                }
-            }
             .debounce(PagingConstants.DEBOUNCE_INTERVAL)
             .distinctUntilChanged()
             .flatMapLatest { currentSearchQuery ->
                 if (currentSearchQuery.length < PagingConstants.MIN_SEARCH_LENGTH) {
                     flowOf(PagingData.empty())
                 } else {
-                    searchNewsUseCase(currentSearchQuery)
+                    searchNewsUseCase(currentSearchQuery, sourceId)
                 }
             }
             .cachedIn(viewModelScope)

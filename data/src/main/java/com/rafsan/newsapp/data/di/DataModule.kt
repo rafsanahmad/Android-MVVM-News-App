@@ -4,8 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import com.rafsan.newsapp.data.BuildConfig
 import com.rafsan.newsapp.data.database.MIGRATION_2_3
+import com.rafsan.newsapp.data.database.MIGRATION_3_4
 import com.rafsan.newsapp.data.database.NewsDao
 import com.rafsan.newsapp.data.database.NewsDatabase
+import com.rafsan.newsapp.data.database.SourceDao
 import com.rafsan.newsapp.data.network.NewsApi
 import dagger.Module
 import dagger.Provides
@@ -52,11 +54,15 @@ object DataModule {
             context,
             NewsDatabase::class.java,
             "news.db"
-        ).addMigrations(MIGRATION_2_3).build()
+        ).addMigrations(MIGRATION_2_3, MIGRATION_3_4).build()
 
     @Provides
     @Singleton
     fun provideDao(db: NewsDatabase): NewsDao = db.newsDao()
+
+    @Provides
+    @Singleton
+    fun provideSourceDao(db: NewsDatabase): SourceDao = db.sourceDao()
 }
 
 

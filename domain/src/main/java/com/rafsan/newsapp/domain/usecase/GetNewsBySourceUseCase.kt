@@ -6,7 +6,10 @@ import com.rafsan.newsapp.domain.repository.NewsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class SearchNewsUseCase @Inject constructor(private val repository: NewsRepository) {
-    operator fun invoke(query: String, sourceId: String?): Flow<PagingData<NewsArticle>> =
-        repository.searchNews(query, sourceId)
+class GetNewsBySourceUseCase @Inject constructor(
+    private val newsRepository: NewsRepository
+) {
+    operator fun invoke(source: String): Flow<PagingData<NewsArticle>> {
+        return newsRepository.getNewsBySource(source)
+    }
 }
