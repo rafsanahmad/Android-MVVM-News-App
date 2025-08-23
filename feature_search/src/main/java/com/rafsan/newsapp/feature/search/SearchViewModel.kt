@@ -36,7 +36,7 @@ class SearchViewModel @Inject constructor(
             .debounce(500) // Debounce to avoid too many API calls while typing
             .distinctUntilChanged() // Only search if query text actually changes
             .flatMapLatest { currentSearchQuery ->
-                if (currentSearchQuery.isBlank()) {
+                if (currentSearchQuery.length < 3) {
                     flowOf(PagingData.empty()) // Emit empty if query is blank
                 } else {
                     searchNewsUseCase(currentSearchQuery) // Perform search
