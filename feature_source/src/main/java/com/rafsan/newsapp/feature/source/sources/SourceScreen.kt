@@ -11,9 +11,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,9 +28,16 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import com.rafsan.newsapp.R
+import com.rafsan.newsapp.core.util.Constants
+import com.rafsan.newsapp.core.util.getDomainName
 import com.rafsan.newsapp.core.util.getFlagEmoji
 import com.rafsan.newsapp.domain.model.NewsSource
 
@@ -39,12 +49,30 @@ fun SourceScreen(
     val state by viewModel.state.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
 
+    SourceScreenContent(
+        sourceState = state,
+        searchQuery = searchQuery,
+        onSearchQueryChanged = viewModel::onSearchQueryChanged,
+        onSourceClick = { source ->
+            val encodedSourceName = java.net.URLEncoder.encode(source.name, "UTF-8")
+            navController.navigate("source_news/${source.id}/${encodedSourceName}")
+        }
+    )
+}
+
+@Composable
+fun SourceScreenContent(
+    sourceState: SourceState,
+    searchQuery: String,
+    onSearchQueryChanged: (String) -> Unit,
+    onSourceClick: (NewsSource) -> Unit
+) {
     Column(modifier = Modifier.fillMaxSize()) {
         SearchBar(
             query = searchQuery,
-            onQueryChanged = viewModel::onSearchQueryChanged
+            onQueryChanged = onSearchQueryChanged
         )
-        when (val sourceState = state) {
+        when (sourceState) {
             is SourceState.Loading -> {
                 Box(
                     modifier = Modifier.fillMaxSize(),
@@ -57,9 +85,7 @@ fun SourceScreen(
             is SourceState.Success -> {
                 SourceList(
                     sources = sourceState.sources,
-                    onSourceClick = { source ->
-                        navController.navigate("source_news/${source.id}")
-                    }
+                    onSourceClick = onSourceClick
                 )
             }
 
@@ -73,6 +99,19 @@ fun SourceScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SourceScreenPreview(
+    @PreviewParameter(SourcePreviewParameterProvider::class) sourceState: SourceState
+) {
+    SourceScreenContent(
+        sourceState = sourceState,
+        searchQuery = "",
+        onSearchQueryChanged = {},
+        onSourceClick = {}
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,12 +155,22 @@ fun SourceItem(
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val domain = getDomainName(source.url)
+        if (domain != null) {
+            AsyncImage(
+                model = "${Constants.CLEARBIT_LOGO_API}$domain",
+                contentDescription = source.name,
+                modifier = Modifier.size(40.dp),
+                placeholder = painterResource(id = R.drawable.ic_launcher_background),
+                error = painterResource(id = R.drawable.ic_launcher_background)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+        }
         Text(text = getFlagEmoji(source.country), modifier = Modifier.padding(end = 16.dp))
         Column {
             Text(text = source.name)
             Text(text = "Category: ${source.category}")
             Text(text = "Language: ${source.language}")
-            Text(text = "Country: ${source.country.uppercase()}")
         }
     }
 }

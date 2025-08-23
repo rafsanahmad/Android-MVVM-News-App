@@ -31,9 +31,11 @@ class SourceNewsViewModel @Inject constructor(
         MutableStateFlow(PagingData.empty())
     val newsState: StateFlow<PagingData<NewsArticle>> = _newsState.asStateFlow()
 
+    val sourceId: String = savedStateHandle.get<String>("sourceId") ?: ""
+    val sourceName: String = savedStateHandle.get<String>("sourceName") ?: "Source News"
+
     init {
-        val sourceId = savedStateHandle.get<String>("sourceId")
-        if (!sourceId.isNullOrEmpty()) {
+        if (sourceId.isNotEmpty()) {
             getNews(sourceId)
         }
     }

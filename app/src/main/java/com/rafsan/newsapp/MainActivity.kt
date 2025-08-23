@@ -79,7 +79,7 @@ private fun AppScaffold() {
                 Text(text = stringResource(id = titleRes))
             }, actions = {
                 // Show search icon only on screens where it makes sense (e.g., Feed, Favorites)
-                if (currentDestination?.route == Screen.Feed.route || currentDestination?.route == Screen.Favorites.route) {
+                if (currentDestination?.route == Screen.Feed.route || currentDestination?.route == Screen.Favorites.route || currentDestination?.route == Screen.Source.route) {
                     IconButton(onClick = { navController.navigate(Screen.Search.route) }) {
                         Icon(
                             imageVector = Icons.Default.Search,

@@ -54,7 +54,10 @@ class SourceViewModel @Inject constructor(
         val filteredSources = if (query.isBlank()) {
             originalSources
         } else {
-            originalSources.filter { it.name.contains(query, ignoreCase = true) }
+            originalSources.filter {
+                it.name.contains(query, ignoreCase = true) ||
+                        it.category.contains(query, ignoreCase = true)
+            }
         }
         _state.value = SourceState.Success(filteredSources)
     }

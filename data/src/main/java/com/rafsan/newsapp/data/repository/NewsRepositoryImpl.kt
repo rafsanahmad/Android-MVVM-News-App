@@ -35,7 +35,7 @@ class NewsRepositoryImpl @Inject constructor(
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
-    override fun searchNews(query: String): Flow<PagingData<NewsArticle>> {
+    override fun searchNews(query: String, sources: String?): Flow<PagingData<NewsArticle>> {
         return Pager(
             config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
             pagingSourceFactory = {
@@ -43,9 +43,8 @@ class NewsRepositoryImpl @Inject constructor(
                     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, NewsArticle> {
                         val page = params.key ?: 1
                         return try {
-                            val response = api.searchNews(query, page, pageSize, apiKey)
-                            val body = response.body()
-                            val articles = body?.articles ?: emptyList()
+                            val response = api.searchNews(query, page, pageSize, apiKey, sources)
+                            val articles = response.body()?.articles?.map { it.toDomain() } ?: emptyList()
                             val nextKey = if (articles.isEmpty()) null else page + 1
                             LoadResult.Page(
                                 data = articles,

@@ -9,7 +9,7 @@
     <string name="app_name">News App</string>
     <string name="favorites">Favorites</string>
     <string name="feed">Feed</string>
-    <string name="sources">Source</string>
+    <string name="sources">Sources</string>
     <string name="search">Search</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="today_news">Today\'s News</string>

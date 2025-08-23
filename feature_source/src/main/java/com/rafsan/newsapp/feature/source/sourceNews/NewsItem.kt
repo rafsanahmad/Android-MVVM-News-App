@@ -21,9 +21,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.rafsan.newsapp.domain.model.NewsArticle
+import com.rafsan.newsapp.domain.model.Source
 
 @Composable
 fun NewsItem(
@@ -71,4 +73,20 @@ fun NewsItem(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NewsItemPreview() {
+    val article = NewsArticle(
+        author = "Rafsan Ahmad",
+        title = "7 takeaways from the first Trump-Biden presidential debate",
+        description = "The first presidential debate between Donald Trump and Joe Biden was a chaotic affair, with frequent interruptions and personal attacks.",
+        url = "https://www.cnn.com/2020/09/29/politics/trump-biden-debate-takeaways/index.html",
+        urlToImage = "https://cdn.cnn.com/cnnnext/dam/assets/200929224213-01-trump-biden-debate-0929-super-tease.jpg",
+        publishedAt = "2020-09-30T03:18:00Z",
+        content = "The first presidential debate between President Donald Trump and former Vice President Joe Biden was a chaotic and often unintelligible affair, with the two candidates frequently interrupting each other and the moderator, Fox News' Chris Wallace, struggling to maintain control.",
+        source = Source(id = "cnn", name = "CNN")
+    )
+    NewsItem(article = article, onItemClick = {})
 }

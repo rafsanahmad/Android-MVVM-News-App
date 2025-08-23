@@ -25,7 +25,13 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         composable(Screen.Feed.route) {
             FeedScreen(navController = navController)
         }
-        composable(Screen.Search.route) {
+        composable(
+            route = Screen.Search.route,
+            arguments = listOf(navArgument("sourceId") {
+                type = NavType.StringType
+                nullable = true
+            })
+        ) {
             SearchScreen(navController = navController)
         }
         composable(Screen.Favorites.route) {
@@ -36,7 +42,10 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         }
         composable(
             route = Screen.SourceNews.route,
-            arguments = listOf(navArgument("sourceId") { type = NavType.StringType })
+            arguments = listOf(
+                navArgument("sourceId") { type = NavType.StringType },
+                navArgument("sourceName") { type = NavType.StringType }
+            )
         ) {
             SourceNewsScreen(navController = navController)
         }
