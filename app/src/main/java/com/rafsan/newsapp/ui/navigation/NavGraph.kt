@@ -12,6 +12,8 @@ import com.rafsan.newsapp.feature.details.DetailsScreen
 import com.rafsan.newsapp.feature.favorite.FavoritesScreen
 import com.rafsan.newsapp.feature.news.FeedScreen
 import com.rafsan.newsapp.feature.search.SearchScreen
+import com.rafsan.newsapp.feature.source.SourceNewsScreen
+import com.rafsan.newsapp.feature.source.SourceScreen
 
 @Composable
 fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifier) {
@@ -28,6 +30,15 @@ fun SetupNavGraph(navController: NavHostController, modifier: Modifier = Modifie
         }
         composable(Screen.Favorites.route) {
             FavoritesScreen(navController = navController)
+        }
+        composable(Screen.Source.route) {
+            SourceScreen(navController = navController)
+        }
+        composable(
+            route = Screen.SourceNews.route,
+            arguments = listOf(navArgument("sourceId") { type = NavType.StringType })
+        ) {
+            SourceNewsScreen(navController = navController)
         }
         composable(
             route = Screen.Details.route,

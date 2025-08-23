@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include(":app", ":core", ":domain", ":feature_news", ":feature_favorite", ":feature_search", ":feature_details", ":data")
+include(":app", ":core", ":domain", ":feature_news", ":feature_favorite", ":feature_search", ":feature_details", ":data", ":feature_source")
 rootProject.name = "News App"
 

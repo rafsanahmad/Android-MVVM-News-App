@@ -63,4 +63,11 @@ class NewsRepositoryImpl @Inject constructor(
             }
         ).flow
     }
+
+    override fun getNewsBySource(source: String): Flow<PagingData<NewsArticle>> {
+        return Pager(
+            config = PagingConfig(pageSize = pageSize, enablePlaceholders = false),
+            pagingSourceFactory = { SourceNewsPagingSource(api, source, apiKey) }
+        ).flow
+    }
 }
