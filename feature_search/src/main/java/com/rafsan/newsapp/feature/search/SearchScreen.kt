@@ -195,74 +195,73 @@ private fun HandlePagingContent(
             }
         } else {
             LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(vertical = 8.dp)
-                ) {
-                    items(
-                        count = pagingItems.itemCount,
-                        key = { index ->
-                            val item = pagingItems.peek(index)
-                            // Create a more robust key to prevent crashes
-                            item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" }
-                                ?: "search_article_${index}"
-                        }
-                    ) { index ->
-                        val article = pagingItems[index]
-                        if (article != null) {
-                            SearchNewsRow(article = article, onClick = {
-                                val articleJson = Json.encodeToString(article)
-                                val encodedArticleJson = Uri.encode(articleJson)
-                                navController.navigate("details/$encodedArticleJson")
-                            })
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                items(
+                    count = pagingItems.itemCount,
+                    key = { index ->
+                        val item = pagingItems.peek(index)
+                        // Create a more robust key to prevent crashes
+                        item?.let { "${it.url ?: ""}-${it.publishedAt ?: ""}" }
+                            ?: "search_article_${index}"
+                    }
+                ) { index ->
+                    val article = pagingItems[index]
+                    if (article != null) {
+                        SearchNewsRow(article = article, onClick = {
+                            val articleJson = Json.encodeToString(article)
+                            val encodedArticleJson = Uri.encode(articleJson)
+                            navController.navigate("details/$encodedArticleJson")
+                        })
+                    }
+                }
+
+                when (val appendState = pagingItems.loadState.append) {
+                    is LoadState.Loading -> {
+                        item {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
 
-                    when (val appendState = pagingItems.loadState.append) {
-                        is LoadState.Loading -> {
+                    is LoadState.Error -> {
+                        item {
+                            val errorMessage =
+                                getErrorMessage(error = appendState.error, context = context)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = errorMessage,
+                                    color = MaterialTheme.colorScheme.error,
+                                    textAlign = TextAlign.Center
+                                )
+                            }
+                        }
+                    }
+
+                    is LoadState.NotLoading -> {
+                        if (appendState.endOfPaginationReached) {
                             item {
-                                Box(
+                                Text(
+                                    text = stringResource(R.string.no_more_news_available),
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-                        }
-
-                        is LoadState.Error -> {
-                            item {
-                                val errorMessage =
-                                    getErrorMessage(error = appendState.error, context = context)
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = errorMessage,
-                                        color = MaterialTheme.colorScheme.error,
-                                        textAlign = TextAlign.Center
-                                    )
-                                }
-                            }
-                        }
-
-                        is LoadState.NotLoading -> {
-                            if (appendState.endOfPaginationReached) {
-                                item {
-                                    Text(
-                                        text = stringResource(R.string.no_more_news_available),
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(16.dp),
-                                        textAlign = TextAlign.Center,
-                                        style = MaterialTheme.typography.bodySmall
-                                    )
-                                }
+                                    textAlign = TextAlign.Center,
+                                    style = MaterialTheme.typography.bodySmall
+                                )
                             }
                         }
                     }

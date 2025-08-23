@@ -4,14 +4,13 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
-import androidx.paging.PagingState
 import androidx.paging.map
 import com.rafsan.newsapp.data.database.NewsDao
 import com.rafsan.newsapp.data.database.NewsDatabase
 import com.rafsan.newsapp.data.mapper.toDomain
 import com.rafsan.newsapp.data.network.NewsApi
 import com.rafsan.newsapp.data.repository.paging.FeedPagingSource
+import com.rafsan.newsapp.data.repository.paging.SearchPagingSource
 import com.rafsan.newsapp.data.repository.paging.SourceNewsPagingSource
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.repository.NewsRepository
@@ -34,8 +33,6 @@ class NewsRepositoryImpl @Inject constructor(
             pagingSourceFactory = { FeedPagingSource(api, dao, countryCode, apiKey, pageSize) }
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
-
-import com.rafsan.newsapp.data.repository.paging.SearchPagingSource
 
     override fun searchNews(query: String, sources: String?): Flow<PagingData<NewsArticle>> {
         return Pager(
