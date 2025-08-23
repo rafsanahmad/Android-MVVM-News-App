@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rafsan.newsapp.core.PagingConstants
+import com.rafsan.newsapp.core.util.PagingConstants
 import com.rafsan.newsapp.domain.model.NewsArticle
 import com.rafsan.newsapp.domain.usecase.SearchNewsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
